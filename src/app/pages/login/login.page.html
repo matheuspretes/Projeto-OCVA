@@ -1,0 +1,50 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <ion-title>OCVA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="login-page">
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+
+  <div class="login-shell">
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title>Bem-vindo</ion-card-title>
+        <ion-text color="medium">
+          Entre com seu login para acessar o sistema.
+        </ion-text>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="formGroup" (ngSubmit)="entrar()">
+          <ion-item class="field">
+            <ion-label position="stacked">Login</ion-label>
+            <ion-input type="text" formControlName="login" placeholder="Digite seu login"></ion-input>
+          </ion-item>
+          <ion-text class="field-error" *ngIf="formGroup.get('login')?.touched && formGroup.get('login')?.invalid">
+            Informe o login.
+          </ion-text>
+
+          <ion-item class="field">
+            <ion-label position="stacked">Senha</ion-label>
+            <ion-input type="password" formControlName="senha" placeholder="Digite sua senha"></ion-input>
+          </ion-item>
+          <ion-text class="field-error" *ngIf="formGroup.get('senha')?.touched && formGroup.get('senha')?.invalid">
+            Informe a senha.
+          </ion-text>
+
+          <ion-button type="submit" expand="block" color="primary" class="enter-button" [disabled]="carregando">
+            <ion-spinner *ngIf="carregando" name="crescent"></ion-spinner>
+            <span *ngIf="!carregando">Entrar</span>
+          </ion-button>
+
+          <ion-button type="button" expand="block" fill="clear" (click)="irCadastro()">
+            Criar conta
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

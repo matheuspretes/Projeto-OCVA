@@ -1,0 +1,99 @@
+.dados-page {
+  --background: linear-gradient(160deg, #0f172a 0%, #111827 45%, #1f2937 100%);
+  position: relative;
+}
+
+.background-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(18px);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.orb-one {
+  width: 220px;
+  height: 220px;
+  top: 5%;
+  right: -45px;
+  background: #22c55e;
+}
+
+.orb-two {
+  width: 180px;
+  height: 180px;
+  bottom: 8%;
+  left: -35px;
+  background: #38bdf8;
+}
+
+.dados-shell {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.dados-card {
+  width: min(100%, 500px);
+  margin: 0;
+  border-radius: 24px;
+  backdrop-filter: blur(14px);
+  background: rgba(15, 23, 42, 0.78);
+  color: #f8fafc;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+.dados-card ion-card-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.field {
+  --background: rgba(255, 255, 255, 0.05);
+  --border-radius: 14px;
+  --border-color: rgba(255, 255, 255, 0.12);
+  margin-bottom: 10px;
+}
+
+.info-field {
+  --background: transparent;
+  --border-color: transparent;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  ion-label {
+    color: #cbd5e1;
+    margin-bottom: 4px;
+  }
+
+  ion-text {
+    color: #f8fafc;
+    font-weight: 500;
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+
+  ion-button {
+    flex: 1;
+  }
+}
+
+.edit-button {
+  margin-top: 18px;
+}
+
+ion-button[fill='clear'] {
+  --color: #cbd5e1;
+}

@@ -1,0 +1,61 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inicio"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Dados do Usuário</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="dados-page">
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+
+  <div class="dados-shell">
+    <ion-card class="dados-card">
+      <ion-card-header>
+        <ion-card-title>Informações Pessoais</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+
+          <ion-item class="field info-field">
+            <ion-label position="stacked">Nome</ion-label>
+            <ion-input type="text" formControlName="nome"></ion-input>
+          </ion-item>
+
+          <ion-item class="field info-field">
+            <ion-label position="stacked">Login</ion-label>
+            <ion-input type="text" formControlName="login"></ion-input>
+          </ion-item>
+
+          <ion-item class="field info-field">
+            <ion-label position="stacked">Senha</ion-label>
+            <ion-input type="password" formControlName="senha"></ion-input>
+          </ion-item>
+
+          <ion-item class="field info-field">
+            <ion-label position="stacked">Tipo</ion-label>
+            <ion-input type="text" formControlName="tipo"></ion-input>
+          </ion-item>
+
+          <ion-item class="field info-field">
+            <ion-label position="stacked">Instrumento</ion-label>
+            <ion-input type="text" formControlName="instrumento"></ion-input>
+          </ion-item>
+
+          <div class="button-group">
+            <ion-button type="submit" expand="block" color="primary" [disabled]="!formGroup.valid">
+              SALVAR
+            </ion-button>
+            <ion-button expand="block" color="danger" (click)="excluir()">
+              EXCLUIR
+            </ion-button>
+          </div>
+
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

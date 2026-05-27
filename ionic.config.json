@@ -1,0 +1,7 @@
+{
+  "name": "OCVA",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
