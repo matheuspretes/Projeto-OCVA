@@ -1,6 +1,11 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>inicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/dados">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -24,7 +29,7 @@
               </span>
             </a>
 
-            <button type="button" class="action-link danger-link" (click)="sair()">
+            <button type="button" class="action-link danger-link">
               <span class="action-text">
                 <strong>Sair da conta</strong>
                 <small>Finalize a sessão atual.</small>

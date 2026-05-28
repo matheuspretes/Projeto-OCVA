@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { Usuario } from 'src/app/models/usuario';
 import { ToastController, NavController, AlertController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dados',
@@ -14,6 +15,7 @@ import { ToastController, NavController, AlertController } from '@ionic/angular'
   imports: [IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class DadosPage implements OnInit {
+  private tipoSub: Subscription | null = null;
   usuario: Usuario | null = null;
   formGroup: FormGroup;
 
@@ -46,6 +48,13 @@ export class DadosPage implements OnInit {
         instrumento: this.usuario?.instrumento
       });
     }
+
+    // Clear instrumento when tipo is not 'musico'
+    this.tipoSub = this.formGroup.get('tipo')?.valueChanges.subscribe((val) => {
+      if (val !== 'musico') {
+        this.formGroup.get('instrumento')?.setValue('');
+      }
+    }) || null;
   }
 
     ionViewWillEnter(){
@@ -61,6 +70,10 @@ export class DadosPage implements OnInit {
       });
     }
     }
+
+  ngOnDestroy(): void {
+    this.tipoSub?.unsubscribe();
+  }
 
   salvar() {
     if (!this.usuario) {
@@ -115,6 +128,12 @@ export class DadosPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async sairDaConta() {
+    this.usuarioService.encerrarAutenticacao();
+    await this.exibirMensagem('Sessão encerrada com sucesso!');
+    this.navController.navigateRoot('/login');
   }
 
   async exibirMensagem(texto: string) {
