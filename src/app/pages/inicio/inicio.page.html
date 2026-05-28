@@ -1,19 +1,40 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-title>inicio</ion-title>
-    <ion-buttons slot="end">
-      <a routerLink="/dados" class="user-data-link">Dados do Usuário</a>
-      <ion-button (click)="sair()" color="danger">
-        <ion-icon name="log-out"></ion-icon>
-        Sair
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="inicio-page">
   <div class="background-orb orb-one"></div>
   <div class="background-orb orb-two"></div>
+
+  <div class="inicio-shell">
+    <div class="dashboard-grid">
+      <ion-card class="dashboard-card surface-card">
+        <ion-card-header>
+          <ion-card-title>Ações rápidas</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="action-list">
+            <a routerLink="/dados" class="action-link primary-link">
+              <span class="action-text">
+                <strong>Dados do usuário</strong>
+                <small>Revise e atualize suas informações.</small>
+              </span>
+            </a>
+
+            <button type="button" class="action-link danger-link" (click)="sair()">
+              <span class="action-text">
+                <strong>Sair da conta</strong>
+                <small>Finalize a sessão atual.</small>
+              </span>
+            </button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
 
   <ion-header collapse="condense">
     <ion-toolbar>

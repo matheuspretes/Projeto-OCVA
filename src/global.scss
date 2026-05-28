@@ -35,3 +35,61 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+:root {
+	--ocva-gold: #d4af37;
+	--ocva-gold-soft: #f2d272;
+	--ocva-black-1: #000000;
+	--ocva-black-2: #050505;
+	--ocva-black-3: #120d04;
+	--ocva-surface: rgba(24, 16, 6, 0.8);
+	--ion-color-primary: #f2d272;
+	--ion-color-primary-rgb: 242, 210, 114;
+	--ion-color-primary-contrast: #000000;
+	--ion-color-primary-contrast-rgb: 0, 0, 0;
+	--ion-color-primary-shade: #d5b964;
+	--ion-color-primary-tint: #f4d985;
+}
+
+ion-title,
+ion-card-title {
+	font-family: Georgia, 'Times New Roman', serif;
+	color: var(--ocva-gold-soft);
+}
+
+ion-header,
+ion-toolbar,
+ion-header ion-toolbar {
+	--background: #000000;
+	--color: var(--ocva-gold-soft);
+	--ion-toolbar-background: #000000;
+	--ion-toolbar-color: var(--ocva-gold-soft);
+	background: #000000 !important;
+}
+
+ion-toolbar::part(background) {
+	background: #000000;
+}
+
+ion-button {
+	--background: #000000;
+	--background-hover: #111111;
+	--background-activated: #151515;
+	--background-focused: #151515;
+	--color: var(--ocva-gold-soft);
+	--border-color: #1f1f1f;
+	--border-style: solid;
+	--border-width: 1px;
+	font-weight: 600;
+}
+
+ion-button[fill='clear'] {
+	--background: #000000;
+	--background-hover: #111111;
+	--background-activated: #151515;
+	--background-focused: #151515;
+	--color: var(--ocva-gold-soft);
+	--border-color: #1f1f1f;
+	--border-style: solid;
+	--border-width: 1px;
+}

@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/login"></ion-back-button>
@@ -12,52 +12,65 @@
   <div class="background-orb orb-two"></div>
 
   <div class="cadastro-shell">
-    <ion-card class="cadastro-card">
+    <ion-card class="cadastro-card surface-card">
       <ion-card-header>
         <ion-card-title>Criar conta</ion-card-title>
-        <ion-text color="medium">
-          Preencha os dados para acessar o sistema.
-        </ion-text>
       </ion-card-header>
 
       <ion-card-content>
         <form [formGroup]="formGroup" (ngSubmit)="salvar()">
-          <ion-item class="field">
-            <ion-label position="stacked">Nome</ion-label>
-            <ion-input type="text" formControlName="nome" placeholder="Digite seu nome"></ion-input>
-          </ion-item>
+          <div class="form-group">
+            <p class="form-group-title">Identidade</p>
 
-          <ion-item class="field">
-            <ion-label position="stacked">Login</ion-label>
-            <ion-input type="text" formControlName="login" (ionBlur)="verificarLoginExistente()" placeholder="Crie seu login"></ion-input>
-          </ion-item>
+            <ion-item class="field">
+              <ion-label position="stacked">Nome</ion-label>
+              <ion-input type="text" formControlName="nome" placeholder="Digite seu nome"></ion-input>
+            </ion-item>
 
-          <ion-text class="field-error" *ngIf="loginExistente">
-            Esse login já existe.
-          </ion-text>
+            <ion-item class="field">
+              <ion-label position="stacked">Login</ion-label>
+              <ion-input type="text" formControlName="login" (ionBlur)="verificarLoginExistente()" placeholder="Crie seu login"></ion-input>
+            </ion-item>
 
-          <ion-item class="field">
-            <ion-label position="stacked">Senha</ion-label>
-            <ion-input type="password" formControlName="senha" placeholder="Crie uma senha"></ion-input>
-          </ion-item>
+            <ion-text class="field-error" *ngIf="loginExistente">
+              Esse login já existe.
+            </ion-text>
+          </div>
 
-          <ion-item class="field">
-            <ion-label position="stacked">Selecionar tipo</ion-label>
-            <ion-select formControlName="tipo" placeholder="Escolha uma opção">
-              <ion-select-option value="musico">Musico</ion-select-option>
-              <ion-select-option value="maestro">Maestro</ion-select-option>
-              <ion-select-option value="diretoria">Diretoria</ion-select-option>
-              <ion-select-option value="secretaria">Secretaria</ion-select-option>
-            </ion-select>
-          </ion-item>
+          <div class="form-group">
+            <p class="form-group-title">Segurança</p>
 
-          <ion-item *ngIf="formGroup.get('tipo')?.value === 'musico'" class="field">
-            <ion-label position="stacked">Instrumento</ion-label>
-            <ion-input type="text" formControlName="instrumento" placeholder="Ex.: violão, clarinete, bateria"></ion-input>
-          </ion-item>
+            <ion-item class="field">
+              <ion-label position="stacked">Senha</ion-label>
+              <ion-input type="password" formControlName="senha" placeholder="Crie uma senha"></ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-group">
+            <p class="form-group-title">Perfil</p>
+
+            <ion-item class="field">
+              <ion-label position="stacked">Selecionar tipo</ion-label>
+              <ion-select formControlName="tipo" placeholder="Escolha uma opção">
+                <ion-select-option value="musico">Musico</ion-select-option>
+                <ion-select-option value="maestro">Maestro</ion-select-option>
+                <ion-select-option value="diretoria">Diretoria</ion-select-option>
+                <ion-select-option value="secretaria">Secretaria</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item *ngIf="formGroup.get('tipo')?.value === 'musico'" class="field">
+              <ion-label position="stacked">Instrumento</ion-label>
+              <ion-input type="text" formControlName="instrumento" placeholder="Ex.: violão, clarinete, bateria"></ion-input>
+            </ion-item>
+          </div>
 
           <ion-button type="submit" expand="block" color="primary" class="enter-button" [disabled]="!formGroup.valid || loginExistente">
             Salvar
+          </ion-button>
+
+          <ion-button type="button" expand="block" fill="clear" (click)="irLogin()">
+            Cancelar
           </ion-button>
         </form>
       </ion-card-content>

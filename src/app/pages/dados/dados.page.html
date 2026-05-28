@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar color="dark">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/inicio"></ion-back-button>
@@ -12,38 +12,49 @@
   <div class="background-orb orb-two"></div>
 
   <div class="dados-shell">
-    <ion-card class="dados-card">
+    <ion-card class="dados-card surface-card">
       <ion-card-header>
-        <ion-card-title>Informações Pessoais</ion-card-title>
+        <ion-card-title>Informações pessoais</ion-card-title>
       </ion-card-header>
 
       <ion-card-content>
         <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+          <div class="form-group">
+            <p class="form-group-title">Identidade</p>
 
-          <ion-item class="field info-field">
-            <ion-label position="stacked">Nome</ion-label>
-            <ion-input type="text" formControlName="nome"></ion-input>
-          </ion-item>
+            <ion-item class="field info-field">
+              <ion-label position="stacked">Nome</ion-label>
+              <ion-input type="text" formControlName="nome"></ion-input>
+            </ion-item>
 
-          <ion-item class="field info-field">
-            <ion-label position="stacked">Login</ion-label>
-            <ion-input type="text" formControlName="login"></ion-input>
-          </ion-item>
+            <ion-item class="field info-field">
+              <ion-label position="stacked">Login</ion-label>
+              <ion-input type="text" formControlName="login"></ion-input>
+            </ion-item>
+          </div>
 
-          <ion-item class="field info-field">
-            <ion-label position="stacked">Senha</ion-label>
-            <ion-input type="password" formControlName="senha"></ion-input>
-          </ion-item>
+          <div class="form-group">
+            <p class="form-group-title">Segurança</p>
 
-          <ion-item class="field info-field">
-            <ion-label position="stacked">Tipo</ion-label>
-            <ion-input type="text" formControlName="tipo"></ion-input>
-          </ion-item>
+            <ion-item class="field info-field">
+              <ion-label position="stacked">Senha</ion-label>
+              <ion-input type="password" formControlName="senha"></ion-input>
+            </ion-item>
+          </div>
 
-          <ion-item class="field info-field">
-            <ion-label position="stacked">Instrumento</ion-label>
-            <ion-input type="text" formControlName="instrumento"></ion-input>
-          </ion-item>
+          <div class="form-group">
+            <p class="form-group-title">Perfil</p>
+
+            <ion-item class="field info-field">
+              <ion-label position="stacked">Tipo</ion-label>
+              <ion-input type="text" formControlName="tipo"></ion-input>
+            </ion-item>
+
+            <ion-item class="field info-field">
+              <ion-label position="stacked">Instrumento</ion-label>
+              <ion-input type="text" formControlName="instrumento"></ion-input>
+            </ion-item>
+          </div>
 
           <div class="button-group">
             <ion-button type="submit" expand="block" color="primary" [disabled]="!formGroup.valid">

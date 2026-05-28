@@ -63,6 +63,10 @@ export class CadastroPage implements OnInit {
     }
   }
 
+  irLogin() {
+    this.router.navigate(['/login']);
+  }
+
   verificarLoginExistente() {
     let login = this.formGroup.get('login')?.value;
     if (this.usuarioService.verificarLogin(login)) {

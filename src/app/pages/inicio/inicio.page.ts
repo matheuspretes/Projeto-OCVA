@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar, IonFooter } from '@ionic/angular/standalone';
+import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar, IonFooter } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
 
 @Component({
@@ -10,7 +10,7 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, IonIcon, CommonModule, FormsModule, RouterLink]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, RouterLink]
 })
 export class InicioPage implements OnInit {
 

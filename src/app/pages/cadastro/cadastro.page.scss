@@ -1,6 +1,9 @@
 .cadastro-page {
-	--background: linear-gradient(160deg, #0f172a 0%, #111827 45%, #1f2937 100%);
+	--background: linear-gradient(155deg, var(--ocva-black-1) 0%, var(--ocva-black-2) 55%, var(--ocva-black-3) 100%);
+	--padding-top: 16px;
+	--padding-bottom: 24px;
 	position: relative;
+	isolation: isolate;
 }
 
 .background-orb {
@@ -16,7 +19,7 @@
 	height: 220px;
 	top: 5%;
 	right: -45px;
-	background: #22c55e;
+	background: #b8860b;
 }
 
 .orb-two {
@@ -24,32 +27,137 @@
 	height: 180px;
 	bottom: 8%;
 	left: -35px;
-	background: #38bdf8;
+	background: #f2d272;
 }
 
 .cadastro-shell {
+	position: relative;
+	z-index: 1;
+	width: min(100%, 1100px);
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+	gap: 20px;
+	align-items: start;
+	padding: 12px 20px 28px;
 	min-height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 24px;
 }
 
+
+.cadastro-hero {
+	padding: 16px 6px;
+	color: #f8fafc;
+	max-width: 28rem;
+
+	h1 {
+		margin: 10px 0 12px;
+		font-size: clamp(2rem, 6vw, 3.4rem);
+		line-height: 0.98;
+		letter-spacing: -0.05em;
+		color: #ffffff;
+	}
+
+	.hero-copy {
+		margin: 0;
+		max-width: 36ch;
+		font-size: 1rem;
+		line-height: 1.55;
+		color: #cbd5e1;
+	}
+}
+
+.eyebrow {
+	display: inline-flex;
+	margin: 0;
+	padding: 6px 10px;
+	border-radius: 999px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: #0f172a;
+	background: #e2e8f0;
+}
+
+.hero-list {
+	display: grid;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.hero-item {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 12px;
+	align-items: start;
+	padding: 14px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+	strong {
+		display: block;
+		margin-bottom: 2px;
+		font-size: 1rem;
+		color: #ffffff;
+	}
+
+	p {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: #cbd5e1;
+	}
+}
+
+.hero-index {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.2rem;
+	height: 2.2rem;
+	border-radius: 0.9rem;
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: #0f172a;
+	background: linear-gradient(135deg, #38bdf8, #22c55e);
+	box-shadow: 0 12px 24px rgba(34, 197, 94, 0.18);
+}
+
+.surface-card,
 .cadastro-card {
-	width: min(100%, 420px);
 	margin: 0;
 	border-radius: 24px;
 	backdrop-filter: blur(14px);
-	background: rgba(15, 23, 42, 0.78);
+	background: var(--ocva-surface);
 	color: #f8fafc;
 	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+.cadastro-card {
+	width: min(100%, 540px);
+	justify-self: end;
+	align-self: start;
 }
 
 .cadastro-card ion-card-title {
 	font-size: 1.9rem;
 	font-weight: 700;
 	letter-spacing: -0.03em;
-	color: #ffffff;
+	color: var(--ocva-gold-soft);
+}
+
+.form-group {
+	display: grid;
+	gap: 8px;
+	margin-bottom: 20px;
+}
+
+.form-group-title {
+	margin: 0 0 2px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--ocva-gold);
 }
 
 .cadastro-card ion-text {
@@ -61,7 +169,7 @@
 	--background: rgba(255, 255, 255, 0.05);
 	--border-radius: 14px;
 	--border-color: rgba(255, 255, 255, 0.12);
-	--highlight-color-focused: #38bdf8;
+	--highlight-color-focused: var(--ocva-gold-soft);
 	margin-bottom: 10px;
 }
 
@@ -74,4 +182,44 @@
 
 .enter-button {
 	margin-top: 18px;
+}
+
+@media (max-width: 960px) {
+	.cadastro-shell {
+		grid-template-columns: 1fr;
+		padding-inline: 14px;
+	}
+
+	.cadastro-card {
+		justify-self: stretch;
+		width: 100%;
+	}
+
+	.cadastro-hero {
+		max-width: none;
+		padding-inline: 2px;
+	}
+}
+
+@media (max-width: 600px) {
+	.cadastro-shell {
+		gap: 16px;
+		padding-inline: 8px;
+	}
+
+	.cadastro-card {
+		border-radius: 20px;
+	}
+
+	.cadastro-card ion-card-title {
+		font-size: 1.6rem;
+	}
+
+	.hero-list {
+		gap: 8px;
+	}
+
+	.hero-item {
+		padding: 12px 0;
+	}
 }
