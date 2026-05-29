@@ -57,17 +57,9 @@ export class CadastroPage implements OnInit {
       this.usuario.tipo = this.formGroup.value.tipo;
       this.usuario.instrumento = this.formGroup.value.instrumento;
 
-      this.usuarioService.salvar(this.usuario).subscribe(
-        (resultado) => {
-          this.exibirMensagem('Usuário cadastrado com sucesso');
-          this.router.navigate(['/login']);
-        },
-        (erro) => {
-          this.exibirMensagem('Erro ao cadastrar usuário');
-          console.error(erro);
-        }
-      );
-
+      this.usuarioService.salvar(this.usuario);
+      this.exibirMensagem('Usuário cadastrado com sucesso');
+      this.router.navigate(['/login']);
     }
   }
 
@@ -77,8 +69,7 @@ export class CadastroPage implements OnInit {
 
   verificarLoginExistente() {
     let login = this.formGroup.get('login')?.value;
-    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    if (usuarios.find((temp: Usuario) => temp.login === login)) {
+    if (this.usuarioService.verificarLogin(login)) {
       this.loginExistente = true;
       this.exibirMensagem('Login existente');
     } else {

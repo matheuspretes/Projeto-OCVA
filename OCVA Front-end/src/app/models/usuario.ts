@@ -1,9 +1,11 @@
+import { TipoUsuario } from 'src/app/constantes/tipo-usuario';
+
 export class Usuario {
     id: number;
     nome: string;
     login: string;
     senha: string;
-    tipo: string;
+    tipo: TipoUsuario;
     instrumento: string;
 
     constructor() {
@@ -11,7 +13,7 @@ export class Usuario {
         this.nome = "";
         this.login = "";
         this.senha = "";
-        this.tipo = "";
+        this.tipo = TipoUsuario[4].value;
         this.instrumento = "";
     }
 }

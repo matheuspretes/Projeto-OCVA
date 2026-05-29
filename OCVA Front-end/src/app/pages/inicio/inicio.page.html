@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>inicio</ion-title>
+    <ion-title>Início</ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/dados">
         <ion-icon name="log-out-outline"></ion-icon>
@@ -21,21 +21,29 @@
         </ion-card-header>
 
         <ion-card-content>
-          <div class="action-list">
-            <a routerLink="/dados" class="action-link primary-link">
-              <span class="action-text">
-                <strong>Dados do usuário</strong>
-                <small>Revise e atualize suas informações.</small>
-              </span>
-            </a>
+          <ng-container *ngIf="visibleCards.length > 0; else emptyState">
+            <div class="action-list">
+              <ng-container *ngFor="let card of visibleCards">
+                <a *ngIf="card.kind === 'link'" [routerLink]="card.route" class="action-link primary-link">
+                  <span class="action-text">
+                    <strong>{{ card.title }}</strong>
+                    <small>{{ card.description }}</small>
+                  </span>
+                </a>
 
-            <button type="button" class="action-link danger-link">
-              <span class="action-text">
-                <strong>Sair da conta</strong>
-                <small>Finalize a sessão atual.</small>
-              </span>
-            </button>
-          </div>
+                <button *ngIf="card.kind === 'button'" type="button" class="action-link danger-link" (click)="sair()">
+                  <span class="action-text">
+                    <strong>{{ card.title }}</strong>
+                    <small>{{ card.description }}</small>
+                  </span>
+                </button>
+              </ng-container>
+            </div>
+          </ng-container>
+
+          <ng-template #emptyState>
+            <p class="empty-state">Nenhuma ação disponível para este perfil.</p>
+          </ng-template>
         </ion-card-content>
       </ion-card>
     </div>

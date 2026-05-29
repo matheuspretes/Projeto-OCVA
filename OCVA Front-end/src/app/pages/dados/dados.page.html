@@ -45,9 +45,14 @@
           <div class="form-group">
             <p class="form-group-title">Perfil</p>
 
-            <ion-item class="field info-field">
-              <ion-label position="stacked">Tipo</ion-label>
-              <ion-input type="text" formControlName="tipo"></ion-input>
+            <ion-item class="field">
+              <ion-label position="stacked">Selecionar tipo</ion-label>
+              <ion-select formControlName="tipo" placeholder="Escolha uma opção">
+                <ion-select-option value="musico">Musico</ion-select-option>
+                <ion-select-option value="maestro">Maestro</ion-select-option>
+                <ion-select-option value="diretoria">Diretoria</ion-select-option>
+                <ion-select-option value="secretaria">Secretaria</ion-select-option>
+              </ion-select>
             </ion-item>
 
             <ion-item *ngIf="formGroup.get('tipo')?.value === 'musico'" class="field info-field">
@@ -62,6 +67,9 @@
             </ion-button>
             <ion-button expand="block" color="danger" (click)="excluir()">
               EXCLUIR
+            </ion-button>
+            <ion-button type="button" expand="block" color="danger" (click)="cancelar()">
+              Cancelar
             </ion-button>
             <ion-button type="button" expand="block" color="medium" (click)="sairDaConta()">
               Sair da conta

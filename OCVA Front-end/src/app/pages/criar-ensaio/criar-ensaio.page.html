@@ -1,0 +1,60 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Criar ensaios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Criar ensaio</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card class="surface-card">
+    <ion-card-header>
+      <ion-card-title>Registrar novo ensaio</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+        <div class="form-group">
+          <p class="form-group-title">Detalhes do ensaio</p>
+
+          <ion-item class="field">
+            <ion-label position="stacked">Data</ion-label>
+            <ion-datetime presentation="date" displayFormat="DD/MM/YYYY" formControlName="data"></ion-datetime>
+          </ion-item>
+
+          <ion-item class="field">
+            <ion-label position="stacked">Descrição</ion-label>
+            <ion-input placeholder="Descrição do ensaio" formControlName="descricao"></ion-input>
+          </ion-item>
+
+          <ion-item class="field">
+            <ion-label position="stacked">Músicos presentes</ion-label>
+            <ion-select placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
+              <ion-select-option *ngFor="let musico of musicos" [value]="musico">
+                {{ musico.nome }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+        <div class="button-group">
+            <ion-button type="submit" expand="block" color="primary" [disabled]="!formGroup.valid">
+              SALVAR
+            </ion-button>
+            <ion-button expand="block" color="danger" (click)="excluir()">
+              EXCLUIR
+            </ion-button>
+            <ion-button type="button" expand="block" color="danger" (click)="cancelar()">
+              Cancelar
+            </ion-button>
+            <ion-button type="button" expand="block" color="medium" (click)="sairDaConta()">
+              Sair da conta
+            </ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

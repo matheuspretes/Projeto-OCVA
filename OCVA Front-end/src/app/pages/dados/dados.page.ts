@@ -1,18 +1,21 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons,
+   IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent,
+    IonCardHeader, IonCardTitle, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { Usuario } from 'src/app/models/usuario';
 import { ToastController, NavController, AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-dados',
   templateUrl: './dados.page.html',
   styleUrls: ['./dados.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class DadosPage implements OnInit {
   private tipoSub: Subscription | null = null;
@@ -49,6 +52,7 @@ export class DadosPage implements OnInit {
       });
     }
 
+    // Clear instrumento when tipo is not 'musico'
     this.tipoSub = this.formGroup.get('tipo')?.valueChanges.subscribe((val) => {
       if (val !== 'musico') {
         this.formGroup.get('instrumento')?.setValue('');
@@ -57,7 +61,7 @@ export class DadosPage implements OnInit {
   }
 
     ionViewWillEnter(){
-      const usuarioLogado = localStorage.getItem('usuarioAutenticado');
+        const usuarioLogado = localStorage.getItem('usuarioAutenticado');
     if (usuarioLogado) {
       this.usuario = JSON.parse(usuarioLogado);
       this.formGroup.patchValue({
@@ -72,15 +76,6 @@ export class DadosPage implements OnInit {
 
   ngOnDestroy(): void {
     this.tipoSub?.unsubscribe();
-  }
-
-  async exibirMensagem(texto: string) {
-    const toast = await this.toastController.create({
-      message: texto,
-      duration: 1500,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 
   salvar() {
@@ -101,17 +96,11 @@ export class DadosPage implements OnInit {
     this.usuario.tipo = dados.tipo;
     this.usuario.instrumento = dados.instrumento;
 
-    this.usuarioService.salvar(this.usuario).subscribe(
-      (usuarioAtualizado) => {
-        this.usuarioService.registrarAutenticacao(usuarioAtualizado);
-        this.exibirMensagem('Dados atualizados com sucesso!!!');
-        this.navController.navigateBack('/inicio');
-      },
-      (erro) => {
-        this.exibirMensagem('Erro ao atualizar dados');
-        console.error(erro);
-      }
-    );
+    this.usuarioService.salvar(this.usuario);
+    localStorage.setItem('usuarioAutenticado', JSON.stringify(this.usuario));
+
+    this.exibirMensagem('Dados atualizados com sucesso!!!');
+    this.navController.navigateBack('/inicio');
   }
 
   async excluir() {
@@ -131,17 +120,10 @@ export class DadosPage implements OnInit {
           role: 'destructive',
           handler: () => {
             if (this.usuario) {
-              this.usuarioService.excluir(this.usuario.id).subscribe(
-                () => {
-                  localStorage.removeItem('usuarioAutenticado');
-                  this.exibirMensagem('Conta excluída com sucesso!');
-                  this.navController.navigateRoot('/login');
-                },
-                (erro) => {
-                  this.exibirMensagem('Erro ao excluir conta');
-                  console.error(erro);
-                }
-              );
+              this.usuarioService.excluir(this.usuario.id);
+              localStorage.removeItem('usuarioAutenticado');
+              this.exibirMensagem('Conta excluída com sucesso!');
+              this.navController.navigateRoot('/login');
             }
           }
         }
@@ -157,4 +139,15 @@ export class DadosPage implements OnInit {
     this.navController.navigateRoot('/login');
   }
 
+  async cancelar() {
+    this.navController.navigateBack('/inicio');
+  }
+
+  async exibirMensagem(texto: string) {
+    const toast = await this.toastController.create({
+      message: texto,
+      duration: 1500
+    });
+    toast.present();
+  }
 }
