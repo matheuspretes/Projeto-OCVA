@@ -10,4 +10,18 @@
       <ion-title size="large">ensaios</ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-list *ngIf="ensaios && ensaios.length > 0">
+    <ion-item *ngFor="let ensaio of ensaios; let i = index">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ensaio.data}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div><strong>Descrição:</strong> {{ensaio.descricao}}</div>
+        </ion-card-content>
+      </ion-card>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="!ensaios || ensaios.length === 0" style="padding:16px">Nenhum ensaio encontrado.</div>
 </ion-content>

@@ -24,11 +24,13 @@
           <ion-item class="field">
             <ion-label position="stacked">Data</ion-label>
             <ion-datetime presentation="date" displayFormat="DD/MM/YYYY" formControlName="data"></ion-datetime>
+            <div *ngIf="isInvalid('data')" class="ion-text-danger" style="margin-top:6px">Preencha a data do ensaio.</div>
           </ion-item>
 
           <ion-item class="field">
             <ion-label position="stacked">Descrição</ion-label>
             <ion-input placeholder="Descrição do ensaio" formControlName="descricao"></ion-input>
+            <div *ngIf="isInvalid('descricao')" class="ion-text-danger" style="margin-top:6px">Preencha a descrição do ensaio.</div>
           </ion-item>
 
           <ion-item class="field">
@@ -38,6 +40,7 @@
                 {{ musico.nome }}
               </ion-select-option>
             </ion-select>
+            <div *ngIf="isInvalid('musicos')" class="ion-text-danger" style="margin-top:6px">Selecione pelo menos um músico.</div>
           </ion-item>
         </div>
         <div class="button-group">
