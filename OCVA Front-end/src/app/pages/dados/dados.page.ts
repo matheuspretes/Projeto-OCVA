@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons,
+import { RouterLink } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonButtons,
    IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent,
     IonCardHeader, IonCardTitle, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
@@ -15,7 +16,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './dados.page.html',
   styleUrls: ['./dados.page.scss'],
   standalone: true,
-  imports: [IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class DadosPage implements OnInit {
   private tipoSub: Subscription | null = null;

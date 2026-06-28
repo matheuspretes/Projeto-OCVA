@@ -1,51 +1,88 @@
 <ion-header>
   <ion-toolbar color="dark">
-    <ion-title>OCVA</ion-title>
+    <div class="toolbar-brand">
+      <img class="toolbar-logo" [src]="logoCabecalho" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="login-page">
-  <div class="background-orb orb-one"></div>
-  <div class="background-orb orb-two"></div>
-
+  <div class="login-backdrop" aria-hidden="true"></div>
   <div class="login-shell">
-    <ion-card class="login-card surface-card">
-      <ion-card-header>
-        <ion-card-title>Bem-vindo</ion-card-title>
-      </ion-card-header>
+    <section class="login-card">
+      <div class="brand-panel">
+        <img class="brand-logo" [src]="logoLateral" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </div>
 
-      <ion-card-content>
-        <form [formGroup]="formGroup" (ngSubmit)="entrar()">
-          <div class="form-group">
-            <p class="form-group-title">Acesso</p>
-
-            <ion-item class="field">
-              <ion-label position="stacked">Login</ion-label>
-              <ion-input type="text" formControlName="login" placeholder="Digite seu login"></ion-input>
-            </ion-item>
+      <div class="form-panel">
+        <form [formGroup]="formGroup" (ngSubmit)="entrar()" class="login-form">
+          <div class="field-block">
+            <label class="field-label" for="login">E-mail ou Usuário</label>
+            <input
+              id="login"
+              class="field-input"
+              type="text"
+              formControlName="login"
+              placeholder="digite seu e-mail..."
+              autocomplete="username"
+            >
             <ion-text class="field-error" *ngIf="formGroup.get('login')?.touched && formGroup.get('login')?.invalid">
               Informe o login.
             </ion-text>
+          </div>
 
-            <ion-item class="field">
-              <ion-label position="stacked">Senha</ion-label>
-              <ion-input type="password" formControlName="senha" placeholder="Digite sua senha"></ion-input>
-            </ion-item>
+          <div class="field-block">
+            <div class="field-headline">
+              <label class="field-label" for="senha">Senha</label>
+              <button type="button" class="forgot-link">Esqueceu a senha?</button>
+            </div>
+
+            <div class="password-field">
+              <input
+                id="senha"
+                class="field-input field-input-password"
+                [type]="mostrarSenha ? 'text' : 'password'"
+                formControlName="senha"
+                placeholder="••••••••••••"
+                autocomplete="current-password"
+              >
+              <button
+                type="button"
+                class="password-toggle"
+                [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+                (click)="alternarSenha()"
+              >
+                <ion-icon [name]="mostrarSenha ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </button>
+            </div>
             <ion-text class="field-error" *ngIf="formGroup.get('senha')?.touched && formGroup.get('senha')?.invalid">
               Informe a senha.
             </ion-text>
           </div>
 
-          <ion-button type="submit" expand="block" color="primary" class="enter-button" [disabled]="carregando">
-            <ion-spinner *ngIf="carregando" name="crescent"></ion-spinner>
-            <span *ngIf="!carregando">Entrar</span>
-          </ion-button>
+          <div class="action-row">
+            <label class="remember-control">
+              <ion-toggle
+                class="remember-toggle"
+                [checked]="lembrarDeMim"
+                (ionChange)="lembrarDeMim = $event.detail.checked"
+              ></ion-toggle>
+              <span>Lembrar de mim</span>
+            </label>
+          </div>
 
-          <ion-button type="button" expand="block" fill="clear" (click)="irCadastro()">
-            Criar conta
+          <ion-button type="submit" expand="block" class="enter-button" [disabled]="carregando">
+            <ion-spinner *ngIf="carregando" name="crescent"></ion-spinner>
+            <span *ngIf="!carregando">ENTRAR</span>
           </ion-button>
         </form>
-      </ion-card-content>
-    </ion-card>
+
+        <p class="signup-copy">
+          Não tem uma conta?
+          <button type="button" class="signup-link" (click)="irCadastro()">Cadastre-se</button>
+        </p>
+      </div>
+    </section>
   </div>
+  <div class="corner-spark" aria-hidden="true"></div>
 </ion-content>

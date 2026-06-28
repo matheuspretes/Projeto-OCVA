@@ -42,7 +42,8 @@
 	--ocva-black-1: #000000;
 	--ocva-black-2: #050505;
 	--ocva-black-3: #120d04;
-	--ocva-surface: rgba(24, 16, 6, 0.8);
+	--ocva-surface: rgba(44, 46, 49, 0.96);
+	--ocva-page-bg: #2f3235;
 	--ion-color-primary: #f2d272;
 	--ion-color-primary-rgb: 242, 210, 114;
 	--ion-color-primary-contrast: #000000;
@@ -54,42 +55,82 @@
 ion-title,
 ion-card-title {
 	font-family: Georgia, 'Times New Roman', serif;
-	color: var(--ocva-gold-soft);
+	color: #f2f2f2;
 }
 
 ion-header,
 ion-toolbar,
 ion-header ion-toolbar {
-	--background: #000000;
-	--color: var(--ocva-gold-soft);
-	--ion-toolbar-background: #000000;
-	--ion-toolbar-color: var(--ocva-gold-soft);
-	background: #000000 !important;
+	--background: #3a3d40;
+	--color: #f2f2f2;
+	--ion-toolbar-background: #3a3d40;
+	--ion-toolbar-color: #f2f2f2;
+	background: #3a3d40 !important;
 }
 
 ion-toolbar::part(background) {
-	background: #000000;
+	background: #3a3d40;
+
+}
+
+ion-content,
+ion-page {
+	background: var(--ocva-page-bg);
+}
+
+.toolbar-brand {
+	display: flex;
+	align-items: center;
+	margin-left: 12px;
+	min-height: 34px;
+}
+
+.toolbar-logo-link {
+	display: inline-flex;
+	align-items: center;
+	text-decoration: none;
+}
+
+.toolbar-logo {
+	height: 34px;
+	width: auto;
+	display: block;
+	object-fit: contain;
 }
 
 ion-button {
-	--background: #000000;
-	--background-hover: #111111;
-	--background-activated: #151515;
-	--background-focused: #151515;
-	--color: var(--ocva-gold-soft);
-	--border-color: #1f1f1f;
+	--background: #3a3d40;
+	--background-hover: #4a4d50;
+	--background-activated: #2a2d30;
+	--background-focused: #2a2d30;
+	--color: #f2f2f2;
+	--border-color: #4a4d50;
 	--border-style: solid;
 	--border-width: 1px;
 	font-weight: 600;
 }
 
 ion-button[fill='clear'] {
-	--background: #000000;
-	--background-hover: #111111;
-	--background-activated: #151515;
-	--background-focused: #151515;
-	--color: var(--ocva-gold-soft);
-	--border-color: #1f1f1f;
+	--background: #3a3d40;
+	--background-hover: #4a4d50;
+	--background-activated: #2a2d30;
+	--background-focused: #2a2d30;
+	--color: #f2f2f2;
+	--border-color: #4a4d50;
 	--border-style: solid;
 	--border-width: 1px;
+}
+
+/* Shared enter button style (used on login and salvar actions) */
+.enter-button {
+	--background: linear-gradient(180deg, #f4bf22 0%, #e7ab10 100%);
+	--background-hover: linear-gradient(180deg, #f6c83f 0%, #df9f00 100%);
+	--background-activated: linear-gradient(180deg, #d89c00 0%, #bf8800 100%);
+	--color: #000000;
+	--border-radius: 17px;
+	--box-shadow: 0 10px 20px rgba(0, 0, 0, 0.34);
+	height: 34px;
+	margin-top: 6px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
 }

@@ -1,5 +1,5 @@
 .cadastro-page {
-	--background: linear-gradient(155deg, var(--ocva-black-1) 0%, var(--ocva-black-2) 55%, var(--ocva-black-3) 100%);
+	--background: #2f3235;
 	--padding-top: 16px;
 	--padding-bottom: 24px;
 	position: relative;
@@ -7,11 +7,7 @@
 }
 
 .background-orb {
-	position: absolute;
-	border-radius: 999px;
-	filter: blur(18px);
-	opacity: 0.28;
-	pointer-events: none;
+	display: none;
 }
 
 .orb-one {
@@ -128,7 +124,7 @@
 	margin: 0;
 	border-radius: 24px;
 	backdrop-filter: blur(14px);
-	background: var(--ocva-surface);
+	background: rgba(44, 46, 49, 0.96);
 	color: #f8fafc;
 	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }

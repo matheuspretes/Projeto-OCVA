@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonDatetime, IonHeader, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonTitle, IonToolbar, ToastController } from '@ionic/angular/standalone';
+import { RouterLink } from '@angular/router';
+import { IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonDatetime, IonHeader, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonSpinner, IonToolbar, ToastController } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { Ensaio } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
@@ -13,12 +14,13 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   templateUrl: './criar-ensaio.page.html',
   styleUrls: ['./criar-ensaio.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonInput, IonButton]
+  imports: [CommonModule, ReactiveFormsModule, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonInput, IonSpinner, IonButton, RouterLink]
 })
 export class CriarEnsaioPage implements OnInit {
   formGroup: FormGroup;
   musicos: Usuario[] = [];
   submitted = false;
+  isSaving = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,9 +42,11 @@ export class CriarEnsaioPage implements OnInit {
 
   async salvar() {
     this.submitted = true;
+    this.isSaving = true;
     if (this.formGroup.invalid) {
       const t = await this.toastController.create({ message: 'Preencha todos os campos', duration: 2000, color: 'danger' });
       await t.present();
+      this.isSaving = false;
       return;
     }
 
@@ -60,6 +64,7 @@ export class CriarEnsaioPage implements OnInit {
 
     this.formGroup.reset({ data: '', descricao: '', musicos: [] });
     this.router.navigate(['/ensaios']);
+    this.isSaving = false;
   }
 
   isInvalid(controlName: string): boolean {

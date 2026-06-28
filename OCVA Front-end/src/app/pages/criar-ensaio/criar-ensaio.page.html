@@ -1,63 +1,59 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>Criar ensaios</ion-title>
+  
+    <div class="toolbar-brand">
+      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
+        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </a>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Criar ensaio</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
+<ion-content [fullscreen]="true" class="criar-ensaio-page">
   <ion-card class="surface-card">
     <ion-card-header>
       <ion-card-title>Registrar novo ensaio</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
-      <form [formGroup]="formGroup" (ngSubmit)="salvar()">
-        <div class="form-group">
-          <p class="form-group-title">Detalhes do ensaio</p>
+        <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+          <div class="criar-ensaio-grid">
+            <div class="left-col">
+              <p class="field-label">Data</p>
+              <ion-datetime class="calendar" presentation="date" displayFormat="DD/MM/YYYY" formControlName="data"></ion-datetime>
+              <div *ngIf="isInvalid('data')" class="ion-text-danger" style="margin-top:6px">Preencha a data do ensaio.</div>
+            </div>
 
-          <ion-item class="field">
-            <ion-label position="stacked">Data</ion-label>
-            <ion-datetime presentation="date" displayFormat="DD/MM/YYYY" formControlName="data"></ion-datetime>
-            <div *ngIf="isInvalid('data')" class="ion-text-danger" style="margin-top:6px">Preencha a data do ensaio.</div>
-          </ion-item>
+            <div class="right-col">
+              <div class="field">
+                <ion-label class="field-label">Descrição</ion-label>
+                <ion-input class="field-input" placeholder="Descrição do ensaio" formControlName="descricao"></ion-input>
+                <div *ngIf="isInvalid('descricao')" class="ion-text-danger" style="margin-top:6px">Preencha a descrição do ensaio.</div>
+              </div>
 
-          <ion-item class="field">
-            <ion-label position="stacked">Descrição</ion-label>
-            <ion-input placeholder="Descrição do ensaio" formControlName="descricao"></ion-input>
-            <div *ngIf="isInvalid('descricao')" class="ion-text-danger" style="margin-top:6px">Preencha a descrição do ensaio.</div>
-          </ion-item>
+              <div class="field">
+                <ion-label class="field-label">Músicos presentes</ion-label>
+                <ion-select class="field-input" placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
+                  <ion-select-option *ngFor="let musico of musicos" [value]="musico">
+                    {{ musico.nome }}
+                  </ion-select-option>
+                </ion-select>
+                <div *ngIf="isInvalid('musicos')" class="ion-text-danger" style="margin-top:6px">Selecione pelo menos um músico.</div>
+              </div>
 
-          <ion-item class="field">
-            <ion-label position="stacked">Músicos presentes</ion-label>
-            <ion-select placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
-              <ion-select-option *ngFor="let musico of musicos" [value]="musico">
-                {{ musico.nome }}
-              </ion-select-option>
-            </ion-select>
-            <div *ngIf="isInvalid('musicos')" class="ion-text-danger" style="margin-top:6px">Selecione pelo menos um músico.</div>
-          </ion-item>
-        </div>
-        <div class="button-group">
-            <ion-button type="submit" expand="block" color="primary" [disabled]="!formGroup.valid">
-              SALVAR
-            </ion-button>
-            <ion-button expand="block" color="danger" (click)="excluir()">
-              EXCLUIR
-            </ion-button>
-            <ion-button type="button" expand="block" color="danger" (click)="cancelar()">
-              Cancelar
-            </ion-button>
-            <ion-button type="button" expand="block" color="medium" (click)="sairDaConta()">
-              Sair da conta
-            </ion-button>
-        </div>
-      </form>
-    </ion-card-content>
+              <div class="actions-row">
+                <ion-button type="button" class="cancel-button" (click)="cancelar()" [disabled]="isSaving">
+                  CANCELAR
+                </ion-button>
+
+                <ion-button type="submit" expand="block" class="enter-button" [disabled]="!formGroup.valid || isSaving">
+                  <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+                  <span *ngIf="!isSaving">SALVAR</span>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </ion-card-content>
   </ion-card>
 </ion-content>

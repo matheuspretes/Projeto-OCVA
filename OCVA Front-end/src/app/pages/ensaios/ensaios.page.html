@@ -1,15 +1,17 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>Ensaios</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inicio"></ion-back-button>
+    </ion-buttons>
+    <div class="toolbar-brand">
+      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
+        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </a>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">ensaios</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ensaios-page">
   <ion-list *ngIf="ensaios && ensaios.length > 0">
     <ion-item *ngFor="let ensaio of ensaios; let i = index">
       <ion-card>

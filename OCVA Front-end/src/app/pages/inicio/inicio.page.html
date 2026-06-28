@@ -1,6 +1,10 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Início</ion-title>
+    <div class="toolbar-brand">
+      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Ir para o início">
+        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </a>
+    </div>
     <ion-buttons slot="end">
       <ion-button routerLink="/dados">
         <ion-icon name="log-out-outline"></ion-icon>
@@ -10,9 +14,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="inicio-page">
-  <div class="background-orb orb-one"></div>
-  <div class="background-orb orb-two"></div>
-
   <div class="inicio-shell">
     <div class="dashboard-grid">
       <ion-card class="dashboard-card surface-card">
@@ -48,10 +49,4 @@
       </ion-card>
     </div>
   </div>
-
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">inicio</ion-title>
-    </ion-toolbar>
-  </ion-header>
 </ion-content>

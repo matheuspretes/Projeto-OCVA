@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Usuario } from '../../models/usuario';
-import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonSelect, IonSelectOption, IonText, IonToolbar } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
   templateUrl: './cadastro.page.html',
   styleUrls: ['./cadastro.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonSelect, IonSelectOption, IonText, IonToolbar]
 })
 export class CadastroPage implements OnInit {
 

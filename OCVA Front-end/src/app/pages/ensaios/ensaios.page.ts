@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { RouterLink } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton } from '@ionic/angular/standalone';
 import { Ensaio } from 'src/app/models/ensaio';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
-import { IonList, IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
+import { IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-ensaios',
   templateUrl: './ensaios.page.html',
   styleUrls: ['./ensaios.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonList, IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardContent]
+  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, CommonModule, FormsModule, IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardContent, RouterLink]
 })
 export class EnsaiosPage implements OnInit {
 

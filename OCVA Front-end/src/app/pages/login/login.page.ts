@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonSpinner, IonText, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonText, IonToggle, IonToolbar } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular';
 import { UsuarioService } from 'src/app/services/usuario-service';
 
@@ -11,11 +11,15 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonSpinner, IonText, IonTitle, IonToolbar]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonText, IonToggle, IonToolbar]
 })
 export class LoginPage implements OnInit {
   formGroup: FormGroup;
   carregando = false;
+  mostrarSenha = false;
+  lembrarDeMim = true;
+  logoCabecalho = '/assets/icon/ocva-header.png';
+  logoLateral = '/assets/icon/ocva-login.png';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,6 +76,10 @@ export class LoginPage implements OnInit {
 
   irCadastro() {
     this.router.navigate(['/cadastro']);
+  }
+
+  alternarSenha() {
+    this.mostrarSenha = !this.mostrarSenha;
   }
 
 }
