@@ -80,9 +80,9 @@
 /* Save button uses shared .enter-button from global.scss */
 
 .cancel-button {
-	--background: linear-gradient(180deg, #8f2f2f 0%, #7a1f1f 100%);
-	--background-hover: linear-gradient(180deg, #a33b3b 0%, #8a2222 100%);
-	--background-activated: linear-gradient(180deg, #6d1a1a 0%, #5b1414 100%);
+	--background: #b82323;
+	--background-hover: #df8282;
+	--background-activated: #580e0e;
 	--color: #ffffff; /* texto em branco conforme pedido */
 	--border-radius: 17px;
 	--box-shadow: 0 6px 14px rgba(0,0,0,0.28);
@@ -90,6 +90,13 @@
 	min-width: 140px;
 	padding: 0 18px;
 	font-weight: 700;
+}
+
+.criar-ensaio-page .enter-button {
+	--background: #f4bf22;
+	--background-hover: #f6c83f;
+	--background-activated: #d89c00;
+	--color: #000000;
 }
 
 @media (max-width: 760px) {

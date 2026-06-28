@@ -2,9 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons,
-   IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent,
-    IonCardHeader, IonCardTitle, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import {
+  IonContent, IonHeader, IonToolbar, IonButtons,
+  IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent,
+  IonCardHeader, IonCardTitle, IonSelect, IonSelectOption
+} from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { Usuario } from 'src/app/models/usuario';
 import { ToastController, NavController, AlertController } from '@ionic/angular';
@@ -21,7 +23,10 @@ import { Subscription } from 'rxjs';
 export class DadosPage implements OnInit {
   private tipoSub: Subscription | null = null;
   usuario: Usuario | null = null;
+  dadosOriginais: Usuario | null = null;
   formGroup: FormGroup;
+  editando = false;
+
 
   constructor(
     private usuarioService: UsuarioService,
@@ -61,8 +66,8 @@ export class DadosPage implements OnInit {
     }) || null;
   }
 
-    ionViewWillEnter(){
-        const usuarioLogado = localStorage.getItem('usuarioAutenticado');
+  ionViewWillEnter() {
+    const usuarioLogado = localStorage.getItem('usuarioAutenticado');
     if (usuarioLogado) {
       this.usuario = JSON.parse(usuarioLogado);
       this.formGroup.patchValue({
@@ -73,7 +78,7 @@ export class DadosPage implements OnInit {
         instrumento: this.usuario?.instrumento
       });
     }
-    }
+  }
 
   ngOnDestroy(): void {
     this.tipoSub?.unsubscribe();
@@ -101,6 +106,11 @@ export class DadosPage implements OnInit {
     localStorage.setItem('usuarioAutenticado', JSON.stringify(this.usuario));
 
     this.exibirMensagem('Dados atualizados com sucesso!!!');
+
+    this.dadosOriginais = { ...this.usuario };
+    this.formGroup.patchValue(this.dadosOriginais);
+    this.formGroup.disable({ emitEvent: false });
+
     this.navController.navigateBack('/inicio');
   }
 
@@ -151,4 +161,18 @@ export class DadosPage implements OnInit {
     });
     toast.present();
   }
+  editar() {
+    this.editando = true;
+    this.formGroup.enable({ emitEvent: false });
+  }
+
+  cancelarEditar() {
+    if (this.dadosOriginais) {
+      this.formGroup.reset(this.dadosOriginais);
+    }
+
+    this.formGroup.disable({ emitEvent: false });
+    this.editando = false;
+  }
 }
+

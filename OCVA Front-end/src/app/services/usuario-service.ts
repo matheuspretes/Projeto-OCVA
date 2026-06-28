@@ -13,7 +13,7 @@ export class UsuarioService {
 
     let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
     if (usuario.id === 0) {
-       usuario.id = (new Date().getTime() / 1000) * Math.random(); //Gera um ID aleatório.
+       usuario.id = (new Date().getTime() / 1000) * Math.random(); 
       usuarios.push(usuario);
     } else {
       let posicao = usuarios.findIndex((temp: Usuario) => temp.id === usuario.id);

@@ -44,7 +44,7 @@ export class CriarEnsaioPage implements OnInit {
     this.submitted = true;
     this.isSaving = true;
     if (this.formGroup.invalid) {
-      const t = await this.toastController.create({ message: 'Preencha todos os campos', duration: 2000, color: 'danger' });
+      const t = await this.toastController.create({ message: 'Preencha todos os campos', duration: 2000, color: 'red' });
       await t.present();
       this.isSaving = false;
       return;
@@ -75,12 +75,9 @@ export class CriarEnsaioPage implements OnInit {
 
   formatDateOnly(value: any): string {
     if (!value) return '';
-    // If already contains a time (ISO with T), strip time portion
     if (typeof value === 'string') {
       const tIndex = value.indexOf('T');
       if (tIndex > 0) return value.slice(0, tIndex);
-      // value might be already a date string (YYYY-MM-DD) — return as-is
-      // or in some cases ion-datetime returns the full ISO; handle fallback
       try {
         const d = new Date(value);
         if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
@@ -88,16 +85,14 @@ export class CriarEnsaioPage implements OnInit {
         return value;
       }
     }
-    // If value is a Date object
     if (value instanceof Date) {
       return value.toISOString().slice(0, 10);
     }
-    // Fallback: try to construct Date
     try {
       const d = new Date(value);
       if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
     } catch {
-      // ignore
+
     }
     return '';
   }
