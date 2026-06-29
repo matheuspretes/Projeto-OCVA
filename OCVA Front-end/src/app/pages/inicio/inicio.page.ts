@@ -13,6 +13,11 @@ type CardAction = {
   types: TipoUsuario[];
 };
 
+type Nome = {
+  title: string;
+  description: string;
+}
+
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.page.html',
@@ -46,12 +51,13 @@ export class InicioPage implements OnInit {
       kind: 'link',
       types: ['nulo'],
     },
+  ];
+
+  private readonly nomes: Nome[] = [
     {
-      title: 'Sair da conta',
-      description: 'Finalize a sessão atual',
-      kind: 'button',
-      types: ['nulo'],
-    },
+      title: 'Nome',
+      description: JSON.parse(localStorage.getItem('usuarioAutenticado') || 'null'),
+    }
   ];
 
   constructor(private router: Router, private usuarioService: UsuarioService) { }

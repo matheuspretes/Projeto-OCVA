@@ -1,8 +1,13 @@
 <ion-header>
   <ion-toolbar>
-    <div class="toolbar-brand">
+    <div class="toolbar-brand" *ngIf="usuarioAutenticado" *ngFor="let card of nomes">
       <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Ir para o início">
         <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </a>
+      <a *ngIf="card.kind === Nome">
+        <span class="user-greeting">
+          Olá, {{ usuarioAutenticado }}
+        </span>
       </a>
     </div>
     <ion-buttons slot="end">
