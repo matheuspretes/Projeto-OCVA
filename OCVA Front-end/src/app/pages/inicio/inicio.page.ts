@@ -13,11 +13,6 @@ type CardAction = {
   types: TipoUsuario[];
 };
 
-type Nome = {
-  title: string;
-  description: string;
-}
-
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.page.html',
@@ -29,20 +24,22 @@ export class InicioPage implements OnInit {
   tipoUsuario: TipoUsuario | null = null;
   visibleCards: CardAction[] = [];
 
+  public nomeUsuario: string = "";
+
   private readonly cards: CardAction[] = [
     {
       title: 'Ensaios',
       description: 'Acesse seus ensaios cadastrados',
       route: '/ensaios',
       kind: 'link',
-      types: ['musico', 'secretaria', 'maestro', 'diretoria'],
+      types: ['musico', 'maestro', 'diretoria'],
     },
     {
       title: 'Registrar ensaio',
       description: 'Registre um ensaio que ocorreu',
       route: '/criar-ensaio',
       kind: 'link',
-      types: ['secretaria', 'maestro', 'diretoria'],
+      types: ['maestro', 'diretoria'],
     },
     {
       title: 'Dados do usuário',
@@ -51,20 +48,55 @@ export class InicioPage implements OnInit {
       kind: 'link',
       types: ['nulo'],
     },
+    {
+      title: 'Registrar evento',
+      description: 'Registre eventos futuros',
+      route: '/criar-evento',
+      kind: 'link',
+      types: ['diretoria'],
+    },
+    {
+      title: 'Eventos',
+      description: 'Confira eventos registrados',
+      route: '/eventos',
+      kind: 'link',
+      types: ['diretoria','maestro','musico'],
+    },
+    {
+      title: 'Músicos',
+      description: 'Confira os músicos registrados',
+      route: '/musicos',
+      kind: 'link',
+      types: ['diretoria','maestro'],
+    },
   ];
 
-  private readonly nomes: Nome[] = [
-    {
-      title: 'Nome',
-      description: JSON.parse(localStorage.getItem('usuarioAutenticado') || 'null'),
-    }
-  ];
 
   constructor(private router: Router, private usuarioService: UsuarioService) { }
 
   ngOnInit() {
-    const usuario = JSON.parse(localStorage.getItem('usuarioAutenticado') || 'null');
-    this.tipoUsuario = usuario?.tipo ?? null;
+    // 1. Buscamos a string do localStorage
+    const usuarioLogadoRaw = localStorage.getItem('usuarioAutenticado');
+
+    if (usuarioLogadoRaw) {
+      try {
+        // 2. Fazemos o PARSE apenas UMA vez com segurança
+        const usuarioAutenticado = JSON.parse(usuarioLogadoRaw);
+        
+        // 3. Pegamos as propriedades do objeto convertido
+        this.nomeUsuario = usuarioAutenticado.nome || usuarioAutenticado.login || '';
+        this.tipoUsuario = usuarioAutenticado?.tipo ?? null;
+
+        // 4. Se ainda precisar alimentar o array 'nomes', faça aqui dentro com segurança:
+      } catch (e) {
+        console.error('O formato do utilizador no localStorage está inválido:', e);
+        this.nomeUsuario = '';
+        this.tipoUsuario = null;
+        localStorage.removeItem('usuarioAutenticado'); // Limpa a chave errada
+      }
+    }
+
+    // 5. Filtra os cards baseando-se no tipo do usuário recuperado
     this.visibleCards = this.tipoUsuario
       ? this.cards.filter((card) => card.types.includes(this.tipoUsuario as TipoUsuario))
       : [];
@@ -74,5 +106,4 @@ export class InicioPage implements OnInit {
     this.usuarioService.encerrarAutenticacao();
     this.router.navigate(['/login']);
   }
-
 }

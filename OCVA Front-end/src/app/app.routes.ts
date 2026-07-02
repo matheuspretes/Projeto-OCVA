@@ -30,4 +30,16 @@ export const routes: Routes = [
     path: 'criar-ensaio',
     loadComponent: () => import('./pages/criar-ensaio/criar-ensaio.page').then( m => m.CriarEnsaioPage)
   },
+  {
+    path: 'criar-evento',
+    loadComponent: () => import('./pages/criar-evento/criar-evento.page').then( m => m.CriarEventoPage)
+  },
+  {
+    path: 'eventos',
+    loadComponent: () => import('./pages/eventos/eventos.page').then( m => m.EventosPage)
+  },
+  {
+    path: 'musicos',
+    loadComponent: () => import('./pages/musicos/musicos.page').then( m => m.MusicosPage)
+  },
 ];

@@ -1,14 +1,13 @@
 <ion-header>
   <ion-toolbar>
-    <div class="toolbar-brand" *ngIf="usuarioAutenticado" *ngFor="let card of nomes">
+    <div class="toolbar-brand" style="display: flex; align-items: center;">
       <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Ir para o início">
         <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
       </a>
-      <a *ngIf="card.kind === Nome">
-        <span class="user-greeting">
-          Olá, {{ usuarioAutenticado }}
-        </span>
-      </a>
+
+      <span class="user-name-tag" *ngIf="nomeUsuario" style="margin-left: 12px; font-weight: 500; color: #ffffff;">
+        Olá, {{ nomeUsuario }}
+      </span>
     </div>
     <ion-buttons slot="end">
       <ion-button routerLink="/dados">
@@ -23,7 +22,7 @@
     <div class="dashboard-grid">
       <ion-card class="dashboard-card surface-card">
         <ion-card-header>
-          <ion-card-title>Ações rápidas</ion-card-title>
+          <ion-card-title>Ações</ion-card-title>
         </ion-card-header>
 
         <ion-card-content>

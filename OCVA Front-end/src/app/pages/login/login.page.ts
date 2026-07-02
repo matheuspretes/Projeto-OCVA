@@ -37,6 +37,7 @@ export class LoginPage implements OnInit {
     const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
     if (usuarioAutenticado && usuarioAutenticado.id) {
       this.router.navigate(['/inicio']);
+      
     }
   }
 
