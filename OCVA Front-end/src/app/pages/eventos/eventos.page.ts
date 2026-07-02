@@ -28,22 +28,43 @@ export class EventosPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    // 1. Recupera o usuário que está logado no sistema
     this.usuarioAutenticado = this.usuarioService.buscarAutenticacao();
-    const todos = this.eventosService.listar() || [];
 
+    // 2. Busca a lista de todos os ensaios cadastrados no localStorage
+    const eventosTexto = localStorage.getItem('eventos') || '[]';
+    const todosOsEventos = JSON.parse(eventosTexto);
+
+    let eventosFiltrados = [];
+
+    // 3. Filtro de segurança por perfil de usuário
     if (this.usuarioAutenticado && (this.usuarioAutenticado.tipo === 'maestro' || this.usuarioAutenticado.tipo === 'diretoria')) {
-      this.eventos = todos;
+      // Maestro e Diretoria têm acesso total a todos os ensaios
+      eventosFiltrados = todosOsEventos;
     } else if (this.usuarioAutenticado) {
+      // Músicos só vêm os ensaios onde o e-mail/login deles foi escalado
+      const userLogin = this.usuarioAutenticado.login;
       const userId = this.usuarioAutenticado.id;
-      this.eventos = todos.filter((e: any) => (e.musicos || []).some((m: any) => m.id === userId));
+      
+      eventosFiltrados = todosOsEventos.filter((e: any) => 
+        (e.musicos || []).some((m: any) => m.login === userLogin || m.id === userId)
+      );
     } else {
-      this.eventos = [];
+      // Se não houver ninguém autenticado, por segurança a lista fica vazia
+      eventosFiltrados = [];
     }
-  }
 
-  getMusicosNomes(evento: Evento): string {
-    const nomes = (evento.musicos || []).map((m: any) => m.nome || '');
-    return nomes.filter(n => !!n).join(', ');
+    // 4. Mapeamento para extrair os nomes dos músicos que já estão dentro do ensaio
+    this.eventos = eventosFiltrados.map((evento: any) => {
+      return {
+        ...evento,
+        // Cria o array de strings 'nomesMusicos' pegando direto a propriedade '.nome' de cada músico
+        nomesMusicos: (evento.musicos || []).map((m: any) => m.nome)
+      };
+    });
+
+    // Log para controle no console do navegador (F12)
+    console.log('Eventos carregados e filtrados com sucesso:', this.eventos);
   }   
 
 }
