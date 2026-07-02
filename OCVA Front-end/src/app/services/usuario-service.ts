@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import {Usuario} from '../models/usuario';
+import { MUSICOS_PADRAO } from '../constantes/usuarios-padrao';
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
 
   private readonly API_URL = 'http://localhost:8080/api/v1/musicos';
+
+  constructor() {
+    this.inicializarUsuarios();
+  }
 
 
 
@@ -81,6 +86,13 @@ export class UsuarioService {
     }
 
     return usuario;
+  }
+
+  private inicializarUsuarios() {
+    const usuariosExistentes = localStorage.getItem('usuarios');
+    if (!usuariosExistentes) {
+      localStorage.setItem('usuarios', JSON.stringify(MUSICOS_PADRAO));
+    }
   }
 
 }
