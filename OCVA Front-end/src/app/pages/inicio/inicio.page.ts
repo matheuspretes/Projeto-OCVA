@@ -49,13 +49,6 @@ export class InicioPage implements OnInit {
       types: ['nulo'],
     },
     {
-      title: 'Registrar evento',
-      description: 'Registre eventos futuros',
-      route: '/criar-evento',
-      kind: 'link',
-      types: ['diretoria'],
-    },
-    {
       title: 'Eventos',
       description: 'Confira eventos registrados',
       route: '/eventos',
@@ -63,11 +56,18 @@ export class InicioPage implements OnInit {
       types: ['diretoria','maestro','musico'],
     },
     {
+      title: 'Registrar evento',
+      description: 'Registre eventos futuros',
+      route: '/criar-evento',
+      kind: 'link',
+      types: ['diretoria'],
+    },
+    {
       title: 'Músicos',
       description: 'Confira os músicos registrados',
       route: '/musicos',
       kind: 'link',
-      types: ['diretoria','maestro'],
+      types: ['nulo'],
     },
   ];
 

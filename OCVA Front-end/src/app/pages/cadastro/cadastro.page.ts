@@ -51,8 +51,16 @@ export class CadastroPage implements OnInit {
 
   salvar() {
     if (this.formGroup.valid) {
+      const login = this.formGroup.value.login?.trim();
+
+      if (this.usuarioService.verificarLogin(login)) {
+        this.loginExistente = true;
+        this.exibirMensagem('Esse login já existe.');
+        return;
+      }
+
       this.usuario.nome = this.formGroup.value.nome;
-      this.usuario.login = this.formGroup.value.login;
+      this.usuario.login = login;
       this.usuario.senha = this.formGroup.value.senha;
       this.usuario.tipo = this.formGroup.value.tipo;
       this.usuario.instrumento = this.formGroup.value.instrumento;

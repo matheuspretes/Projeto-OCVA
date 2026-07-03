@@ -4,233 +4,179 @@
   --padding-bottom: 24px;
   position: relative;
   isolation: isolate;
-}
-
-.background-orb {
-  display: none;
-}
-
-.orb-one {
-  width: 220px;
-  height: 220px;
-  top: 5%;
-  right: -45px;
-  background: #b8860b;
-}
-
-.orb-two {
-  width: 180px;
-  height: 180px;
-  bottom: 8%;
-  left: -35px;
-  background: #f2d272;
+  color: #f4f4f4;
 }
 
 .dados-shell {
   position: relative;
   z-index: 1;
-  width: min(100%, 1100px);
+  width: min(100%, 680px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 12px;
   align-items: start;
-  justify-items: center;
-  padding: 12px 20px 28px;
+  padding: 24px 18px 28px;
   min-height: 100%;
 }
 
-
-.dados-hero {
-  padding: 16px 6px;
-  color: #f8fafc;
-  max-width: 28rem;
-
-  h1 {
-    margin: 10px 0 12px;
-    font-size: clamp(2rem, 6vw, 3.4rem);
-    line-height: 0.98;
-    letter-spacing: -0.05em;
-    color: #ffffff;
-  }
-
-  .hero-copy {
-    margin: 0;
-    max-width: 36ch;
-    font-size: 1rem;
-    line-height: 1.55;
-    color: #cbd5e1;
- 	}
-}
-
-.eyebrow {
-  display: inline-flex;
-  margin: 0;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #0f172a;
-  background: #e2e8f0;
-}
-
-.summary-grid {
+.dados-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 20px;
 }
 
-.summary-item {
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(15, 23, 42, 0.36);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  .summary-label {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #38bdf8;
-  }
-
-  strong {
-    display: block;
-    font-size: 1rem;
-    line-height: 1.35;
-    color: #ffffff;
- 	}
-}
-
-.surface-card,
-.dados-card {
+.dados-card,
+.actions-card {
   margin: 0;
-  border-radius: 24px;
-  backdrop-filter: blur(14px);
-  background: rgba(44, 46, 49, 0.96);
+  border-radius: 8px;
+  background: rgba(52, 54, 58, 0.98);
   color: #f8fafc;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.dados-card {
-  width: min(100%, 560px);
-  justify-self: center;
-  align-self: start;
+.dados-card ion-card-header,
+.actions-card ion-card-content {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.dados-card ion-card-header {
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
+.dados-card ion-card-content,
+.actions-card ion-card-content {
+  padding-top: 4px;
+  padding-bottom: 16px;
 }
 
 .dados-card ion-card-title {
-  font-size: 1.9rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--ocva-gold-soft);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #c9b37a;
 }
 
-.form-group {
+.field-stack {
   display: grid;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 4px;
+  margin-bottom: 14px;
 }
 
-.form-group-title {
-  margin: 0 0 2px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ocva-gold);
+.field-label {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #d8dbe0;
 }
 
-.field {
-  --background: rgba(255, 255, 255, 0.05);
-  --border-radius: 14px;
-  --border-color: rgba(255, 255, 255, 0.12);
-  margin-bottom: 10px;
+.field-input-card {
+  --background: rgba(66, 70, 76, 0.98);
+  --color: #f6f1df;
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  --min-height: 36px;
+  --border-radius: 5px;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(189, 194, 204, 0.65);
+  --highlight-height: 0;
+  margin: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.info-field {
-  --background: transparent;
-  --border-color: transparent;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  ion-label {
-    color: #cbd5e1;
-    margin-bottom: 4px;
-  }
-
-  ion-text {
-    color: #f8fafc;
-    font-weight: 500;
-  }
+.field-input-card::part(native) {
+  border-radius: 5px;
 }
 
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-
-  ion-button {
-    flex: 1 1 180px;
-  }
+.field-input-card ion-input,
+.field-input-card ion-select {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 0;
+  --padding-end: 0;
+  font-size: 0.92rem;
+  color: #f7f0d2;
 }
 
-.edit-button {
-  margin-top: 18px;
+.password-field {
+  --inner-padding-end: 12px;
 }
 
-ion-button[fill='clear'] {
-  --color: var(--ocva-gold-soft);
+.select-field {
+  --background: rgba(62, 66, 71, 0.98);
 }
 
-@media (max-width: 960px) {
-  .dados-shell {
-    padding-inline: 14px;
-  }
+.inline-link {
+  justify-self: end;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: 0.78rem;
+  color: #aeb4bc;
+  text-decoration: underline;
+  cursor: pointer;
+}
 
-  .dados-card {
-    justify-self: stretch;
-    width: 100%;
-  }
+.actions-card {
+  overflow: hidden;
+}
 
-  .dados-hero {
-    max-width: none;
-    padding-inline: 2px;
-  }
+.save-button {
+  --background: linear-gradient(180deg, #f0cf68 0%, #d7b54e 100%);
+  --background-hover: linear-gradient(180deg, #f3d678 0%, #cfa73e 100%);
+  --background-activated: linear-gradient(180deg, #d1ab38 0%, #b98f24 100%);
+  --color: #1d1a11;
+  --border-radius: 4px;
+  --box-shadow: none;
+  margin: 2px 0 12px;
+  height: 31px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.actions-row {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.text-action {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: 0.84rem;
+  color: #d7d7d7;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.delete-button {
+  --border-color: #9f4f4f;
+  --color: #d77a7a;
+  --border-radius: 4px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  height: 30px;
+  margin: 0;
+  justify-self: center;
 }
 
 @media (max-width: 600px) {
   .dados-shell {
-    gap: 16px;
-    padding-inline: 8px;
+    padding-inline: 10px;
   }
 
-  .dados-card {
-    border-radius: 20px;
-  }
-
-  .dados-card ion-card-title {
-    font-size: 1.6rem;
-  }
-
-  .summary-grid {
+  .actions-row {
     grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 10px;
   }
 
-  .button-group {
-    gap: 10px;
-
-    ion-button {
-      flex-basis: 100%;
-    }
+  .delete-button {
+    justify-self: stretch;
   }
 }
