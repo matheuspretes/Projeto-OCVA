@@ -39,7 +39,7 @@ export class InicioPage implements OnInit {
       description: 'Registre um ensaio que ocorreu',
       route: '/criar-ensaio',
       kind: 'link',
-      types: ['maestro', 'diretoria'],
+      types: ['maestro'],
     },
     {
       title: 'Dados do usuário',
@@ -60,7 +60,7 @@ export class InicioPage implements OnInit {
       description: 'Registre eventos futuros',
       route: '/criar-evento',
       kind: 'link',
-      types: ['diretoria'],
+      types: ['maestro'],
     },
     {
       title: 'Músicos',
