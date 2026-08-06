@@ -49,7 +49,7 @@ export class InicioPage implements OnInit {
       types: ['nulo'],
     },
     {
-<<<<<<< HEAD
+
       title: 'Criar evento',
       description: 'Registre eventos futuros',
       route: '/criar-evento',
@@ -57,8 +57,7 @@ export class InicioPage implements OnInit {
       types: ['diretoria', 'maestro', 'secretaria'],
     },
     {
-=======
->>>>>>> 67000c8eabb7dec5cecd28b40d7b68fd96c17775
+
       title: 'Eventos',
       description: 'Confira eventos registrados',
       route: '/eventos',

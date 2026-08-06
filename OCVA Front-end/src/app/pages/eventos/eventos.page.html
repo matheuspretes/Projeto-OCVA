@@ -6,30 +6,10 @@
   </ion-toolbar>
 </ion-header>
 
-<<<<<<< HEAD
 <ion-content [fullscreen]="true" class="ensaios-page">
-  <ion-list *ngIf="eventos && eventos.length > 0">
-    <ion-item *ngFor="let evento of eventos; let i = index">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>{{evento.data}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <div><strong>Descrição:</strong> {{evento.descricao}}</div>
-          <div *ngIf="podeEditarOuExcluir()" style="display:flex; gap:8px; margin-top:12px; flex-wrap: wrap;">
-            <ion-button size="small" fill="outline" (click)="editarEvento(evento)">Editar</ion-button>
-            <ion-button size="small" color="danger" fill="outline" (click)="excluirEvento(evento)">Excluir</ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </ion-item>
-  </ion-list>
-=======
-<ion-content [fullscreen]="true" class="ion-padding">
   <div *ngIf="!eventos || eventos.length === 0" style="text-align: center; margin-top: 50px; color: #aaa;">
     <p>Nenhum evento agendado encontrado.</p>
   </div>
->>>>>>> 67000c8eabb7dec5cecd28b40d7b68fd96c17775
 
   <ion-card *ngFor="let evento of eventos" style="margin-bottom: 20px;">
     <ion-card-header>
