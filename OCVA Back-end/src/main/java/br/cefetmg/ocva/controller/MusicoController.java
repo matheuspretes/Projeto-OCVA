@@ -36,8 +36,6 @@ public class MusicoController {
     private static Long nextId = 1L;
     {
         MusicoList = new ArrayList<>();
-
-
     }
 
     public MusicoController (MusicoRepository repository){
@@ -62,8 +60,6 @@ public class MusicoController {
 
         return musico;
     }
-
-
 
     @DeleteMapping("/{id}")
     public Musico excluir (@PathVariable long id){

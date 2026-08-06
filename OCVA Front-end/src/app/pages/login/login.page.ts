@@ -51,17 +51,17 @@ export class LoginPage implements OnInit {
 
     const login = this.formGroup.value.login;
     const senha = this.formGroup.value.senha;
-    const usuario = this.usuarioService.autenticar(login, senha);
-
-    debugger
-    if (usuario) {
-      this.usuarioService.registrarAutenticacao(usuario);
-      await this.router.navigate(['/inicio']);
-    } else {
-      await this.exibirMensagem('Login ou senha inválidos');
-    }
-
-    this.carregando = false;
+    this.usuarioService.autenticar(login, senha).subscribe({
+      next: async (usuario) => {
+        this.usuarioService.registrarAutenticacao(usuario);
+        await this.router.navigate(['/inicio']);
+        this.carregando = false;
+      },
+      error: async () => {
+        await this.exibirMensagem('Login ou senha inválidos');
+        this.carregando = false;
+      }
+    });
   }
 
   async exibirMensagem(texto: string) {

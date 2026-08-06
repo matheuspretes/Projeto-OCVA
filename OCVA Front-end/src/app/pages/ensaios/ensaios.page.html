@@ -43,6 +43,12 @@
             <ion-label style="font-weight: 500;">{{ nome }}</ion-label>
           </ion-chip>
         </div>
+
+        <div *ngIf="podeEditarOuExcluir()" style="display:flex; gap:8px; margin-top:16px; flex-wrap: wrap;">
+          <ion-button size="small" fill="outline" (click)="editarEnsaio(ensaio)">Editar</ion-button>
+          <ion-button size="small" color="danger" fill="outline" (click)="excluirEnsaio(ensaio)">Excluir</ion-button>
+          <ion-button size="small" color="success" fill="solid" (click)="confirmarPresenca(ensaio)">Confirmar presença</ion-button>
+        </div>
       </div>
     </ion-card-content>
   </ion-card>

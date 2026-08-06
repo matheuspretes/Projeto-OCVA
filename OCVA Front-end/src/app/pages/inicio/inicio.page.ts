@@ -49,11 +49,11 @@ export class InicioPage implements OnInit {
       types: ['nulo'],
     },
     {
-      title: 'Registrar evento',
+      title: 'Criar evento',
       description: 'Registre eventos futuros',
       route: '/criar-evento',
       kind: 'link',
-      types: ['diretoria'],
+      types: ['diretoria', 'maestro', 'secretaria'],
     },
     {
       title: 'Eventos',
@@ -85,7 +85,9 @@ export class InicioPage implements OnInit {
         
         // 3. Pegamos as propriedades do objeto convertido
         this.nomeUsuario = usuarioAutenticado.nome || usuarioAutenticado.login || '';
-        this.tipoUsuario = usuarioAutenticado?.tipo ?? null;
+        this.tipoUsuario = typeof usuarioAutenticado?.tipo === 'string'
+          ? usuarioAutenticado.tipo.trim().toLowerCase() as TipoUsuario
+          : null;
 
         // 4. Se ainda precisar alimentar o array 'nomes', faça aqui dentro com segurança:
       } catch (e) {

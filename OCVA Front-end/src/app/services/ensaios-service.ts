@@ -1,39 +1,33 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Ensaio } from '../models/ensaio';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EnsaiosService {
+  private readonly API_URL = 'http://localhost:8080/api/v1/ensaios';
 
-  salvar(ensaio: Ensaio): Ensaio {
-    const ensaios: Ensaio[] = JSON.parse(localStorage.getItem('ensaios') || '[]');
-    ensaios.push(ensaio);
-    localStorage.setItem('ensaios', JSON.stringify(ensaios));
-    return ensaio;
+  constructor(private http: HttpClient) {}
+
+  salvar(ensaio: Ensaio): Observable<Ensaio> {
+    return this.http.post<Ensaio>(this.API_URL, ensaio);
   }
 
-  listar(): Ensaio[] {
-    return JSON.parse(localStorage.getItem('ensaios') || '[]');
+  listar(): Observable<Ensaio[]> {
+    return this.http.get<Ensaio[]>(this.API_URL);
   }
 
-  editar(index: number, ensaio: Ensaio): Ensaio | null {
-    const ensaios: Ensaio[] = JSON.parse(localStorage.getItem('ensaios') || '[]');
-    if (index < 0 || index >= ensaios.length) {
-      return null;
-    }
-    ensaios[index] = ensaio;
-    localStorage.setItem('ensaios', JSON.stringify(ensaios));
-    return ensaio;
+  buscarPorId(id: number): Observable<Ensaio> {
+    return this.http.get<Ensaio>(`${this.API_URL}/${id}`);
   }
 
-  excluir(index: number): boolean {
-    const ensaios: Ensaio[] = JSON.parse(localStorage.getItem('ensaios') || '[]');
-    if (index < 0 || index >= ensaios.length) {
-      return false;
-    }
-    ensaios.splice(index, 1);
-    localStorage.setItem('ensaios', JSON.stringify(ensaios));
-    return true;
+  editar(ensaio: Ensaio): Observable<Ensaio> {
+    return this.http.put<Ensaio>(this.API_URL, ensaio);
+  }
+
+  excluir(id: number): Observable<Ensaio> {
+    return this.http.delete<Ensaio>(`${this.API_URL}/${id}`);
   }
 }

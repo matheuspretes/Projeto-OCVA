@@ -12,7 +12,7 @@
 <ion-content [fullscreen]="true" class="criar-evento-page">
   <ion-card class="surface-card">
     <ion-card-header>
-      <ion-card-title>Registrar novo evento</ion-card-title>
+      <ion-card-title>{{ modoEdicao ? 'Editar evento' : 'Registrar novo evento' }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -39,6 +39,9 @@
                   </ion-select-option>
                 </ion-select>
                 <div *ngIf="isInvalid('musicos')" class="ion-text-danger" style="margin-top:6px">Selecione pelo menos um músico.</div>
+                <div *ngIf="musicos.length === 0" class="ion-text-warning" style="margin-top:6px">
+                  Só aparecem músicos com pelo menos 2 presenças em ensaios.
+                </div>
               </div>
 
               <div class="actions-row">
@@ -48,7 +51,11 @@
 
                 <ion-button type="submit" expand="block" class="enter-button" [disabled]="!formGroup.valid || isSaving">
                   <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-                  <span *ngIf="!isSaving">SALVAR</span>
+                  <span *ngIf="!isSaving">{{ modoEdicao ? 'ATUALIZAR' : 'SALVAR' }}</span>
+                </ion-button>
+
+                <ion-button *ngIf="modoEdicao" type="button" expand="block" color="danger" class="enter-button" (click)="excluir()" [disabled]="isSaving">
+                  EXCLUIR
                 </ion-button>
               </div>
             </div>

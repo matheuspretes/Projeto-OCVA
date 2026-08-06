@@ -1,3 +1,4 @@
+import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
@@ -13,6 +14,7 @@ bootstrapApplication(AppComponent, {
     // (ensures icon SVG data is available to the ion-icon web component)
     (() => { addIcons({ 'log-out-outline': logOutOutline, 'eye-outline': eyeOutline, 'eye-off-outline': eyeOffOutline }); return []; })(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideHttpClient(),
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
   ],

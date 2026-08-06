@@ -31,6 +31,12 @@ public class Musico {
 
     @Column(length=60, nullable = false)
     private String senha;
+
+    @Column(length=20)
+    private String tipo;
+
+    @Column(length=60, nullable = false)
+    private String instrumento;
 }
 
 

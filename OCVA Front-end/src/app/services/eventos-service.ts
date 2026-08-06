@@ -1,39 +1,35 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Evento } from '../models/evento';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventosService {
+  private readonly API_URL = 'http://localhost:8080/api/v1/eventos';
 
-  salvar(evento: Evento): Evento {
-    const eventos: Evento[] = JSON.parse(localStorage.getItem('eventos') || '[]');
-    eventos.push(evento);
-    localStorage.setItem('eventos', JSON.stringify(eventos));
-    return evento;
+  constructor(private http: HttpClient) {
+    
   }
 
-  listar(): Evento[] {
-    return JSON.parse(localStorage.getItem('eventos') || '[]');
+  salvar(evento: Evento): Observable<Evento> {
+    return this.http.post<Evento>(this.API_URL, evento);
   }
 
-  editar(index: number, evento: Evento): Evento | null {
-    const eventos: Evento[] = JSON.parse(localStorage.getItem('eventos') || '[]');
-    if (index < 0 || index >= eventos.length) {
-      return null;
-    }
-    eventos[index] = evento;
-    localStorage.setItem('eventos', JSON.stringify(eventos));
-    return evento;
+  listar(): Observable<Evento[]> {
+    return this.http.get<Evento[]>(this.API_URL);
   }
 
-  excluir(index: number): boolean {
-    const eventos: Evento[] = JSON.parse(localStorage.getItem('eventos') || '[]');
-    if (index < 0 || index >= eventos.length) {
-      return false;
-    }
-    eventos.splice(index, 1);
-    localStorage.setItem('eventos', JSON.stringify(eventos));
-    return true;
+  buscarPorId(id: number): Observable<Evento> {
+    return this.http.get<Evento>(`${this.API_URL}/${id}`);
+  }
+
+  editar(evento: Evento): Observable<Evento> {
+    return this.http.put<Evento>(this.API_URL, evento);
+  }
+
+  excluir(id: number): Observable<Evento> {
+    return this.http.delete<Evento>(`${this.API_URL}/${id}`);
   }
 }

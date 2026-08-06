@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonDatetime, IonHeader, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonSpinner, IonToolbar, ToastController } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Ensaio } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
+import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { EventosService } from 'src/app/services/eventos-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { Evento } from 'src/app/models/evento';
@@ -22,13 +23,18 @@ export class CriarEventoPage implements OnInit {
   musicos: Usuario[] = [];
   submitted = false;
   isSaving = false;
+  eventoId: number | null = null;
+  modoEdicao = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private usuarioService: UsuarioService,
+    private ensaiosService: EnsaiosService,
     private eventosService: EventosService,
     private toastController: ToastController,
-    private router: Router
+    private alertController: AlertController,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.formGroup = this.formBuilder.group({
       data: ['', Validators.compose([Validators.required])],
@@ -38,7 +44,76 @@ export class CriarEventoPage implements OnInit {
   }
 
   ngOnInit() {
-    this.musicos = this.usuarioService.listar().filter((usuario) => usuario.tipo === 'musico');
+    this.ensaiosService.listar().subscribe({
+      next: (ensaios) => {
+        this.usuarioService.listar().subscribe({
+          next: (usuarios) => {
+            this.musicos = this.filtrarMusicosComMinimoDePresencas(usuarios, ensaios, 2);
+          },
+          error: () => {
+            this.musicos = [];
+          }
+        });
+      },
+      error: () => {
+        this.musicos = [];
+      }
+    });
+
+    this.route.queryParamMap.subscribe((params) => {
+      const idParam = params.get('id');
+      if (!idParam) {
+        this.modoEdicao = false;
+        this.eventoId = null;
+        return;
+      }
+
+      const id = Number(idParam);
+      if (Number.isNaN(id)) {
+        return;
+      }
+
+      this.eventoId = id;
+      this.modoEdicao = true;
+      this.carregarEvento(id);
+    });
+  }
+
+  private filtrarMusicosComMinimoDePresencas(usuarios: Usuario[], ensaios: Ensaio[], minimoPresencas: number): Usuario[] {
+    const presencasPorMusico = new Map<number, number>();
+
+    ensaios.forEach((ensaio) => {
+      (ensaio.musicos || []).forEach((musico) => {
+        if (!musico || musico.id == null) {
+          return;
+        }
+
+        const presencasAtuais = presencasPorMusico.get(musico.id) || 0;
+        presencasPorMusico.set(musico.id, presencasAtuais + 1);
+      });
+    });
+
+    return usuarios.filter((usuario) => usuario.tipo === 'musico' && (presencasPorMusico.get(usuario.id) || 0) >= minimoPresencas);
+  }
+
+  private carregarEvento(id: number) {
+    this.isSaving = true;
+    this.eventosService.buscarPorId(id).subscribe({
+      next: (evento) => {
+        this.formGroup.patchValue({
+          data: evento.data,
+          descricao: evento.descricao,
+          musicos: evento.musicos || []
+        });
+        this.isSaving = false;
+      },
+      error: async () => {
+        this.isSaving = false;
+        const errorToast = await this.toastController.create({ message: 'Não foi possível carregar o evento', duration: 2000, color: 'danger' });
+        await errorToast.present();
+        this.router.navigate(['/eventos']);
+      }
+    });
   }
 
   async salvar() {
@@ -53,19 +128,31 @@ export class CriarEventoPage implements OnInit {
 
     const form = this.formGroup.value;
     const evento: Evento = {
+      id: this.eventoId ?? undefined,
       data: this.formatDateOnly(form.data),
       descricao: form.descricao,
       musicos: form.musicos || []
     };
 
-    this.eventosService.salvar(evento);
+    const requisicao = this.modoEdicao && this.eventoId
+      ? this.eventosService.editar(evento)
+      : this.eventosService.salvar(evento);
 
-    const success = await this.toastController.create({ message: 'Evento salvo com sucesso', duration: 1500, color: 'success' });
-    await success.present();
+    requisicao.subscribe({
+      next: async () => {
+        const success = await this.toastController.create({ message: this.modoEdicao ? 'Evento atualizado com sucesso' : 'Evento salvo com sucesso', duration: 1500, color: 'success' });
+        await success.present();
 
-    this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    this.router.navigate(['/eventos']);
-    this.isSaving = false;
+        this.formGroup.reset({ data: '', descricao: '', musicos: [] });
+        this.router.navigate(['/eventos']);
+        this.isSaving = false;
+      },
+      error: async () => {
+        const errorToast = await this.toastController.create({ message: this.modoEdicao ? 'Não foi possível atualizar o evento' : 'Não foi possível salvar o evento', duration: 2000, color: 'danger' });
+        await errorToast.present();
+        this.isSaving = false;
+      }
+    });
   }
 
   isInvalid(controlName: string): boolean {
@@ -104,14 +191,44 @@ export class CriarEventoPage implements OnInit {
   }
 
   async excluir() {
-    const ok = window.confirm('Deseja descartar este evento?');
-    if (!ok) {
+    if (!this.modoEdicao || !this.eventoId) {
+      const ok = window.confirm('Deseja descartar este evento?');
+      if (!ok) {
+        return;
+      }
+      this.formGroup.reset({ data: '', descricao: '', musicos: [] });
+      const t = await this.toastController.create({ message: 'Evento descartado', duration: 1500, color: 'warning' });
+      await t.present();
+      this.router.navigate(['/eventos']);
       return;
     }
-    this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    const t = await this.toastController.create({ message: 'Evento descartado', duration: 1500, color: 'warning' });
-    await t.present();
-    this.router.navigate(['/eventos']);
+
+    const alert = await this.alertController.create({
+      header: 'Confirmar exclusão',
+      message: 'Tem certeza que deseja excluir este evento?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Excluir',
+          role: 'destructive',
+          handler: () => {
+            this.eventosService.excluir(this.eventoId as number).subscribe({
+              next: async () => {
+                const t = await this.toastController.create({ message: 'Evento excluído com sucesso', duration: 1500, color: 'warning' });
+                await t.present();
+                this.router.navigate(['/eventos']);
+              },
+              error: async () => {
+                const t = await this.toastController.create({ message: 'Erro ao excluir o evento', duration: 2000, color: 'danger' });
+                await t.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   sairDaConta() {

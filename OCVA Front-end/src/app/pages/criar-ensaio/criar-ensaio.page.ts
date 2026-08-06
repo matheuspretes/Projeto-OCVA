@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonDatetime, IonHeader, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonSpinner, IonToolbar, ToastController } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Ensaio } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
@@ -21,13 +21,17 @@ export class CriarEnsaioPage implements OnInit {
   musicos: Usuario[] = [];
   submitted = false;
   isSaving = false;
+  ensaioId: number | null = null;
+  modoEdicao = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private usuarioService: UsuarioService,
     private ensaiosService: EnsaiosService,
     private toastController: ToastController,
-    private router: Router
+    private alertController: AlertController,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.formGroup = this.formBuilder.group({
       data: ['', Validators.compose([Validators.required])],
@@ -37,7 +41,47 @@ export class CriarEnsaioPage implements OnInit {
   }
 
   ngOnInit() {
-    this.musicos = this.usuarioService.listar().filter((usuario) => usuario.tipo === 'musico');
+    this.usuarioService.listar().subscribe((usuarios) => {
+      this.musicos = usuarios.filter((usuario) => usuario.tipo === 'musico');
+    });
+
+    this.route.queryParamMap.subscribe((params) => {
+      const idParam = params.get('id');
+      if (!idParam) {
+        this.modoEdicao = false;
+        this.ensaioId = null;
+        return;
+      }
+
+      const id = Number(idParam);
+      if (Number.isNaN(id)) {
+        return;
+      }
+
+      this.ensaioId = id;
+      this.modoEdicao = true;
+      this.carregarEnsaio(id);
+    });
+  }
+
+  private carregarEnsaio(id: number) {
+    this.isSaving = true;
+    this.ensaiosService.buscarPorId(id).subscribe({
+      next: (ensaio) => {
+        this.formGroup.patchValue({
+          data: ensaio.data,
+          descricao: ensaio.descricao,
+          musicos: ensaio.musicos || []
+        });
+        this.isSaving = false;
+      },
+      error: async () => {
+        this.isSaving = false;
+        const errorToast = await this.toastController.create({ message: 'Não foi possível carregar o ensaio', duration: 2000, color: 'danger' });
+        await errorToast.present();
+        this.router.navigate(['/ensaios']);
+      }
+    });
   }
 
   async salvar() {
@@ -52,19 +96,31 @@ export class CriarEnsaioPage implements OnInit {
 
     const form = this.formGroup.value;
     const ensaio: Ensaio = {
+      id: this.ensaioId ?? undefined,
       data: this.formatDateOnly(form.data),
       descricao: form.descricao,
       musicos: form.musicos || []
     };
 
-    this.ensaiosService.salvar(ensaio);
+    const requisicao = this.modoEdicao && this.ensaioId
+      ? this.ensaiosService.editar(ensaio)
+      : this.ensaiosService.salvar(ensaio);
 
-    const success = await this.toastController.create({ message: 'Ensaio salvo com sucesso', duration: 1500, color: 'success' });
-    await success.present();
+    requisicao.subscribe({
+      next: async () => {
+        const success = await this.toastController.create({ message: this.modoEdicao ? 'Ensaio atualizado com sucesso' : 'Ensaio salvo com sucesso', duration: 1500, color: 'success' });
+        await success.present();
 
-    this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    this.router.navigate(['/ensaios']);
-    this.isSaving = false;
+        this.formGroup.reset({ data: '', descricao: '', musicos: [] });
+        await this.router.navigate(['/ensaios']);
+        this.isSaving = false;
+      },
+      error: async () => {
+        const errorToast = await this.toastController.create({ message: this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio', duration: 2000, color: 'danger' });
+        await errorToast.present();
+        this.isSaving = false;
+      }
+    });
   }
 
   isInvalid(controlName: string): boolean {
@@ -103,14 +159,44 @@ export class CriarEnsaioPage implements OnInit {
   }
 
   async excluir() {
-    const ok = window.confirm('Deseja descartar este ensaio?');
-    if (!ok) {
+    if (!this.modoEdicao || !this.ensaioId) {
+      const ok = window.confirm('Deseja descartar este ensaio?');
+      if (!ok) {
+        return;
+      }
+      this.formGroup.reset({ data: '', descricao: '', musicos: [] });
+      const t = await this.toastController.create({ message: 'Ensaio descartado', duration: 1500, color: 'warning' });
+      await t.present();
+      this.router.navigate(['/ensaios']);
       return;
     }
-    this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    const t = await this.toastController.create({ message: 'Ensaio descartado', duration: 1500, color: 'warning' });
-    await t.present();
-    this.router.navigate(['/ensaios']);
+
+    const alert = await this.alertController.create({
+      header: 'Confirmar exclusão',
+      message: 'Tem certeza que deseja excluir este ensaio?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Excluir',
+          role: 'destructive',
+          handler: () => {
+            this.ensaiosService.excluir(this.ensaioId as number).subscribe({
+              next: async () => {
+                const t = await this.toastController.create({ message: 'Ensaio excluído com sucesso', duration: 1500, color: 'warning' });
+                await t.present();
+                this.router.navigate(['/ensaios']);
+              },
+              error: async () => {
+                const t = await this.toastController.create({ message: 'Erro ao excluir o ensaio', duration: 2000, color: 'danger' });
+                await t.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   sairDaConta() {

@@ -17,6 +17,10 @@
         </ion-card-header>
         <ion-card-content>
           <div><strong>Descrição:</strong> {{evento.descricao}}</div>
+          <div *ngIf="podeEditarOuExcluir()" style="display:flex; gap:8px; margin-top:12px; flex-wrap: wrap;">
+            <ion-button size="small" fill="outline" (click)="editarEvento(evento)">Editar</ion-button>
+            <ion-button size="small" color="danger" fill="outline" (click)="excluirEvento(evento)">Excluir</ion-button>
+          </div>
         </ion-card-content>
       </ion-card>
     </ion-item>

@@ -102,16 +102,21 @@ export class DadosPage implements OnInit {
     this.usuario.tipo = dados.tipo;
     this.usuario.instrumento = dados.instrumento;
 
-    this.usuarioService.salvar(this.usuario);
-    localStorage.setItem('usuarioAutenticado', JSON.stringify(this.usuario));
+    this.usuarioService.salvar(this.usuario).subscribe({
+      next: (usuarioAtualizado) => {
+        localStorage.setItem('usuarioAutenticado', JSON.stringify(usuarioAtualizado));
+        this.exibirMensagem('Dados atualizados com sucesso!!!');
 
-    this.exibirMensagem('Dados atualizados com sucesso!!!');
+        this.dadosOriginais = { ...usuarioAtualizado };
+        this.formGroup.patchValue(this.dadosOriginais);
+        this.formGroup.disable({ emitEvent: false });
 
-    this.dadosOriginais = { ...this.usuario };
-    this.formGroup.patchValue(this.dadosOriginais);
-    this.formGroup.disable({ emitEvent: false });
-
-    this.navController.navigateBack('/inicio');
+        this.navController.navigateBack('/inicio');
+      },
+      error: () => {
+        this.exibirMensagem('Erro ao atualizar os dados do usuário!');
+      }
+    });
   }
 
   async excluir() {
@@ -131,10 +136,16 @@ export class DadosPage implements OnInit {
           role: 'destructive',
           handler: () => {
             if (this.usuario) {
-              this.usuarioService.excluir(this.usuario.id);
-              localStorage.removeItem('usuarioAutenticado');
-              this.exibirMensagem('Conta excluída com sucesso!');
-              this.navController.navigateRoot('/login');
+              this.usuarioService.excluir(this.usuario.id).subscribe({
+                next: () => {
+                  localStorage.removeItem('usuarioAutenticado');
+                  this.exibirMensagem('Conta excluída com sucesso!');
+                  this.navController.navigateRoot('/login');
+                },
+                error: () => {
+                  this.exibirMensagem('Erro ao excluir a conta!');
+                }
+              });
             }
           }
         }

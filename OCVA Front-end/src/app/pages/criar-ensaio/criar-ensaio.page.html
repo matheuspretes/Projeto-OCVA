@@ -12,7 +12,7 @@
 <ion-content [fullscreen]="true" class="criar-ensaio-page">
   <ion-card class="surface-card">
     <ion-card-header>
-      <ion-card-title>Registrar novo ensaio</ion-card-title>
+      <ion-card-title>{{ modoEdicao ? 'Editar ensaio' : 'Registrar novo ensaio' }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -48,7 +48,11 @@
 
                 <ion-button type="submit" expand="block" class="enter-button" [disabled]="!formGroup.valid || isSaving">
                   <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-                  <span *ngIf="!isSaving">SALVAR</span>
+                  <span *ngIf="!isSaving">{{ modoEdicao ? 'ATUALIZAR' : 'SALVAR' }}</span>
+                </ion-button>
+
+                <ion-button *ngIf="modoEdicao" type="button" expand="block" color="danger" class="enter-button" (click)="excluir()" [disabled]="isSaving">
+                  EXCLUIR
                 </ion-button>
               </div>
             </div>

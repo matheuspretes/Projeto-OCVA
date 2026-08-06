@@ -1,13 +1,41 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>musicos</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inicio" text="Voltar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Músicos cadastrados</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">musicos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card *ngIf="!usuarioAutenticado || (usuarioAutenticado.tipo !== 'maestro' && usuarioAutenticado.tipo !== 'diretoria')">
+    <ion-card-header>
+      <ion-card-title>Acesso restrito</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Esta área está disponível apenas para maestro e diretoria.
+    </ion-card-content>
+  </ion-card>
+
+  <ng-container *ngIf="usuarioAutenticado && (usuarioAutenticado.tipo === 'maestro' || usuarioAutenticado.tipo === 'diretoria')">
+    <ion-card *ngIf="musicos.length === 0">
+      <ion-card-header>
+        <ion-card-title>Nenhum músico encontrado</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Ainda não existem músicos cadastrados na API.
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngFor="let musico of musicos" style="margin-bottom: 12px;">
+      <ion-card-header>
+        <ion-card-title>{{ musico.nome }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Login:</strong> {{ musico.login }}</p>
+        <p><strong>Instrumento:</strong> {{ musico.instrumento || 'Não informado' }}</p>
+        <ion-badge color="primary">{{ musico.tipo }}</ion-badge>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
 </ion-content>

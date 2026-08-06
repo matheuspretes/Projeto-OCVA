@@ -2,20 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton } from '@ionic/angular/standalone';
-import { Ensaio } from 'src/app/models/ensaio';
-import { EnsaiosService } from 'src/app/services/ensaios-service';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 import { Evento } from 'src/app/models/evento';
 import { EventosService } from 'src/app/services/eventos-service';
+import { Router } from '@angular/router';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-eventos',
   templateUrl: './eventos.page.html',
   styleUrls: ['./eventos.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, CommonModule, FormsModule, IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardContent, RouterLink]
+  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, CommonModule, FormsModule, IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, RouterLink]
 })
 export class EventosPage implements OnInit {
 
@@ -24,47 +24,83 @@ export class EventosPage implements OnInit {
 
   constructor(
     private eventosService: EventosService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private router: Router,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
-    // 1. Recupera o usuário que está logado no sistema
     this.usuarioAutenticado = this.usuarioService.buscarAutenticacao();
+    this.eventosService.listar().subscribe({
+      next: (todosOsEventos) => {
+        let eventosFiltrados: Evento[] = [];
 
-    // 2. Busca a lista de todos os ensaios cadastrados no localStorage
-    const eventosTexto = localStorage.getItem('eventos') || '[]';
-    const todosOsEventos = JSON.parse(eventosTexto);
+        if (this.usuarioAutenticado && (this.usuarioAutenticado.tipo === 'maestro' || this.usuarioAutenticado.tipo === 'diretoria')) {
+          eventosFiltrados = todosOsEventos;
+        } else if (this.usuarioAutenticado) {
+          const userLogin = this.usuarioAutenticado.login;
+          const userId = this.usuarioAutenticado.id;
 
-    let eventosFiltrados = [];
+          eventosFiltrados = todosOsEventos.filter((evento: Evento) =>
+            (evento.musicos || []).some((m: any) => m.login === userLogin || m.id === userId)
+          );
+        }
 
-    // 3. Filtro de segurança por perfil de usuário
-    if (this.usuarioAutenticado && (this.usuarioAutenticado.tipo === 'maestro' || this.usuarioAutenticado.tipo === 'diretoria')) {
-      // Maestro e Diretoria têm acesso total a todos os ensaios
-      eventosFiltrados = todosOsEventos;
-    } else if (this.usuarioAutenticado) {
-      // Músicos só vêm os ensaios onde o e-mail/login deles foi escalado
-      const userLogin = this.usuarioAutenticado.login;
-      const userId = this.usuarioAutenticado.id;
-      
-      eventosFiltrados = todosOsEventos.filter((e: any) => 
-        (e.musicos || []).some((m: any) => m.login === userLogin || m.id === userId)
-      );
-    } else {
-      // Se não houver ninguém autenticado, por segurança a lista fica vazia
-      eventosFiltrados = [];
+        this.eventos = eventosFiltrados.map((evento: Evento) => ({
+          ...evento,
+          nomesMusicos: (evento.musicos || []).map((m: any) => m.nome)
+        })) as any;
+      },
+      error: () => {
+        this.eventos = [];
+      }
+    });
+  }   
+
+  podeEditarOuExcluir(): boolean {
+    return this.usuarioAutenticado?.tipo === 'maestro';
+  }
+
+  editarEvento(evento: Evento) {
+    if (!evento.id) {
+      return;
     }
 
-    // 4. Mapeamento para extrair os nomes dos músicos que já estão dentro do ensaio
-    this.eventos = eventosFiltrados.map((evento: any) => {
-      return {
-        ...evento,
-        // Cria o array de strings 'nomesMusicos' pegando direto a propriedade '.nome' de cada músico
-        nomesMusicos: (evento.musicos || []).map((m: any) => m.nome)
-      };
+    this.router.navigate(['/criar-evento'], { queryParams: { id: evento.id } });
+  }
+
+  async excluirEvento(evento: Evento) {
+    if (!evento.id) {
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Confirmar exclusão',
+      message: 'Tem certeza que deseja excluir este evento?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Excluir',
+          role: 'destructive',
+          handler: () => {
+            this.eventosService.excluir(evento.id as number).subscribe({
+              next: async () => {
+                const toast = await this.toastController.create({ message: 'Evento excluído com sucesso', duration: 1500, color: 'warning' });
+                await toast.present();
+                this.ngOnInit();
+              },
+              error: async () => {
+                const toast = await this.toastController.create({ message: 'Erro ao excluir evento', duration: 2000, color: 'danger' });
+                await toast.present();
+              }
+            });
+          }
+        }
+      ]
     });
 
-    // Log para controle no console do navegador (F12)
-    console.log('Eventos carregados e filtrados com sucesso:', this.eventos);
-  }   
+    await alert.present();
+  }
 
 }

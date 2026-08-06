@@ -15,10 +15,13 @@ import {
   IonCardSubtitle, 
   IonCardContent, 
   IonChip,         
-  IonLabel         
+  IonLabel,
+  IonButton
 } from '@ionic/angular/standalone';
 import { EnsaiosService } from '../../services/ensaios-service'; // Ajuste o caminho se necessário
 import { UsuarioService } from '../../services/usuario-service'; // Ajuste o caminho se necessário
+import { Router } from '@angular/router';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-ensaios',
@@ -41,7 +44,8 @@ import { UsuarioService } from '../../services/usuario-service'; // Ajuste o cam
     IonCardSubtitle, 
     IonCardContent,
     IonChip,         
-    IonLabel         
+    IonLabel,
+    IonButton        
   ]
 })
 export class EnsaiosPage implements OnInit {
@@ -52,46 +56,137 @@ export class EnsaiosPage implements OnInit {
 
   constructor(
     private ensaiosService: EnsaiosService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private router: Router,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
     // 1. Recupera o usuário que está logado no sistema
     this.usuarioAutenticado = this.usuarioService.buscarAutenticacao();
 
-    // 2. Busca a lista de todos os ensaios cadastrados no localStorage
-    const ensaiosTexto = localStorage.getItem('ensaios') || '[]';
-    const todosOsEnsaios = JSON.parse(ensaiosTexto);
+    this.ensaiosService.listar().subscribe({
+      next: (todosOsEnsaios) => {
+        let ensaiosFiltrados: any[] = [];
 
-    let ensaiosFiltrados = [];
+        if (this.usuarioAutenticado && (this.usuarioAutenticado.tipo === 'maestro' || this.usuarioAutenticado.tipo === 'diretoria')) {
+          ensaiosFiltrados = todosOsEnsaios;
+        } else if (this.usuarioAutenticado) {
+          const userLogin = this.usuarioAutenticado.login;
+          const userId = this.usuarioAutenticado.id;
 
-    // 3. Filtro de segurança por perfil de usuário
-    if (this.usuarioAutenticado && (this.usuarioAutenticado.tipo === 'maestro' || this.usuarioAutenticado.tipo === 'diretoria')) {
-      // Maestro e Diretoria têm acesso total a todos os ensaios
-      ensaiosFiltrados = todosOsEnsaios;
-    } else if (this.usuarioAutenticado) {
-      // Músicos só vêm os ensaios onde o e-mail/login deles foi escalado
-      const userLogin = this.usuarioAutenticado.login;
-      const userId = this.usuarioAutenticado.id;
-      
-      ensaiosFiltrados = todosOsEnsaios.filter((e: any) => 
-        (e.musicos || []).some((m: any) => m.login === userLogin || m.id === userId)
-      );
-    } else {
-      // Se não houver ninguém autenticado, por segurança a lista fica vazia
-      ensaiosFiltrados = [];
+          ensaiosFiltrados = todosOsEnsaios.filter((ensaio: any) =>
+            (ensaio.musicos || []).some((m: any) => m.login === userLogin || m.id === userId)
+          );
+        }
+
+        this.ensaios = ensaiosFiltrados.map((ensaio: any) => ({
+          ...ensaio,
+          nomesMusicos: (ensaio.musicos || []).map((m: any) => m.nome)
+        }));
+      },
+      error: () => {
+        this.ensaios = [];
+      }
+    });
+  }
+
+  podeEditarOuExcluir(): boolean {
+    return this.usuarioAutenticado?.tipo === 'maestro';
+  }
+
+  editarEnsaio(ensaio: any) {
+    if (!ensaio.id) {
+      return;
     }
 
-    // 4. Mapeamento para extrair os nomes dos músicos que já estão dentro do ensaio
-    this.ensaios = ensaiosFiltrados.map((ensaio: any) => {
-      return {
-        ...ensaio,
-        // Cria o array de strings 'nomesMusicos' pegando direto a propriedade '.nome' de cada músico
-        nomesMusicos: (ensaio.musicos || []).map((m: any) => m.nome)
-      };
+    this.router.navigate(['/criar-ensaio'], { queryParams: { id: ensaio.id } });
+  }
+
+  async excluirEnsaio(ensaio: any) {
+    if (!ensaio.id) {
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Confirmar exclusão',
+      message: 'Tem certeza que deseja excluir este ensaio?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Excluir',
+          role: 'destructive',
+          handler: () => {
+            this.ensaiosService.excluir(ensaio.id as number).subscribe({
+              next: async () => {
+                const toast = await this.toastController.create({ message: 'Ensaio excluído com sucesso', duration: 1500, color: 'warning' });
+                await toast.present();
+                this.ngOnInit();
+              },
+              error: async () => {
+                const toast = await this.toastController.create({ message: 'Erro ao excluir ensaio', duration: 2000, color: 'danger' });
+                await toast.present();
+              }
+            });
+          }
+        }
+      ]
     });
 
-    // Log para controle no console do navegador (F12)
-    console.log('Ensaios carregados e filtrados com sucesso:', this.ensaios);
+    await alert.present();
+  }
+
+  async confirmarPresenca(ensaio: any) {
+    if (!this.podeEditarOuExcluir()) {
+      return;
+    }
+
+    const inputs = (ensaio.musicos || []).map((musico: any, index: number) => ({
+      name: 'presentes',
+      type: 'checkbox' as const,
+      label: musico.nome,
+      value: musico,
+      checked: true,
+      id: `musico-${ensaio.id}-${index}`
+    }));
+
+    if (inputs.length === 0) {
+      const toast = await this.toastController.create({ message: 'Não há músicos cadastrados para confirmar', duration: 2000, color: 'warning' });
+      await toast.present();
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Confirmar presença',
+      message: 'Selecione os músicos presentes neste ensaio',
+      inputs,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Salvar',
+          handler: (selecionados: any[]) => {
+            const ensaioAtualizado = {
+              ...ensaio,
+              musicos: selecionados || []
+            };
+
+            this.ensaiosService.editar(ensaioAtualizado).subscribe({
+              next: async () => {
+                const toast = await this.toastController.create({ message: 'Presença confirmada com sucesso', duration: 1500, color: 'success' });
+                await toast.present();
+                this.ngOnInit();
+              },
+              error: async () => {
+                const toast = await this.toastController.create({ message: 'Erro ao confirmar presença', duration: 2000, color: 'danger' });
+                await toast.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }
