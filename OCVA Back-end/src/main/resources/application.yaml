@@ -3,9 +3,9 @@ spring:
     name: ocva
 
   datasource:
-    url: jdbc:postgresql://ep-soft-smoke-acmstl8y-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channelBinding=require
-    username: neondb_owner
-    password: npg_PLsB6xc1pIml
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:

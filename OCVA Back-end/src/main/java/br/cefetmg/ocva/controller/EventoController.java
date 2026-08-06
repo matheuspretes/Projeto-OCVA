@@ -22,7 +22,7 @@ import br.cefetmg.ocva.repository.EnsaioRepository;
 
 @RestController
 @RequestMapping("/api/v1/eventos")
-@CrossOrigin(origins = "http://localhost:8100")
+@CrossOrigin(origins = "*")
 public class EventoController {
 
     private final EventoRepository repository;

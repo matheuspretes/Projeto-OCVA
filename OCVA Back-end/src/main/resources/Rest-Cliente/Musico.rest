@@ -1,5 +1,5 @@
-GET http://localHost:8080/api/v1/musicos HTTP/1.1
 
+GET http://localHost:8080/api/v1/musicos HTTP/1.1
 ###
 
 GET http://localHost:8080/api/v1/musicos/1 HTTP/1.1
@@ -14,6 +14,7 @@ content-type: application/json
     "idade":"18"
     
 }
+
 
 ###
 
@@ -30,3 +31,4 @@ Content-type: application/json
     "idade": 20
 
 }
+*/

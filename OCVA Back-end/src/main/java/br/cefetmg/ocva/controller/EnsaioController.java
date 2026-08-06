@@ -19,7 +19,7 @@ import br.cefetmg.ocva.repository.EnsaioRepository;
 
 @RestController
 @RequestMapping("/api/v1/ensaios")
-@CrossOrigin(origins = "http://localhost:8100")
+@CrossOrigin(origins = "*")
 public class EnsaioController {
 
     private final EnsaioRepository repository;

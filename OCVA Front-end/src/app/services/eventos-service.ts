@@ -7,7 +7,7 @@ import { Evento } from '../models/evento';
   providedIn: 'root',
 })
 export class EventosService {
-  private readonly API_URL = 'http://localhost:8080/api/v1/eventos';
+  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/eventos';
 
   constructor(private http: HttpClient) {
     

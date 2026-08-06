@@ -7,8 +7,8 @@ import { Ensaio } from '../models/ensaio';
   providedIn: 'root',
 })
 export class EnsaiosService {
-  private readonly API_URL = 'http://localhost:8080/api/v1/ensaios';
-
+  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/ensaios';
+  
   constructor(private http: HttpClient) {}
 
   salvar(ensaio: Ensaio): Observable<Ensaio> {

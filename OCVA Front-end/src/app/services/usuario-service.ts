@@ -7,7 +7,7 @@ import { Usuario } from '../models/usuario';
 })
 export class UsuarioService {
 
-  private readonly API_URL = 'http://localhost:8080/api/v1/musicos';
+  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/musicos';
 
   constructor(private http: HttpClient) {
     

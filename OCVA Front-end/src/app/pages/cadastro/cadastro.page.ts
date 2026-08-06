@@ -53,25 +53,39 @@ export class CadastroPage implements OnInit {
     if (this.formGroup.valid) {
       const login = this.formGroup.value.login?.trim();
 
-      if (this.usuarioService.verificarLogin(login)) {
-        this.loginExistente = true;
-        this.exibirMensagem('Esse login já existe.');
+      if (!login) {
+        this.loginExistente = false;
+        this.exibirMensagem('Informe um login válido.');
         return;
       }
 
-      this.usuario.nome = this.formGroup.value.nome;
-      this.usuario.login = login;
-      this.usuario.senha = this.formGroup.value.senha;
-      this.usuario.tipo = this.formGroup.value.tipo;
-      this.usuario.instrumento = this.formGroup.value.instrumento;
+      this.usuarioService.verificarLogin(login).subscribe({
+        next: (existe) => {
+          if (existe) {
+            this.loginExistente = true;
+            this.exibirMensagem('Esse login já existe.');
+            return;
+          }
 
-      this.usuarioService.cadastrar(this.usuario).subscribe({
-        next: () => {
-          this.exibirMensagem('Usuário cadastrado com sucesso');
-          this.router.navigate(['/login']);
+          this.loginExistente = false;
+          this.usuario.nome = this.formGroup.value.nome;
+          this.usuario.login = login;
+          this.usuario.senha = this.formGroup.value.senha;
+          this.usuario.tipo = this.formGroup.value.tipo;
+          this.usuario.instrumento = this.formGroup.value.instrumento;
+
+          this.usuarioService.cadastrar(this.usuario).subscribe({
+            next: () => {
+              this.exibirMensagem('Usuário cadastrado com sucesso');
+              this.router.navigate(['/login']);
+            },
+            error: () => {
+              this.exibirMensagem('Erro ao cadastrar usuário');
+            }
+          });
         },
         error: () => {
-          this.exibirMensagem('Erro ao cadastrar usuário');
+          this.exibirMensagem('Não foi possível verificar o login.');
         }
       });
     }
@@ -82,7 +96,13 @@ export class CadastroPage implements OnInit {
   }
 
   verificarLoginExistente() {
-    let login = this.formGroup.get('login')?.value;
+    const login = this.formGroup.get('login')?.value?.trim();
+
+    if (!login) {
+      this.loginExistente = false;
+      return;
+    }
+
     this.usuarioService.verificarLogin(login).subscribe({
       next: (existe) => {
         this.loginExistente = existe;
