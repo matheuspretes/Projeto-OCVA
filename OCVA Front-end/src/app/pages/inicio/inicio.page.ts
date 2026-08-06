@@ -39,7 +39,7 @@ export class InicioPage implements OnInit {
       description: 'Registre um ensaio que ocorreu',
       route: '/criar-ensaio',
       kind: 'link',
-      types: ['maestro', 'diretoria'],
+      types: ['maestro'],
     },
     {
       title: 'Dados do usuário',
@@ -49,6 +49,7 @@ export class InicioPage implements OnInit {
       types: ['nulo'],
     },
     {
+<<<<<<< HEAD
       title: 'Criar evento',
       description: 'Registre eventos futuros',
       route: '/criar-evento',
@@ -56,6 +57,8 @@ export class InicioPage implements OnInit {
       types: ['diretoria', 'maestro', 'secretaria'],
     },
     {
+=======
+>>>>>>> 67000c8eabb7dec5cecd28b40d7b68fd96c17775
       title: 'Eventos',
       description: 'Confira eventos registrados',
       route: '/eventos',
@@ -63,11 +66,18 @@ export class InicioPage implements OnInit {
       types: ['diretoria','maestro','musico'],
     },
     {
+      title: 'Registrar evento',
+      description: 'Registre eventos futuros',
+      route: '/criar-evento',
+      kind: 'link',
+      types: ['maestro'],
+    },
+    {
       title: 'Músicos',
       description: 'Confira os músicos registrados',
       route: '/musicos',
       kind: 'link',
-      types: ['diretoria','maestro'],
+      types: ['nulo'],
     },
   ];
 

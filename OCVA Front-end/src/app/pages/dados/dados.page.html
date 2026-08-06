@@ -1,8 +1,5 @@
 <ion-header>
   <ion-toolbar color="dark">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/inicio"></ion-back-button>
-    </ion-buttons>
     <div class="toolbar-brand">
       <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
         <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
@@ -13,72 +10,82 @@
 
 <ion-content [fullscreen]="true" class="dados-page">
   <div class="dados-shell">
-    <ion-card class="dados-card surface-card">
-      <ion-card-header>
-        <ion-card-title>Informações pessoais</ion-card-title>
-      </ion-card-header>
+    <form class="dados-form" [formGroup]="formGroup" (ngSubmit)="salvar()">
+      <ion-card class="dados-card">
+        <ion-card-header>
+          <ion-card-title>DADOS DE ACESSO</ion-card-title>
+        </ion-card-header>
 
-      <ion-card-content>
-        <form [formGroup]="formGroup" (ngSubmit)="salvar()">
-          <div class="form-group">
-            <p class="form-group-title">Identidade</p>
-
-            <ion-item class="field info-field">
-              <ion-label position="stacked">Nome</ion-label>
+        <ion-card-content>
+          <div class="field-stack">
+            <ion-label class="field-label" position="stacked">Seu nome</ion-label>
+            <ion-item class="field-input-card">
               <ion-input type="text" formControlName="nome"></ion-input>
             </ion-item>
+          </div>
 
-            <ion-item class="field info-field">
-              <ion-label position="stacked">Login</ion-label>
-              <ion-input type="text" formControlName="login"></ion-input>
+          <div class="field-stack">
+            <ion-label class="field-label" position="stacked">Seu E-mail</ion-label>
+            <ion-item class="field-input-card">
+              <ion-input type="email" formControlName="login"></ion-input>
             </ion-item>
           </div>
 
-          <div class="form-group">
-            <p class="form-group-title">Segurança</p>
-
-            <ion-item class="field info-field">
-              <ion-label position="stacked">Senha</ion-label>
+          <div class="field-stack">
+            <div class="field-row">
+              <ion-label class="field-label" position="stacked">Sua Senha</ion-label>
+            </div>
+            <ion-item class="field-input-card password-field">
               <ion-input type="password" formControlName="senha"></ion-input>
             </ion-item>
+            <button type="button" class="inline-link">Alterar Senha</button>
           </div>
+        </ion-card-content>
+      </ion-card>
 
-          <div class="form-group">
-            <p class="form-group-title">Perfil</p>
+      <ion-card class="dados-card">
+        <ion-card-header>
+          <ion-card-title>PERFIL</ion-card-title>
+        </ion-card-header>
 
-            <ion-item class="field">
-              <ion-label position="stacked">Selecionar tipo</ion-label>
+        <ion-card-content>
+          <div class="field-stack">
+            <ion-label class="field-label" position="stacked">Tipo de Perfil</ion-label>
+            <ion-item class="field-input-card select-field">
               <ion-select formControlName="tipo" placeholder="Escolha uma opção">
                 <ion-select-option value="musico">Musico</ion-select-option>
                 <ion-select-option value="maestro">Maestro</ion-select-option>
                 <ion-select-option value="diretoria">Diretoria</ion-select-option>
-                <ion-select-option value="secretaria">Secretaria</ion-select-option>
               </ion-select>
             </ion-item>
+          </div>
 
-            <ion-item *ngIf="formGroup.get('tipo')?.value === 'musico'" class="field info-field">
-              <ion-label position="stacked">Instrumento</ion-label>
+          <div *ngIf="formGroup.get('tipo')?.value === 'musico'" class="field-stack">
+            <ion-label class="field-label" position="stacked">Instrumento</ion-label>
+            <ion-item class="field-input-card">
               <ion-input type="text" formControlName="instrumento"></ion-input>
             </ion-item>
           </div>
+        </ion-card-content>
+      </ion-card>
 
-          <div class="button-group">
-            <ion-button type="submit" expand="block" color="primary" [disabled]="!formGroup.valid">
-              SALVAR
+      <ion-card class="actions-card">
+        <ion-card-content>
+          <ion-button type="submit" expand="block" class="save-button" [disabled]="!formGroup.valid">
+            SALVAR ALTERAÇÕES
+          </ion-button>
+
+          <div class="actions-row">
+            <button type="button" class="text-action" (click)="cancelar()">Cancelar</button>
+
+            <ion-button type="button" fill="outline" class="delete-button" (click)="excluir()">
+              Excluir Conta
             </ion-button>
-            <ion-button expand="block" color="danger" (click)="excluir()">
-              EXCLUIR
-            </ion-button>
-            <ion-button type="button" expand="block" color="danger" (click)="cancelar()">
-              Cancelar
-            </ion-button>
-            <ion-button type="button" expand="block" color="medium" (click)="sairDaConta()">
-              Sair da conta
-            </ion-button>
+
+            <button type="button" class="text-action" (click)="sairDaConta()">Sair da Conta</button>
           </div>
-
-        </form>
-      </ion-card-content>
-    </ion-card>
+        </ion-card-content>
+      </ion-card>
+    </form>
   </div>
 </ion-content>

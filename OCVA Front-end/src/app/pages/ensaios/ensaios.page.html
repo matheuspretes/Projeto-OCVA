@@ -1,9 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="dark">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/inicio" text="Voltar"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Ensaios</ion-title>
+    <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
+      <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+    </a>
   </ion-toolbar>
 </ion-header>
 
@@ -26,15 +25,16 @@
       <p style="font-size: 1.1em; margin-bottom: 15px; color: #ddd;">
         <strong>Descrição:</strong> {{ ensaio.descricao }}
       </p>
-      
+
       <hr style="border-top: 1px solid #444; margin: 15px 0;" />
 
       <div class="musicos-section">
         <h6 style="margin-bottom: 10px; font-weight: bold; color: #deb887; font-size: 1em;">
-          Músicos Escalados:
+          Músicos presentes:
         </h6>
-        
-        <p *ngIf="!ensaio.nomesMusicos || ensaio.nomesMusicos.length === 0" style="font-style: italic; color: #888; margin: 5px 0;">
+
+        <p *ngIf="!ensaio.nomesMusicos || ensaio.nomesMusicos.length === 0"
+          style="font-style: italic; color: #888; margin: 5px 0;">
           Nenhum músico escalado para este ensaio.
         </p>
 

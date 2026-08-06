@@ -3,15 +3,17 @@ spring:
     name: ocva
 
   datasource:
-    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/bdocva}
-    username: root
-    password: 
-    driver-class-name: ${DATASOURCE_DRIVER:com.mysql.cj.jdbc.Driver}
+    url: jdbc:postgresql://ep-soft-smoke-acmstl8y-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channelBinding=require
+    username: neondb_owner
+    password: npg_PLsB6xc1pIml
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update # create, create-drop, validate, none, update
+      ddl-auto: update
+
     show-sql: true
+
     properties:
       hibernate:
         format_sql: true

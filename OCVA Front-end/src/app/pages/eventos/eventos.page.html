@@ -1,13 +1,12 @@
-<ion-header>
-  <ion-toolbar>
-    <div class="toolbar-brand">
-      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
-        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
-      </a>
-    </div>
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
+      <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+    </a>
   </ion-toolbar>
 </ion-header>
 
+<<<<<<< HEAD
 <ion-content [fullscreen]="true" class="ensaios-page">
   <ion-list *ngIf="eventos && eventos.length > 0">
     <ion-item *ngFor="let evento of eventos; let i = index">
@@ -25,6 +24,46 @@
       </ion-card>
     </ion-item>
   </ion-list>
+=======
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div *ngIf="!eventos || eventos.length === 0" style="text-align: center; margin-top: 50px; color: #aaa;">
+    <p>Nenhum evento agendado encontrado.</p>
+  </div>
+>>>>>>> 67000c8eabb7dec5cecd28b40d7b68fd96c17775
 
-  <div *ngIf="!eventos || eventos.length === 0" style="padding:16px">Nenhum evento encontrado.</div>
+  <ion-card *ngFor="let evento of eventos" style="margin-bottom: 20px;">
+    <ion-card-header>
+      <ion-card-title style="font-weight: bold; color: #ffffff;">
+        {{ evento.titulo || 'Apresentação / Concerto' }}
+      </ion-card-title>
+      <ion-card-subtitle style="color: #bbb;">
+        Data: {{ evento.data }}
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p style="font-size: 1.1em; margin-bottom: 15px; color: #ddd;">
+        <strong>Descrição:</strong> {{ evento.descricao }}
+      </p>
+
+      <hr style="border-top: 1px solid #444; margin: 15px 0;" />
+
+      <div class="musicos-section">
+        <h6 style="margin-bottom: 10px; font-weight: bold; color: #deb887; font-size: 1em;">
+          Músicos presentes:
+        </h6>
+
+        <p *ngIf="!evento.nomesMusicos || evento.nomesMusicos.length === 0"
+          style="font-style: italic; color: #888; margin: 5px 0;">
+          Nenhum músico escalado para este evento.
+        </p>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+          <ion-chip *ngFor="let nome of evento.nomesMusicos" color="primary">
+            <ion-label style="font-weight: 500;">{{ nome }}</ion-label>
+          </ion-chip>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
