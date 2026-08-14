@@ -35,21 +35,6 @@ export class UsuarioService {
     return this.http.get<boolean>(`${this.API_URL}/verificar/${encodeURIComponent(login)}`);
   }
 
-  /*salvar(usuario: Usuario): Usuario {
-
-    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    if (usuario.id === 0) {
-       usuario.id = (new Date().getTime() / 1000) * Math.random(); 
-      usuarios.push(usuario);
-    } else {
-      let posicao = usuarios.findIndex((temp: Usuario) => temp.id === usuario.id);
-      usuarios[posicao] = usuario;
-    }
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    return usuario;
-  }
-
-  */
   buscarPorId(id: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.API_URL}/${id}`);
   }
