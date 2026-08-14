@@ -13,7 +13,7 @@ export class Usuario {
         this.nome = "";
         this.login = "";
         this.senha = "";
-        this.tipo = TipoUsuario[4].value;
+        this.tipo = TipoUsuario[3].value;
         this.instrumento = "";
     }
 }

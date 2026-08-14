@@ -78,6 +78,13 @@ export class InicioPage implements OnInit {
       kind: 'link',
       types: ['nulo'],
     },
+    {
+      title: 'Músicos',
+      description: 'Confira os músicos registrados',
+      route: '/musicos',
+      kind: 'link',
+      types: ['nulo'],
+    },
   ];
 
 
