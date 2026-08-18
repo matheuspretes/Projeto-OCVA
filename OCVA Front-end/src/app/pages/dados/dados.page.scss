@@ -180,3 +180,92 @@
     justify-self: stretch;
   }
 }
+
+/* Estilos para Código de Acesso */
+.info-codigo {
+  color: #aeb4bc;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.codigo-acoes {
+  margin-top: 12px;
+}
+
+.codigo-mensagem {
+  margin-top: 12px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.codigo-mensagem .sucesso,
+.codigo-mensagem .erro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.codigo-mensagem .sucesso {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #81c784;
+  border-left: 3px solid #4caf50;
+}
+
+.codigo-mensagem .erro {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #ef5350;
+  border-left: 3px solid #f44336;
+}
+
+.codigo-mensagem ion-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.codigo-acoes-validacao {
+  display: grid;
+  gap: 8px;
+}
+
+.codigo-acoes-validacao ion-button {
+  --border-radius: 4px;
+  height: 32px;
+  margin: 0;
+}
+
+.codigo-vinculado {
+  margin-top: 12px;
+}
+
+.vinculado-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 5px;
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4caf50;
+  color: #81c784;
+  font-size: 0.9rem;
+}
+
+.vinculado-info strong {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}

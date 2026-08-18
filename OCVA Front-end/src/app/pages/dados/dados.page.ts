@@ -5,12 +5,15 @@ import { RouterLink } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonButtons,
   IonBackButton, IonItem, IonInput, IonLabel, IonButton, IonCard, IonCardContent,
-  IonCardHeader, IonCardTitle, IonSelect, IonSelectOption
+  IonCardHeader, IonCardTitle, IonSelect, IonSelectOption, IonIcon, IonSpinner
 } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { CodigoAcessoService } from 'src/app/services/codigo-acesso-service';
 import { Usuario } from 'src/app/models/usuario';
-import { ToastController, NavController, AlertController } from '@ionic/angular';
+import { ToastController, NavController, AlertController, LoadingController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { addIcons } from 'ionicons';
+import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
 
 
 @Component({
@@ -18,7 +21,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './dados.page.html',
   styleUrls: ['./dados.page.scss'],
   standalone: true,
-  imports: [IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule, RouterLink]
+  imports: [IonSpinner, IonIcon, IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class DadosPage implements OnInit {
   private tipoSub: Subscription | null = null;
@@ -26,22 +29,30 @@ export class DadosPage implements OnInit {
   dadosOriginais: Usuario | null = null;
   formGroup: FormGroup;
   editando = false;
+  validandoCodigo = false;
+  codigoValidado = false;
+  mensagemCodigo = '';
+  codigoValido = false;
 
 
   constructor(
     private usuarioService: UsuarioService,
+    private codigoAcessoService: CodigoAcessoService,
     private toastController: ToastController,
     private navController: NavController,
     private formBuilder: FormBuilder,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController
   ) {
+    addIcons({ checkmarkCircleOutline, closeCircleOutline });
 
     this.formGroup = this.formBuilder.group({
       'nome': ['', Validators.compose([Validators.required])],
       'login': ['', Validators.compose([Validators.required])],
       'senha': ['', Validators.compose([Validators.required])],
       'tipo': [''],
-      'instrumento': ['']
+      'instrumento': [''],
+      'codigoAcesso': ['']
     });
   }
 
@@ -54,7 +65,8 @@ export class DadosPage implements OnInit {
         login: this.usuario?.login,
         senha: this.usuario?.senha,
         tipo: this.usuario?.tipo,
-        instrumento: this.usuario?.instrumento
+        instrumento: this.usuario?.instrumento,
+        codigoAcesso: this.usuario?.codigoAcesso || ''
       });
     }
 
@@ -75,7 +87,8 @@ export class DadosPage implements OnInit {
         login: this.usuario?.login,
         senha: this.usuario?.senha,
         tipo: this.usuario?.tipo,
-        instrumento: this.usuario?.instrumento
+        instrumento: this.usuario?.instrumento,
+        codigoAcesso: this.usuario?.codigoAcesso || ''
       });
     }
   }
@@ -101,6 +114,7 @@ export class DadosPage implements OnInit {
     this.usuario.senha = dados.senha;
     this.usuario.tipo = dados.tipo;
     this.usuario.instrumento = dados.instrumento;
+    this.usuario.codigoAcesso = dados.codigoAcesso;
 
     this.usuarioService.salvar(this.usuario).subscribe({
       next: (usuarioAtualizado) => {
@@ -115,6 +129,113 @@ export class DadosPage implements OnInit {
       },
       error: () => {
         this.exibirMensagem('Erro ao atualizar os dados do usuário!');
+      }
+    });
+  }
+
+  /**
+   * Valida o código de acesso inserido
+   */
+  validarCodigo() {
+    const codigo = this.formGroup.get('codigoAcesso')?.value?.trim();
+
+    if (!codigo) {
+      this.mensagemCodigo = 'Por favor, insira um código de acesso';
+      this.codigoValido = false;
+      this.codigoValidado = true;
+      return;
+    }
+
+    if (codigo.length !== 8) {
+      this.mensagemCodigo = 'O código deve conter 8 caracteres';
+      this.codigoValido = false;
+      this.codigoValidado = true;
+      return;
+    }
+
+    this.validandoCodigo = true;
+
+    this.codigoAcessoService.verificarDisponibilidade(codigo).subscribe({
+      next: (resultado) => {
+        this.validandoCodigo = false;
+        if (resultado.disponivel) {
+          this.codigoValido = true;
+          this.mensagemCodigo = 'Código válido e disponível!';
+          this.codigoValidado = true;
+        } else {
+          this.codigoValido = false;
+          this.mensagemCodigo = resultado.mensagem || 'Código não disponível';
+          this.codigoValidado = true;
+        }
+      },
+      error: (erro) => {
+        console.error('Erro ao validar código:', erro);
+        this.validandoCodigo = false;
+        this.codigoValido = false;
+        this.mensagemCodigo = 'Erro ao validar código. Tente novamente.';
+        this.codigoValidado = true;
+      }
+    });
+  }
+
+  /**
+   * Usa o código de acesso e vincula ao usuário
+   */
+  usarCodigo() {
+    const codigo = this.formGroup.get('codigoAcesso')?.value?.trim();
+
+    if (!codigo || !this.codigoValido) {
+      this.exibirMensagem('Por favor, valide o código primeiro');
+      return;
+    }
+
+    this.alertController.create({
+      header: 'Usar Código de Acesso',
+      message: `Você deseja vincular o código ${codigo} a sua conta?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Vincular',
+          handler: () => {
+            this.executarUsoDoCodigoAsync(codigo);
+          }
+        }
+      ]
+    }).then(alert => alert.present());
+  }
+
+  /**
+   * Executa o uso do código de forma assíncrona
+   */
+  private async executarUsoDoCodigoAsync(codigo: string) {
+    const loading = await this.loadingController.create({
+      message: 'Vinculando código...'
+    });
+
+    await loading.present();
+
+    this.codigoAcessoService.validarEUsarCodigo(codigo).subscribe({
+      next: (codigoUsado) => {
+        loading.dismiss();
+        if (this.usuario) {
+          this.usuario.codigoAcesso = codigoUsado.codigo;
+          this.usuario.codigoAcessoId = codigoUsado.id;
+          this.formGroup.patchValue({
+            codigoAcesso: codigoUsado.codigo
+          });
+          this.codigoValidado = false;
+          this.codigoValido = false;
+          this.mensagemCodigo = '';
+          this.exibirMensagem(`Código ${codigoUsado.codigo} vinculado com sucesso!`);
+        }
+      },
+      error: (erro) => {
+        console.error('Erro ao usar código:', erro);
+        loading.dismiss();
+        this.exibirMensagem('Erro ao vincular código. Ele pode estar expirado ou já em uso.');
       }
     });
   }

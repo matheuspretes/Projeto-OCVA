@@ -38,7 +38,6 @@
             <ion-item class="field-input-card password-field">
               <ion-input type="password" formControlName="senha"></ion-input>
             </ion-item>
-            <button type="button" class="inline-link">Alterar Senha</button>
           </div>
         </ion-card-content>
       </ion-card>
@@ -69,20 +68,98 @@
         </ion-card-content>
       </ion-card>
 
+      <ion-card class="dados-card">
+        <ion-card-header>
+          <ion-card-title>CÓDIGO DE ACESSO</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <p class="info-codigo">
+            Recebeu um código de 8 caracteres da diretoria? Insira-o aqui para vincular sua conta.
+          </p>
+          
+          <div class="field-stack">
+            <ion-label class="field-label" position="stacked">Código de Acesso</ion-label>
+            <ion-item class="field-input-card">
+              <ion-input 
+                type="text" 
+                formControlName="codigoAcesso" 
+                placeholder="Ex: ABC12345"
+                (keyup)="codigoValidado = false"
+              ></ion-input>
+            </ion-item>
+          </div>
+
+          <!-- Botões de validação -->
+          <div class="codigo-acoes" *ngIf="!codigoValidado">
+            <ion-button 
+              expand="block" 
+              color="primary"
+              (click)="validarCodigo()"
+              [disabled]="validandoCodigo || !formGroup.get('codigoAcesso')?.value"
+            >
+              <ion-spinner *ngIf="validandoCodigo" name="crescent"></ion-spinner>
+              {{ validandoCodigo ? 'Validando...' : 'Validar Código' }}
+            </ion-button>
+          </div>
+
+          <!-- Mensagem de validação -->
+          <div class="codigo-mensagem" *ngIf="codigoValidado">
+            <div [ngClass]="{'sucesso': codigoValido, 'erro': !codigoValido}">
+              <ion-icon [name]="codigoValido ? 'checkmark-circle-outline' : 'close-circle-outline'"></ion-icon>
+              <span>{{ mensagemCodigo }}</span>
+            </div>
+
+            <div class="codigo-acoes-validacao">
+              <ion-button 
+                expand="block" 
+                color="success"
+                (click)="usarCodigo()"
+                [disabled]="!codigoValido"
+              >
+                Vincular Código
+              </ion-button>
+              <ion-button 
+                expand="block" 
+                fill="outline"
+                color="medium"
+                (click)="codigoValidado = false"
+              >
+                Tentar Outro
+              </ion-button>
+            </div>
+          </div>
+
+          <!-- Código já vinculado -->
+          <div class="codigo-vinculado" *ngIf="formGroup.get('codigoAcesso')?.value && !codigoValidado">
+            <div class="vinculado-info">
+              <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+              <span>Código vinculado: <strong>{{ formGroup.get('codigoAcesso')?.value }}</strong></span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
       <ion-card class="actions-card">
         <ion-card-content>
-          <ion-button type="submit" expand="block" class="save-button" [disabled]="!formGroup.valid">
-            SALVAR ALTERAÇÕES
+          
+          <ion-button type="submit" expand="block" class="save-button" [disabled]="!formGroup?.valid">
+            Salvar Alterações
           </ion-button>
 
+          
           <div class="actions-row">
-            <button type="button" class="text-action" (click)="cancelar()">Cancelar</button>
+            <ion-button fill="clear" color="medium" (click)="cancelar()">
+              Cancelar
+            </ion-button>
 
-            <ion-button type="button" fill="outline" class="delete-button" (click)="excluir()">
+            <ion-button fill="outline" color="danger" class="delete-button" (click)="excluir()">
               Excluir Conta
             </ion-button>
 
-            <button type="button" class="text-action" (click)="sairDaConta()">Sair da Conta</button>
+            <ion-button fill="clear" color="danger" (click)="sairDaConta()">
+              Sair da Conta
+            </ion-button>
           </div>
         </ion-card-content>
       </ion-card>

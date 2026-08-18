@@ -7,6 +7,8 @@ export class Usuario {
     senha: string;
     tipo: TipoUsuario;
     instrumento: string;
+    codigoAcesso?: string;
+    codigoAcessoId?: number;
 
     constructor() {
         this.id = 0;
@@ -15,6 +17,8 @@ export class Usuario {
         this.senha = "";
         this.tipo = TipoUsuario[4].value;
         this.instrumento = "";
+        this.codigoAcesso = "";
+        this.codigoAcessoId = 0;
     }
 }
 

@@ -50,14 +50,6 @@ export class InicioPage implements OnInit {
     },
     {
 
-      title: 'Criar evento',
-      description: 'Registre eventos futuros',
-      route: '/criar-evento',
-      kind: 'link',
-      types: ['diretoria', 'maestro', 'secretaria'],
-    },
-    {
-
       title: 'Eventos',
       description: 'Confira eventos registrados',
       route: '/eventos',
@@ -76,7 +68,14 @@ export class InicioPage implements OnInit {
       description: 'Confira os músicos registrados',
       route: '/musicos',
       kind: 'link',
-      types: ['nulo'],
+      types: ['maestro'],
+    },
+    {
+      title: 'Códigos de Acesso',
+      description: 'Gere e gerencie códigos para usuários',
+      route: '/codigos-acesso',
+      kind: 'link',
+      types: ['diretoria'],
     },
   ];
 
