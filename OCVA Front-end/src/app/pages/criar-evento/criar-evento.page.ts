@@ -100,7 +100,7 @@ export class CriarEventoPage implements OnInit {
 
   cancelar() {
     this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    this.router.navigate(['/eventos']);
+    this.router.navigate(['/inicio']);
   }
 
   async excluir() {
