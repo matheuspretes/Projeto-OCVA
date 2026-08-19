@@ -1,0 +1,116 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <div class="toolbar-brand">
+      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
+        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </a>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="codigos-page">
+  <div class="codigos-shell">
+    
+    <!-- Card de cadastro de código -->
+    <ion-card class="gerador-card">
+      <ion-card-header>
+        <ion-card-title>CADASTRAR CÓDIGO</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="info-text">
+          Cadastre um código personalizado para permitir o acesso de músicos e maestros ao sistema.
+        </p>
+        <ion-button expand="block" color="success" (click)="abrirModalDigitarCodigo()" [disabled]="carregando">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Digitar Novo Código
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card de filtro -->
+    <ion-card class="filtro-card">
+      <ion-card-header>
+        <ion-card-title>FILTRAR POR STATUS</ion-card-title>
+      </ion-card-header>
+      <ion-card-content [formGroup]="formGroup">
+        <ion-item class="field-input-card" lines="none">
+          <ion-select formControlName="filtro" (ionChange)="aplicarFiltro()">
+            <ion-select-option value="todos">Todos os Códigos</ion-select-option>
+            <ion-select-option value="disponivel">Disponíveis</ion-select-option>
+            <ion-select-option value="usado">Usados</ion-select-option>
+            <ion-select-option value="expirado">Expirados</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de códigos -->
+    <ion-card class="lista-card" *ngIf="(codigosFiltrados?.length || 0) > 0">
+      <ion-card-header>
+        <ion-card-title>
+          <span>CÓDIGOS DE ACESSO</span>
+          <ion-badge color="primary">{{ codigosFiltrados.length }}</ion-badge>
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item *ngFor="let codigo of codigosFiltrados" class="codigo-item">
+            <ion-label class="ion-text-wrap">
+              <div class="codigo-principal">
+                <span class="codigo-token">{{ codigo.codigo }}</span>
+                <ion-badge [color]="getCorStatus(codigo.status)">
+                  {{ getStatusLabel(codigo.status) }}
+                </ion-badge>
+              </div>
+
+              <p class="codigo-info">
+                Criado em: {{ formatarData(codigo.dataCriacao) }}
+              </p>
+              <p *ngIf="codigo.dataUso" class="codigo-info">
+                Usado em: {{ formatarData(codigo.dataUso) }}
+              </p>
+              <p *ngIf="codigo.usuarioNome" class="codigo-usuario">
+                Vinculado a: {{ codigo.usuarioNome }}
+              </p>
+            </ion-label>
+
+            <div slot="end" class="acoes-botoes">
+              <ion-button 
+                fill="clear" 
+                size="small" 
+                color="primary" 
+                (click)="copiarCodigo(codigo.codigo)"
+                title="Copiar código"
+              >
+                <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+              </ion-button>
+              
+              <ion-button 
+                *ngIf="codigo.status === 'disponivel'"
+                fill="clear" 
+                size="small" 
+                color="danger" 
+                (click)="deletarCodigo(codigo.codigo)"
+                title="Deletar código"
+              >
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Mensagem vazia -->
+    <ion-card *ngIf="(codigosFiltrados?.length || 0) === 0 && !carregando" class="vazio-card">
+      <ion-card-content>
+        <div class="vazio-container">
+          <ion-icon name="file-tray-outline"></ion-icon>
+          <p class="vazio-text">Nenhum código encontrado com este filtro.</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>

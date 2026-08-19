@@ -1,0 +1,202 @@
+.codigos-page {
+  --background: #f8fafc;
+}
+
+.codigos-shell {
+  padding: 20px 16px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* Toolbar */
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+
+  .toolbar-logo-link {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .toolbar-logo {
+    height: 36px;
+    object-fit: contain;
+  }
+}
+
+/* Cards */
+.gerador-card,
+.filtro-card,
+.lista-card,
+.vazio-card {
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+
+  ion-card-header {
+    padding: 16px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #1e293b;
+    margin: 0;
+  }
+
+  ion-card-content {
+    padding: 18px 20px;
+  }
+}
+
+/* Textos e Inputs */
+.info-text {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.field-input-card {
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --inner-padding-end: 0;
+  --background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  margin: 0;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: #94a3b8;
+  }
+
+  ion-select {
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+  }
+}
+
+/* Lista e Itens */
+.lista-card {
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+.codigo-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .codigo-principal {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+
+    .codigo-token {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #0f172a;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  }
+
+  .codigo-info {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0 0;
+  }
+
+  .codigo-usuario {
+    font-size: 13px;
+    color: #0284c7;
+    font-weight: 500;
+    margin: 4px 0 0 0;
+  }
+}
+
+/* Ações */
+.acoes-botoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    height: 36px;
+    margin: 0;
+    font-size: 18px;
+  }
+}
+
+/* Estado Vazio */
+.vazio-card {
+  .vazio-container {
+    text-align: center;
+    padding: 32px 16px;
+    color: #94a3b8;
+
+    ion-icon {
+      font-size: 44px;
+      margin-bottom: 8px;
+      opacity: 0.7;
+    }
+
+    .vazio-text {
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .codigos-shell {
+    padding: 12px 8px;
+  }
+
+  .gerador-card,
+  .filtro-card,
+  .lista-card,
+  .vazio-card {
+    border-radius: 10px;
+
+    ion-card-header,
+    ion-card-content {
+      padding: 14px 16px;
+    }
+  }
+
+  .codigo-item {
+    .codigo-principal {
+      flex-wrap: wrap;
+    }
+  }
+}
