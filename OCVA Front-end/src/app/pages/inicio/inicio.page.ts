@@ -25,6 +25,7 @@ export class InicioPage implements OnInit {
   visibleCards: CardAction[] = [];
 
   public nomeUsuario: string = "";
+  
 
   private readonly cards: CardAction[] = [
     {
