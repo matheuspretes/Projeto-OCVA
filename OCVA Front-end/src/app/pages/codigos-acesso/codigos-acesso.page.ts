@@ -8,9 +8,9 @@ import {
   IonCardHeader, IonCardTitle, IonBadge, IonList, IonIcon,
   IonSelect, IonSelectOption
 } from '@ionic/angular/standalone';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { copyOutline, trashOutline, refreshOutline } from 'ionicons/icons';
+import { copyOutline, trashOutline, refreshOutline, addOutline } from 'ionicons/icons';
 import { CodigoAcessoService } from 'src/app/services/codigo-acesso-service';
 import { CodigoAcesso } from 'src/app/models/codigo-acesso';
 
@@ -36,19 +36,17 @@ export class CodigosAcessoPage implements OnInit {
   constructor(
     private service: CodigoAcessoService,
     private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
     private formBuilder: FormBuilder
   ) {
-    addIcons({ copyOutline, trashOutline, refreshOutline });
+    addIcons({ copyOutline, trashOutline, refreshOutline, addOutline });
     this.formGroup = this.formBuilder.group({
       filtro: ['todos']
     });
   }
 
   ngOnInit() {
-    this.carregarCodigos();
-  }
-
-  ionViewWillEnter() {
     this.carregarCodigos();
   }
 
@@ -66,13 +64,49 @@ export class CodigosAcessoPage implements OnInit {
     });
   }
 
-  gerarNovoCodigo() {
-    this.service.gerarCodigo().subscribe({
+  async abrirModalDigitarCodigo() {
+    const alert = await this.alertCtrl.create({
+      header: 'Novo Código',
+      message: 'Digite o código que deseja cadastrar:',
+      inputs: [
+        {
+          name: 'codigoDigitado',
+          type: 'text',
+          placeholder: 'Ex: ENSAIO2026'
+        }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Cadastrar',
+          handler: (dados) => {
+            if (dados.codigoDigitado && dados.codigoDigitado.trim() !== '') {
+              this.salvarCodigoDigitado(dados.codigoDigitado.trim());
+            } else {
+              this.mostrarMensagem('Digite um código válido.');
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async salvarCodigoDigitado(codigo: string) {
+    const loading = await this.loadingCtrl.create({ message: 'Cadastrando código...' });
+    await loading.present();
+
+    this.service.cadastrarCodigo(codigo).subscribe({
       next: (novo) => {
+        loading.dismiss();
         this.codigos.unshift(novo);
-        this.mostrarMensagem(`Código gerado: ${novo.codigo}`);
+        this.mostrarMensagem(`Código "${novo.codigo}" cadastrado com sucesso!`);
       },
-      error: () => this.mostrarMensagem('Erro ao gerar código na API')
+      error: (err) => {
+        loading.dismiss();
+        const msg = err.error?.message || 'Erro ao cadastrar código';
+        this.mostrarMensagem(msg);
+      }
     });
   }
 
@@ -80,7 +114,7 @@ export class CodigosAcessoPage implements OnInit {
     this.service.deletarCodigo(codigo).subscribe({
       next: () => {
         this.codigos = this.codigos.filter(c => c.codigo !== codigo);
-        this.mostrarMensagem('Código deletado com sucesso');
+        this.mostrarMensagem('Código removido com sucesso');
       },
       error: () => this.mostrarMensagem('Erro ao deletar código')
     });

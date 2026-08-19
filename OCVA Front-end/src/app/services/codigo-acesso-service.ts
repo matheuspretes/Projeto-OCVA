@@ -16,8 +16,8 @@ export class CodigoAcessoService {
     return this.http.get<CodigoAcesso[]>(this.API_URL);
   }
 
-  gerarCodigo(): Observable<CodigoAcesso> {
-    return this.http.post<CodigoAcesso>(`${this.API_URL}/gerar`, {});
+  cadastrarCodigo(codigo: string): Observable<CodigoAcesso> {
+    return this.http.post<CodigoAcesso>(`${this.API_URL}/cadastrar`, { codigo });
   }
 
   deletarCodigo(codigo: string): Observable<void> {

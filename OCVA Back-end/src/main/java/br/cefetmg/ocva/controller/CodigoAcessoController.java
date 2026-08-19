@@ -2,7 +2,7 @@ package br.cefetmg.ocva.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
+import java.util.Locale;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -18,40 +18,46 @@ import br.cefetmg.ocva.repository.CodigoAcessoRepository;
 public class CodigoAcessoController {
 
     private final CodigoAcessoRepository repository;
-    private final Random random = new Random();
 
     public CodigoAcessoController(CodigoAcessoRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
-public List<CodigoAcesso> listar() {
-    return repository.findAll();
-}
+    public List<CodigoAcesso> listar() {
+        return repository.findAll(Sort.by(Sort.Direction.DESC, "dataCriacao"));
+    }
 
-    @PostMapping("/gerar")
-    public CodigoAcesso gerar() {
+    // Endpoint para CADASTRAR um código digitado manualmente
+    @PostMapping("/cadastrar")
+    public CodigoAcesso cadastrarCodigo(@RequestBody CadastrarCodigoRequest request) {
+        if (request == null || request.codigo == null || request.codigo.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O código não pode ser vazio.");
+        }
+
+        String codigoFormatado = request.codigo.trim().toUpperCase(Locale.ROOT);
+
+        if (repository.existsByCodigo(codigoFormatado)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este código já existe cadastrado.");
+        }
+
         CodigoAcesso novo = new CodigoAcesso();
-        novo.setCodigo(gerarCodigoAleatorio(8));
+        novo.setCodigo(codigoFormatado);
         novo.setStatus("disponivel");
         novo.setDataCriacao(LocalDateTime.now());
         novo.setDataExpiracao(LocalDateTime.now().plusDays(30));
+
         return repository.save(novo);
     }
 
     @DeleteMapping("/{codigo}")
     public void deletar(@PathVariable String codigo) {
-        CodigoAcesso item = repository.findByCodigo(codigo.trim().toUpperCase())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Código não encontrado"));
-        repository.delete(item);
+        CodigoAcesso existente = repository.findByCodigo(codigo.trim().toUpperCase(Locale.ROOT))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Código não encontrado."));
+        repository.delete(existente);
     }
 
-    private String gerarCodigoAleatorio(int tamanho) {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tamanho; i++) {
-            sb.append(chars.charAt(random.nextInt(chars.length())));
-        }
-        return sb.toString();
+    public static class CadastrarCodigoRequest {
+        public String codigo;
     }
 }

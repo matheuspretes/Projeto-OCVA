@@ -11,18 +11,18 @@
 <ion-content [fullscreen]="true" class="codigos-page">
   <div class="codigos-shell">
     
-    <!-- Card de geração -->
+    <!-- Card de cadastro de código -->
     <ion-card class="gerador-card">
       <ion-card-header>
-        <ion-card-title>GERAR NOVO CÓDIGO</ion-card-title>
+        <ion-card-title>CADASTRAR CÓDIGO</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p class="info-text">
-          Gere um novo código de 8 caracteres (letras e números) para compartilhar com usuários (músicos e maestros).
+          Cadastre um código personalizado para permitir o acesso de músicos e maestros ao sistema.
         </p>
-        <ion-button expand="block" color="success" (click)="gerarNovoCodigo()" [disabled]="carregando">
-          <ion-icon slot="start" name="refresh-outline"></ion-icon>
-          Gerar Código
+        <ion-button expand="block" color="success" (click)="abrirModalDigitarCodigo()" [disabled]="carregando">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Digitar Novo Código
         </ion-button>
       </ion-card-content>
     </ion-card>
@@ -79,7 +79,7 @@
               <ion-button 
                 fill="clear" 
                 size="small" 
-                color="primary"
+                color="primary" 
                 (click)="copiarCodigo(codigo.codigo)"
                 title="Copiar código"
               >
@@ -90,7 +90,7 @@
                 *ngIf="codigo.status === 'disponivel'"
                 fill="clear" 
                 size="small" 
-                color="danger"
+                color="danger" 
                 (click)="deletarCodigo(codigo.codigo)"
                 title="Deletar código"
               >
