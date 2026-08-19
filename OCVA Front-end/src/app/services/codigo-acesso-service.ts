@@ -8,33 +8,34 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class CodigoAcessoService {
-  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/codigos-acesso';
+  private readonly api = 'https://ocva-api.onrender.com/api/v1/codigos-acesso';
 
   constructor(private http: HttpClient) {}
 
   listarCodigos(): Observable<CodigoAcesso[]> {
-    return this.http.get<CodigoAcesso[]>(this.API_URL);
+    return this.http.get<CodigoAcesso[]>(this.api);
   }
 
   cadastrarCodigo(codigo: string): Observable<CodigoAcesso> {
-    return this.http.post<CodigoAcesso>(`${this.API_URL}/cadastrar`, { codigo });
+    return this.http.post<CodigoAcesso>(`${this.api}/cadastrar`, { codigo });
   }
 
   deletarCodigo(codigo: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${encodeURIComponent(codigo)}`);
+    return this.http.delete<void>(`${this.api}/${encodeURIComponent(codigo)}`);
   }
 
   verificarDisponibilidade(codigo: string): Observable<{ disponivel: boolean; mensagem: string }> {
     return this.http.get<{ disponivel: boolean; mensagem: string }>(
-      `${this.API_URL}/verificar/${encodeURIComponent(codigo)}`
+      `${this.api}/verificar/${encodeURIComponent(codigo)}`
     );
   }
 
   validarEUsarCodigo(codigo: string, usuarioId?: number, usuarioNome?: string): Observable<CodigoAcesso> {
-    return this.http.post<CodigoAcesso>(`${this.API_URL}/validar`, {
+    return this.http.post<CodigoAcesso>(`${this.api}/validar`, {
       codigo,
       usuarioId,
       usuarioNome
     });
   }
+  // pode deletar isso daqui é só um teste
 }
