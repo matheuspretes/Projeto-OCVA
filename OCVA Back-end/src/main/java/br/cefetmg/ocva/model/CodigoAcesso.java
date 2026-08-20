@@ -41,6 +41,10 @@ public class CodigoAcesso {
 
     private LocalDateTime dataExpiracao;
 
+    public boolean FoiUtilizado() {
+        return !"disponivel".equalsIgnoreCase(this.status) || this.dataUso != null;
+    }
+
     @PrePersist
     public void prePersist() {
         if (this.dataCriacao == null) {
