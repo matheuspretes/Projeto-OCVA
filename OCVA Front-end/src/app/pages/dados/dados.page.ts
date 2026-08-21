@@ -133,9 +133,6 @@ export class DadosPage implements OnInit {
     });
   }
 
-  /**
-   * Valida o código de acesso inserido
-   */
   validarCodigo() {
     const codigo = this.formGroup.get('codigoAcesso')?.value?.trim();
 
@@ -178,9 +175,6 @@ export class DadosPage implements OnInit {
     });
   }
 
-  /**
-   * Usa o código de acesso e vincula ao usuário
-   */
   usarCodigo() {
     const codigo = this.formGroup.get('codigoAcesso')?.value?.trim();
 
@@ -207,9 +201,6 @@ export class DadosPage implements OnInit {
     }).then(alert => alert.present());
   }
 
-  /**
-   * Executa o uso do código de forma assíncrona
-   */
   private async executarUsoDoCodigoAsync(codigo: string) {
     const loading = await this.loadingController.create({
       message: 'Vinculando código...'
@@ -217,7 +208,7 @@ export class DadosPage implements OnInit {
 
     await loading.present();
 
-    this.codigoAcessoService.validarEUsarCodigo(codigo).subscribe({
+    this.codigoAcessoService.validarEUsarCodigo(codigo, this.usuario?.id, this.usuario?.nome).subscribe({
       next: (codigoUsado) => {
         loading.dismiss();
         if (this.usuario) {
