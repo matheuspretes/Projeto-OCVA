@@ -1,6 +1,9 @@
 package br.cefetmg.ocva.config;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 91d7a4320b0256589d249e0f703531221b8e4709
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -35,4 +38,9 @@ public class CorsConfig {
 
         return source;
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> 91d7a4320b0256589d249e0f703531221b8e4709
