@@ -155,7 +155,7 @@ export class CriarEnsaioPage implements OnInit {
 
   cancelar() {
     this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    this.router.navigate(['/ensaios']);
+    this.router.navigate(['/inicio']);
   }
 
   async excluir() {
