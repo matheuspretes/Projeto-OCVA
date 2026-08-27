@@ -40,7 +40,7 @@ public class CorsConfig {
     }
 <<<<<<< HEAD
 }
-=======
-}
+
+
 
 >>>>>>> 91d7a4320b0256589d249e0f703531221b8e4709
