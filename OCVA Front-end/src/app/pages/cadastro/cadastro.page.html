@@ -15,6 +15,78 @@
 
       <ion-card-content>
         <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+          
+          <div class="form-group">
+            <p class="form-group-title">Código de Acesso</p>
+            <p class="info-codigo" style="font-size: 0.85rem; color: var(--ion-color-medium); margin-bottom: 8px;">
+              Recebeu um código de 8 caracteres da diretoria? Insira-o aqui para vincular sua conta.
+            </p>
+
+            <ion-item class="field">
+              <ion-label position="stacked">Código de Acesso</ion-label>
+              <ion-input 
+                type="text" 
+                formControlName="codigoAcesso" 
+                placeholder="Ex: ABC12345"
+                (keyup)="codigoValidado = false"
+              ></ion-input>
+            </ion-item>
+
+            <div class="codigo-acoes" *ngIf="!codigoValidado" style="margin-top: 8px;">
+              <ion-button 
+                expand="block" 
+                fill="outline"
+                size="small"
+                color="primary"
+                type="button"
+                (click)="validarCodigo()"
+                [disabled]="validandoCodigo || !formGroup.get('codigoAcesso')?.value"
+              >
+                <ion-spinner *ngIf="validandoCodigo" name="crescent"></ion-spinner>
+                {{ validandoCodigo ? 'Validando...' : 'Validar Código' }}
+              </ion-button>
+            </div>
+
+            <div class="codigo-mensagem" *ngIf="codigoValidado" style="margin-top: 8px;">
+              <div [ngClass]="{'sucesso': codigoValido, 'erro': !codigoValido}">
+                <ion-icon [name]="codigoValido ? 'checkmark-circle-outline' : 'close-circle-outline'"></ion-icon>
+                <span>{{ mensagemCodigo }}</span>
+              </div>
+
+              <div class="codigo-acoes-validacao" style="display: flex; gap: 8px; margin-top: 8px;">
+                <ion-button 
+                  expand="block" 
+                  size="small"
+                  color="success"
+                  type="button"
+                  (click)="usarCodigo()"
+                  [disabled]="!codigoValido"
+                  style="flex: 1;"
+                >
+                  Vincular Código
+                </ion-button>
+                <ion-button 
+                  expand="block" 
+                  size="small"
+                  fill="outline"
+                  color="medium"
+                  type="button"
+                  (click)="codigoValidado = false"
+                  style="flex: 1;"
+                >
+                  Tentar Outro
+                </ion-button>
+              </div>
+            </div>
+
+            <div class="codigo-vinculado" *ngIf="formGroup.get('codigoAcesso')?.value && !codigoValidado" style="margin-top: 8px;">
+              <div class="vinculado-info" style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem;">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Código inserido: <strong>{{ formGroup.get('codigoAcesso')?.value }}</strong></span>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group">
             <p class="form-group-title">Identidade</p>
 
@@ -48,7 +120,7 @@
             <ion-item class="field">
               <ion-label position="stacked">Selecionar tipo</ion-label>
               <ion-select formControlName="tipo" placeholder="Escolha uma opção">
-                <ion-select-option value="musico">Musico</ion-select-option>
+                <ion-select-option value="musico">Músico</ion-select-option>
                 <ion-select-option value="maestro">Maestro</ion-select-option>
                 <ion-select-option value="diretoria">Diretoria</ion-select-option>
               </ion-select>

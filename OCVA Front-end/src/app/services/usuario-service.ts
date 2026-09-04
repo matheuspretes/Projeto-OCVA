@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario';
+import { CodigoAcesso } from '../models/codigo-acesso';
 @Injectable({
   providedIn: 'root',
 })
@@ -72,5 +73,13 @@ export class UsuarioService {
 
   AlterarDadosUsuario(usuario: Usuario): Observable<Usuario> {
     return this.salvar(usuario);
+  }
+
+  validarEUsarCodigo(codigo: string, usuarioId?: number, usuarioNome?: string): Observable<CodigoAcesso> {
+    return this.http.post<CodigoAcesso>(`${this.API_URL}/validar`, {
+      codigo,
+      usuarioId,
+      usuarioNome
+    });
   }
 }
