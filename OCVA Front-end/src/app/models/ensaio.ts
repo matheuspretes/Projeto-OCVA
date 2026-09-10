@@ -3,5 +3,8 @@ export interface Ensaio {
   data: string;
   descricao: string;
   musicos: any[];
+  presencas?: any[];
+  faltas?: any[];
+  criador?: any;
   titulo?: string; 
 }

@@ -27,6 +27,13 @@ export class EnsaiosService {
     return this.http.put<Ensaio>(this.API_URL, ensaio);
   }
 
+  marcarPresenca(ensaioId: number, musicoId: number, presente: boolean): Observable<Ensaio> {
+    return this.http.put<Ensaio>(
+      `${this.API_URL}/${ensaioId}/presenca/${musicoId}?presente=${presente}`,
+      {}
+    );
+  }
+
   excluir(id: number): Observable<Ensaio> {
     return this.http.delete<Ensaio>(`${this.API_URL}/${id}`);
   }

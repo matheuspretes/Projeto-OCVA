@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/ensaios"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalhes do ensaio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding ensaio-detalhe-page">
+  <div *ngIf="carregando" class="loading-state">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-card *ngIf="!carregando && ensaio">
+    <ion-card-header>
+      <ion-card-title>{{ ensaio.titulo || 'Ensaio Geral' }}</ion-card-title>
+      <p>Data: {{ ensaio.data }}</p>
+      <p *ngIf="ensaio.criador">Criado por: <strong>{{ ensaio.criador.nome }}</strong></p>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>{{ ensaio.descricao }}</p>
+      <h2>Músicos escalados</h2>
+
+      <ion-list *ngIf="ensaio.musicos?.length; else semMusicos">
+        <ion-item *ngFor="let musico of ensaio.musicos">
+          <ion-label>
+            <h3>{{ musico.nome }}</h3>
+            <p>{{ musico.instrumento }}</p>
+          </ion-label>
+          <ion-badge *ngIf="estaPresente(musico)" color="success">Presente</ion-badge>
+          <ion-badge *ngIf="estaAusente(musico)" color="warning">Falta</ion-badge>
+          <div *ngIf="podeMarcarPresenca()" class="presence-actions">
+            <ion-button size="small" color="success" fill="outline" [disabled]="jaFoiMarcado(musico)" (click)="marcarPresenca(musico, true)">Presença</ion-button>
+            <ion-button size="small" color="warning" fill="outline" [disabled]="jaFoiMarcado(musico)" (click)="marcarPresenca(musico, false)">Falta</ion-button>
+          </div>
+        </ion-item>
+      </ion-list>
+
+      <ng-template #semMusicos>
+        <p class="empty-state">Nenhum músico foi escalado para este ensaio.</p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+  <p *ngIf="!carregando && !ensaio" class="empty-state">Ensaio não encontrado.</p>
+</ion-content>

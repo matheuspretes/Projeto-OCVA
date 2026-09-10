@@ -95,11 +95,13 @@ export class CriarEnsaioPage implements OnInit {
     }
 
     const form = this.formGroup.value;
+    const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
     const ensaio: Ensaio = {
       id: this.ensaioId ?? undefined,
       data: this.formatDateOnly(form.data),
       descricao: form.descricao,
-      musicos: form.musicos || []
+      musicos: form.musicos || [],
+      criador: usuarioAutenticado
     };
 
     const requisicao = this.modoEdicao && this.ensaioId

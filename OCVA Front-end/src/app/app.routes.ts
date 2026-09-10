@@ -31,6 +31,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/ensaios/ensaios.page').then( m => m.EnsaiosPage)
   },
   {
+    path: 'ensaios/:id',
+    loadComponent: () => import('./pages/ensaio-detalhe/ensaio-detalhe.page').then( m => m.EnsaioDetalhePage)
+  },
+  {
     path: 'criar-ensaio',
     loadComponent: () => import('./pages/criar-ensaio/criar-ensaio.page').then( m => m.CriarEnsaioPage)
   },
@@ -46,4 +50,6 @@ export const routes: Routes = [
     path: 'musicos',
     loadComponent: () => import('./pages/musicos/musicos.page').then( m => m.MusicosPage)
   },
+
+  
 ];

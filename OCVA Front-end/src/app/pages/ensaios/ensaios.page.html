@@ -11,7 +11,7 @@
     <p>Nenhum ensaio agendado encontrado.</p>
   </div>
 
-  <ion-card *ngFor="let ensaio of ensaios" style="margin-bottom: 20px;">
+  <ion-card *ngFor="let ensaio of ensaios" style="margin-bottom: 20px; cursor: pointer;" (click)="abrirDetalhes(ensaio)">
     <ion-card-header>
       <ion-card-title style="font-weight: bold; color: #ffffff;">
         {{ ensaio.titulo || 'Ensaio Geral' }}
@@ -30,7 +30,7 @@
 
       <div class="musicos-section">
         <h6 style="margin-bottom: 10px; font-weight: bold; color: #deb887; font-size: 1em;">
-          Músicos presentes:
+          Músicos escalados:
         </h6>
 
         <p *ngIf="!ensaio.nomesMusicos || ensaio.nomesMusicos.length === 0"
@@ -45,9 +45,8 @@
         </div>
 
         <div *ngIf="podeEditarOuExcluir()" style="display:flex; gap:8px; margin-top:16px; flex-wrap: wrap;">
-          <ion-button size="small" fill="outline" (click)="editarEnsaio(ensaio)">Editar</ion-button>
-          <ion-button size="small" color="danger" fill="outline" (click)="excluirEnsaio(ensaio)">Excluir</ion-button>
-          <ion-button size="small" color="success" fill="solid" (click)="confirmarPresenca(ensaio)">Confirmar presença</ion-button>
+          <ion-button size="small" fill="outline" (click)="$event.stopPropagation(); editarEnsaio(ensaio)">Editar</ion-button>
+          <ion-button size="small" color="danger" fill="outline" (click)="$event.stopPropagation(); excluirEnsaio(ensaio)">Excluir</ion-button>
         </div>
       </div>
     </ion-card-content>

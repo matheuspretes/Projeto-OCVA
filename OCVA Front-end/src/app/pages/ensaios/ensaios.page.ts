@@ -104,6 +104,12 @@ export class EnsaiosPage implements OnInit {
     this.router.navigate(['/criar-ensaio'], { queryParams: { id: ensaio.id } });
   }
 
+  abrirDetalhes(ensaio: any) {
+    if (ensaio.id) {
+      this.router.navigate(['/ensaios', ensaio.id]);
+    }
+  }
+
   async excluirEnsaio(ensaio: any) {
     if (!ensaio.id) {
       return;
@@ -137,56 +143,4 @@ export class EnsaiosPage implements OnInit {
     await alert.present();
   }
 
-  async confirmarPresenca(ensaio: any) {
-    if (!this.podeEditarOuExcluir()) {
-      return;
-    }
-
-    const inputs = (ensaio.musicos || []).map((musico: any, index: number) => ({
-      name: 'presentes',
-      type: 'checkbox' as const,
-      label: musico.nome,
-      value: musico,
-      checked: true,
-      id: `musico-${ensaio.id}-${index}`
-    }));
-
-    if (inputs.length === 0) {
-      const toast = await this.toastController.create({ message: 'Não há músicos cadastrados para confirmar', duration: 2000, color: 'warning' });
-      await toast.present();
-      return;
-    }
-
-    const alert = await this.alertController.create({
-      header: 'Confirmar presença',
-      message: 'Selecione os músicos presentes neste ensaio',
-      inputs,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Salvar',
-          handler: (selecionados: any[]) => {
-            const ensaioAtualizado = {
-              ...ensaio,
-              musicos: selecionados || []
-            };
-
-            this.ensaiosService.editar(ensaioAtualizado).subscribe({
-              next: async () => {
-                const toast = await this.toastController.create({ message: 'Presença confirmada com sucesso', duration: 1500, color: 'success' });
-                await toast.present();
-                this.ngOnInit();
-              },
-              error: async () => {
-                const toast = await this.toastController.create({ message: 'Erro ao confirmar presença', duration: 2000, color: 'danger' });
-                await toast.present();
-              }
-            });
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
 }

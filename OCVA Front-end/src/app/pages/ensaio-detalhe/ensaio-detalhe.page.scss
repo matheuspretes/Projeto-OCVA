@@ -1,0 +1,42 @@
+.ensaio-detalhe-page {
+  --background: #121212;
+
+  ion-card {
+    margin: 0 auto;
+    max-width: 900px;
+    background: #1d1d1d;
+  }
+
+  ion-card-title,
+  h2,
+  h3,
+  p {
+    color: #f2f2f2;
+  }
+
+  h2 {
+    margin-top: 24px;
+    font-size: 1.1rem;
+  }
+
+  ion-item {
+    --background: #262626;
+    --border-color: #444;
+    margin-bottom: 4px;
+  }
+
+  .presence-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 12px;
+  }
+
+  .loading-state,
+  .empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+    color: #aaa;
+  }
+}

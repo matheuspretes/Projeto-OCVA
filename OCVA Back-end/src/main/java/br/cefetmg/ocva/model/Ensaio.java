@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,4 +42,24 @@ public class Ensaio {
         inverseJoinColumns = @JoinColumn(name = "musico_id")
     )
     private List<Musico> musicos;
+
+    @ManyToMany
+    @JoinTable(
+        name = "ensaio_presenca",
+        joinColumns = @JoinColumn(name = "ensaio_id"),
+        inverseJoinColumns = @JoinColumn(name = "musico_id")
+    )
+    private List<Musico> presencas;
+
+    @ManyToMany
+    @JoinTable(
+        name = "ensaio_falta",
+        joinColumns = @JoinColumn(name = "ensaio_id"),
+        inverseJoinColumns = @JoinColumn(name = "musico_id")
+    )
+    private List<Musico> faltas;
+
+    @ManyToOne
+    @JoinColumn(name = "criador_id")
+    private Musico criador;
 }
