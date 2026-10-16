@@ -6,7 +6,9 @@ export class Usuario {
     login: string;
     senha: string;
     tipo: TipoUsuario;
+    idade: number;
     instrumento: string;
+    ativo?: boolean;
     codigoAcesso?: string;
     codigoAcessoId?: number;
 
@@ -16,9 +18,10 @@ export class Usuario {
         this.login = "";
         this.senha = "";
         this.tipo = TipoUsuario[4].value;
+        this.idade = 0;
         this.instrumento = "";
+        this.ativo = true;
         this.codigoAcesso = "";
         this.codigoAcessoId = 0;
     }
 }
-

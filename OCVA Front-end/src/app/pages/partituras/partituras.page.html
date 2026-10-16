@@ -1,0 +1,63 @@
+<ion-split-pane contentId="partituras-content">
+  <ion-menu contentId="partituras-content" type="overlay">
+    <aside class="sidebar-container">
+      <div class="brand"><div class="brand-icon"><ion-icon name="musical-notes-outline"></ion-icon></div><div class="brand-text"><h1>{{ usuario?.tipo === 'diretoria' ? 'Diretoria' : 'Maestro' }}</h1><span>GESTÃO MUSICAL</span></div></div>
+      <nav class="nav-section"><span class="nav-label">Ações</span><ion-list lines="none" class="nav-list">
+        <ion-item button routerLink="/inicio"><ion-icon slot="start" name="home-outline"></ion-icon><ion-label>Início</ion-label></ion-item>
+        <ion-item button routerLink="/ensaios"><ion-icon slot="start" name="musical-note-outline"></ion-icon><ion-label>Ensaios</ion-label></ion-item>
+        <ion-item button routerLink="/eventos"><ion-icon slot="start" name="calendar-outline"></ion-icon><ion-label>Eventos</ion-label></ion-item>
+        <ion-item button routerLink="/musicos"><ion-icon slot="start" name="people-outline"></ion-icon><ion-label>Músicos</ion-label></ion-item>
+        <ion-item button routerLink="/partituras" class="active"><ion-icon slot="start" name="document-text-outline"></ion-icon><ion-label>Partituras</ion-label></ion-item>
+        <ion-item button routerLink="/codigos-acesso"><ion-icon slot="start" name="key-outline"></ion-icon><ion-label>Códigos de Acesso</ion-label></ion-item>
+        <ion-item button routerLink="/dados"><ion-icon slot="start" name="person-outline"></ion-icon><ion-label>Meus Dados</ion-label></ion-item>
+      </ion-list></nav>
+    </aside>
+  </ion-menu>
+  <ion-content id="partituras-content" class="partituras-content">
+    <header class="topbar">
+      <div class="page-heading"><ion-icon name="document-text-outline"></ion-icon><span>Partituras</span></div>
+      <ion-button *ngIf="podePublicar()" class="publish-button" (click)="mostrarPublicacao = !mostrarPublicacao">
+        <ion-icon slot="start" name="download-outline"></ion-icon>Publicar partitura
+      </ion-button>
+    </header>
+    <main class="partituras-body">
+      <section class="publish-panel" *ngIf="podePublicar() && mostrarPublicacao">
+        <h2>Publicar partitura</h2>
+        <ion-input label="Nome da partitura" label-placement="stacked" [(ngModel)]="nome" placeholder="Ex.: Canon em Ré"></ion-input>
+        <ion-input label="Compositor" label-placement="stacked" [(ngModel)]="compositor" placeholder="Ex.: J. Pachelbel"></ion-input>
+        <ion-input label="Instrumento" label-placement="stacked" [(ngModel)]="instrumento" placeholder="Ex.: Violino I"></ion-input>
+        <ion-input label="Categoria" label-placement="stacked" [(ngModel)]="categoria" placeholder="Ex.: Erudito"></ion-input>
+        <ion-input label="Evento" label-placement="stacked" [(ngModel)]="evento" placeholder="Ex.: Culto de Santa Ceia"></ion-input>
+        <input type="file" accept="application/pdf" (change)="selecionarArquivo($event)">
+        <ion-button (click)="publicar()"><ion-icon slot="start" name="download-outline"></ion-icon>Publicar PDF</ion-button>
+      </section>
+      <section class="filters">
+        <ion-input class="search-input" [(ngModel)]="busca" (ionInput)="aplicarFiltros()" placeholder="Buscar por música ou compositor">
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+        </ion-input>
+        <ion-select [(ngModel)]="filtroInstrumento" (ionChange)="aplicarFiltros()" placeholder="Todos os instrumentos">
+          <ion-select-option value="">Todos os instrumentos</ion-select-option>
+          <ion-select-option *ngFor="let item of valoresDoCampo('instrumento')" [value]="item">{{ item }}</ion-select-option>
+        </ion-select>
+        <ion-select [(ngModel)]="filtroCategoria" (ionChange)="aplicarFiltros()" placeholder="Todas as categorias">
+          <ion-select-option value="">Todas as categorias</ion-select-option>
+          <ion-select-option *ngFor="let item of valoresDoCampo('categoria')" [value]="item">{{ item }}</ion-select-option>
+        </ion-select>
+        <ion-select [(ngModel)]="filtroEvento" (ionChange)="aplicarFiltros()" placeholder="Todos os eventos">
+          <ion-select-option value="">Todos os eventos</ion-select-option>
+          <ion-select-option *ngFor="let item of valoresDoCampo('evento')" [value]="item">{{ item }}</ion-select-option>
+        </ion-select>
+      </section>
+      <h2 class="section-title">{{ partiturasFiltradas.length }} PARTITURAS</h2>
+      <section class="partituras-grid">
+        <article class="partitura-card" *ngFor="let partitura of partiturasFiltradas">
+          <div class="partitura-heading"><div class="file-icon"><ion-icon name="document-text-outline"></ion-icon></div><div><h3>{{ partitura.nome }}</h3><p>{{ partitura.compositor || 'Compositor não informado' }}</p></div></div>
+          <div class="tags"><span *ngIf="partitura.instrumento">{{ partitura.instrumento }}</span><span *ngIf="partitura.categoria">{{ partitura.categoria }}</span></div>
+          <div class="event-tag" *ngIf="partitura.evento">{{ partitura.evento }}</div>
+          <p class="file-meta">{{ partitura.nomeArquivo || 'arquivo.pdf' }}<span *ngIf="partitura.dataPublicacao"> · {{ partitura.dataPublicacao | date:'dd/MM/yyyy' }}</span></p>
+          <div class="card-actions"><ion-button expand="block" (click)="baixar(partitura)"><ion-icon slot="start" name="download-outline"></ion-icon>Baixar</ion-button><ion-button *ngIf="ehDiretoria()" fill="clear" color="danger" (click)="excluir(partitura)" aria-label="Excluir partitura"><ion-icon name="trash-outline"></ion-icon></ion-button></div>
+        </article>
+      </section>
+    </main>
+  </ion-content>
+</ion-split-pane>

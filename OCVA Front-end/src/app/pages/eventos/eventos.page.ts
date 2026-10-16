@@ -2,13 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonButton, IonCardSubtitle, IonChip, IonLabel } from '@ionic/angular/standalone';
+import { IonContent, IonMenu, IonSplitPane, IonList, IonItem, IonLabel, IonIcon, IonButton } from '@ionic/angular/standalone';
 import { UsuarioService } from 'src/app/services/usuario-service';
-import { IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 import { Evento } from 'src/app/models/evento';
 import { EventosService } from 'src/app/services/eventos-service';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  bookOutline,
+  calendarOutline,
+  documentTextOutline,
+  homeOutline,
+  imageOutline,
+  keyOutline,
+  locationOutline,
+  musicalNoteOutline,
+  musicalNotesOutline,
+  peopleOutline,
+  personOutline
+} from 'ionicons/icons';
 
 
 @Component({
@@ -17,13 +30,14 @@ import { AlertController, ToastController } from '@ionic/angular';
   styleUrls: ['./eventos.page.scss'],
   standalone: true,
 
-  imports: [IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, CommonModule, FormsModule, IonList, IonItem, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonChip, IonLabel, RouterLink]
+  imports: [IonContent, IonMenu, IonSplitPane, IonList, IonItem, IonLabel, IonIcon, IonButton, CommonModule, FormsModule, RouterLink]
 
 })
 export class EventosPage implements OnInit {
 
   eventos: any[] = [];
   usuarioAutenticado: any = null;
+  tipoUsuarioLabel = 'Maestro';
 
   constructor(
     private eventosService: EventosService,
@@ -34,8 +48,22 @@ export class EventosPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    addIcons({
+      bookOutline,
+      calendarOutline,
+      documentTextOutline,
+      homeOutline,
+      imageOutline,
+      keyOutline,
+      locationOutline,
+      musicalNoteOutline,
+      musicalNotesOutline,
+      peopleOutline,
+      personOutline
+    });
 
     this.usuarioAutenticado = this.usuarioService.buscarAutenticacao();
+    this.tipoUsuarioLabel = this.usuarioAutenticado?.tipo === 'diretoria' ? 'Diretoria' : 'Maestro';
     this.eventosService.listar().subscribe({
       next: (todosOsEventos) => {
         let eventosFiltrados: Evento[] = [];
@@ -66,7 +94,32 @@ export class EventosPage implements OnInit {
   }   
 
   podeEditarOuExcluir(): boolean {
-    return this.usuarioAutenticado?.tipo === 'maestro';
+    return this.usuarioAutenticado?.tipo === 'diretoria';
+  }
+
+  criarNovoEvento() {
+    this.router.navigate(['/criar-evento']);
+  }
+
+  formatarDataEvento(dataOriginal: string): string {
+    const data = new Date(dataOriginal);
+    if (Number.isNaN(data.getTime())) return dataOriginal || '';
+
+    return data.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }) + ` · ${data.toLocaleDateString('pt-BR', { weekday: 'long' }).toUpperCase()}`;
+  }
+
+  formatarHorario(dataOriginal: string): string {
+    const data = new Date(dataOriginal);
+    if (Number.isNaN(data.getTime())) return '';
+
+    return data.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).replace(':', 'h');
   }
 
   editarEvento(evento: Evento) {

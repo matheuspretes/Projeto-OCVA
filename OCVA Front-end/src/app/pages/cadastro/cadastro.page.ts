@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { 
+import {
   AlertController, 
-  LoadingController, 
   ToastController 
 } from '@ionic/angular';
 import { 
@@ -78,7 +77,6 @@ export class CadastroPage implements OnInit {
     private formBuilder: FormBuilder,
     private toastcontroller: ToastController,
     private alertController: AlertController,
-    private loadingController: LoadingController,
     private usuarioService: UsuarioService,
     private codigoAcessoService: CodigoAcessoService,
     private router: Router
@@ -171,46 +169,14 @@ export class CadastroPage implements OnInit {
         {
           text: 'Vincular',
           handler: () => {
-            this.executarUsoDoCodigoAsync(codigo);
+            this.codigoValidado = true;
+            this.codigoValido = true;
+            this.mensagemCodigo = 'Código confirmado. Ele será utilizado ao finalizar o cadastro.';
+            this.exibirMensagem('Código confirmado. Finalize o cadastro para utilizá-lo.');
           }
         }
       ]
     }).then(alert => alert.present());
-  }
-
-  // 3. Execução da vinculação no backend
-  private async executarUsoDoCodigoAsync(codigo: string) {
-    const loading = await this.loadingController.create({
-      message: 'Vinculando código...'
-    });
-
-    await loading.present();
-
-    const nomeUsuario = this.formGroup.get('nome')?.value || this.usuario?.nome;
-
-    this.codigoAcessoService.validarEUsarCodigo(codigo, this.usuario?.id, nomeUsuario).subscribe({
-      next: (codigoUsado: any) => {
-        loading.dismiss();
-        if (this.usuario) {
-          this.usuario.codigoAcesso = codigoUsado.codigo;
-          (this.usuario as any).codigoAcessoId = codigoUsado.id;
-          
-          this.formGroup.patchValue({
-            codigoAcesso: codigoUsado.codigo
-          });
-
-          this.codigoValidado = false;
-          this.codigoValido = false;
-          this.mensagemCodigo = '';
-          this.exibirMensagem(`Código ${codigoUsado.codigo} vinculado com sucesso!`);
-        }
-      },
-      error: (erro: HttpErrorResponse) => {
-        console.error('Erro ao usar código:', erro);
-        loading.dismiss();
-        this.exibirMensagem('Erro ao vincular código. Ele pode estar expirado ou já em uso.');
-      }
-    });
   }
 
   // 4. Fluxo principal de salvar o cadastro

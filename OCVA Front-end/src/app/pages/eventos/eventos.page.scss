@@ -1,0 +1,320 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap');
+
+$background: #0b0c0e;
+$sidebar: #101113;
+$topbar: #121417;
+$card: #17181c;
+$border: #292b30;
+$gold: #d8ad3f;
+$muted: #8290a5;
+$white: #f1f1f2;
+
+:host {
+  --ion-background-color: #{$background};
+  color: $white;
+  font-family: 'Inter', sans-serif;
+}
+
+ion-split-pane {
+  --side-width: 316px;
+  --side-max-width: 316px;
+  --side-min-width: 260px;
+}
+
+ion-menu {
+  --background: #{$sidebar};
+  border-right: 1px solid $border;
+}
+
+.sidebar-container {
+  min-height: 100%;
+  padding: 28px 10px;
+  background: $sidebar;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 8px 44px;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #29271e;
+  color: $gold;
+}
+
+.brand-icon ion-icon {
+  font-size: 25px;
+}
+
+.brand-text h1 {
+  margin: 0;
+  color: $gold;
+  font: italic 600 1.25rem 'Playfair Display', serif;
+}
+
+.brand-text span {
+  display: block;
+  margin-top: 3px;
+  color: #8b98ab;
+  font-size: .67rem;
+  letter-spacing: 1.5px;
+}
+
+.nav-label {
+  display: block;
+  margin: 0 10px 14px;
+  color: #a0a5ae;
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.nav-list {
+  padding: 0;
+  background: transparent;
+}
+
+.nav-list ion-item {
+  --background: transparent;
+  --color: #f1f1f2;
+  --border-radius: 15px;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  min-height: 40px;
+  margin-bottom: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.nav-list ion-item.active {
+  --background: #24272b;
+  font-weight: 700;
+}
+
+.nav-list ion-icon {
+  margin-right: 12px;
+  color: #e0e1e4;
+  font-size: 20px;
+}
+
+.eventos-content {
+  --background: #{$background};
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 78px;
+  padding: 0 24px 0 40px;
+  background: $topbar;
+  border-bottom: 1px solid $border;
+}
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: $gold;
+  font: italic 1.35rem 'Playfair Display', serif;
+}
+
+.page-heading ion-icon {
+  padding-right: 18px;
+  border-right: 1px solid #303238;
+  color: $white;
+  font-size: 19px;
+}
+
+.new-event-button {
+  --background: #e0b641;
+  --background-hover: #f0c655;
+  --color: #171717;
+  --border-radius: 15px;
+  height: 40px;
+  margin: 0;
+  font-size: .92rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.eventos-body {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 42px 40px 64px;
+}
+
+.section-title {
+  margin: 0 0 32px;
+  color: #94a1b5;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 4px;
+}
+
+.eventos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.evento-card {
+  display: grid;
+  grid-template-columns: 36% 64%;
+  min-height: 218px;
+  overflow: hidden;
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 22px;
+}
+
+.evento-banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #383322, #25231e);
+  color: $gold;
+  letter-spacing: 1.5px;
+  font-size: .82rem;
+  overflow: hidden;
+}
+
+.evento-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.evento-banner ion-icon {
+  font-size: 48px;
+}
+
+.evento-details {
+  padding: 30px 30px 24px;
+}
+
+.evento-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: $gold;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.evento-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $muted;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.evento-time ion-icon,
+.evento-location ion-icon {
+  color: $gold;
+  font-size: 18px;
+}
+
+.evento-details h3 {
+  margin: 12px 0 20px;
+  color: $white;
+  font: italic 600 2.15rem/1.1 'Playfair Display', serif;
+}
+
+.evento-description {
+  margin: 0 0 25px;
+  color: $muted;
+  font-size: 1.05rem;
+}
+
+.evento-location {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: $muted;
+  font-size: .92rem;
+}
+
+.evento-musicos {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  color: $muted;
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
+.evento-musicos ion-icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: $gold;
+  font-size: 18px;
+}
+
+.evento-musicos strong {
+  color: $white;
+  font-weight: 600;
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+  color: $muted;
+}
+
+.empty-state ion-icon {
+  color: $gold;
+  font-size: 42px;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .eventos-body {
+    padding: 28px 16px 48px;
+  }
+
+  .section-title {
+    font-size: .78rem;
+    letter-spacing: 2px;
+  }
+
+  .evento-card {
+    grid-template-columns: 1fr;
+  }
+
+  .evento-banner {
+    min-height: 150px;
+  }
+
+  .evento-details {
+    padding: 22px;
+  }
+
+  .evento-details h3 {
+    font-size: 1.7rem;
+  }
+
+  .evento-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -6,5 +6,6 @@ export interface Evento {
     descricao: string;
     musicos: Usuario[];
     titulo?: string; 
+    local?: string;
+    banner?: string;
 }
-

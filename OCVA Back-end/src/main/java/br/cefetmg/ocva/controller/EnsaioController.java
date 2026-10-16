@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.cefetmg.ocva.model.Ensaio;
 import br.cefetmg.ocva.model.Musico;
@@ -86,14 +87,44 @@ public class EnsaioController {
         return repository.save(ensaio);
     }
 
+    @DeleteMapping("/{ensaioId}/presenca/{musicoId}")
+    public Ensaio removerPresenca(
+            @PathVariable Long ensaioId,
+            @PathVariable Long musicoId) {
+        Ensaio ensaio = repository.findById(ensaioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ensaio não encontrado"));
+        musicoRepository.findById(musicoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Músico não encontrado"));
+
+        if (ensaio.getPresencas() != null) {
+            ensaio.getPresencas().removeIf(item -> musicoId.equals(item.getId()));
+        }
+        if (ensaio.getFaltas() != null) {
+            ensaio.getFaltas().removeIf(item -> musicoId.equals(item.getId()));
+        }
+
+        return repository.save(ensaio);
+    }
+
     @DeleteMapping("/{id}")
+    @Transactional
     public Ensaio excluir(@PathVariable long id) {
         Ensaio ensaio = repository.findById(id).orElse(null);
         if (ensaio == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ensaio com id: " + id + " não encontrado");
         }
 
-        repository.deleteById(id);
+        if (ensaio.getMusicos() != null) {
+            ensaio.getMusicos().clear();
+        }
+        if (ensaio.getPresencas() != null) {
+            ensaio.getPresencas().clear();
+        }
+        if (ensaio.getFaltas() != null) {
+            ensaio.getFaltas().clear();
+        }
+
+        repository.delete(ensaio);
         return ensaio;
     }
 }

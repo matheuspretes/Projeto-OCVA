@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap');
+
+$background: #0b0c0e;
+$sidebar: #101113;
+$topbar: #121417;
+$card: #17181c;
+$border: #292b30;
+$gold: #d8ad3f;
+$muted: #8290a5;
+$white: #f1f1f2;
+
+:host {
+  --ion-background-color: #{$background};
+  color: $white;
+  font-family: 'Inter', sans-serif;
+}
+
+ion-split-pane { --side-width: 322px; --side-max-width: 322px; --side-min-width: 260px; }
+ion-menu { --background: #{$sidebar}; border-right: 1px solid $border; }
+.sidebar-container { min-height: 100%; padding: 28px 10px; background: $sidebar; }
+.brand { display: flex; align-items: center; gap: 16px; padding: 0 8px 44px; }
+.brand-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; background: #29271e; color: $gold; }
+.brand-icon ion-icon { font-size: 25px; }
+.brand-text h1 { margin: 0; color: $gold; font: italic 600 1.25rem 'Playfair Display', serif; }
+.brand-text span { display: block; margin-top: 3px; color: #8b98ab; font-size: .67rem; letter-spacing: 1.5px; }
+.nav-label { display: block; margin: 0 10px 14px; color: #a0a5ae; font-size: .78rem; font-weight: 600; }
+.nav-list { padding: 0; background: transparent; }
+.nav-list ion-item { --background: transparent; --color: #f1f1f2; --border-radius: 15px; --padding-start: 12px; --inner-padding-end: 12px; min-height: 40px; margin-bottom: 5px; font-size: 1rem; font-weight: 500; }
+.nav-list ion-item.active { --background: #24272b; font-weight: 700; }
+.nav-list ion-icon { margin-right: 12px; color: #e0e1e4; font-size: 20px; }
+.musicos-content { --background: #{$background}; }
+.topbar { display: flex; align-items: center; min-height: 78px; padding: 0 28px 0 40px; background: $topbar; border-bottom: 1px solid $border; }
+.page-heading { display: flex; align-items: center; gap: 16px; color: $gold; font: italic 1.35rem 'Playfair Display', serif; }
+.page-heading ion-icon { padding-right: 18px; border-right: 1px solid #303238; color: $white; font-size: 20px; }
+.musicos-body { max-width: 1220px; margin: 0 auto; padding: 42px 40px 64px; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 32px; }
+.section-heading h2 { margin: 0; color: #94a1b5; font-size: 1rem; font-weight: 500; letter-spacing: 4px; }
+.count-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid $border; border-radius: 20px; color: $white; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+.count-badge ion-icon { color: $gold; font-size: 16px; }
+.musicos-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.musico-card { min-height: 350px; padding: 26px; background: $card; border: 1px solid $border; border-radius: 22px; }
+.card-top { display: flex; align-items: flex-start; gap: 16px; }
+.avatar { flex: 0 0 70px; width: 70px; height: 70px; display: grid; place-items: center; border: 1px solid #514622; border-radius: 50%; background: #2d2a20; color: $gold; font: italic 1.3rem 'Playfair Display', serif; }
+.person-heading { min-width: 0; flex: 1; }
+.person-heading h3 { margin: 4px 0 4px; color: $white; font: italic 600 1.65rem/1.15 'Playfair Display', serif; overflow-wrap: anywhere; }
+.person-heading span { color: $gold; font-size: 1rem; font-weight: 600; }
+.musico-card ion-badge { --background: #e0b641; --color: #181818; margin-top: 1px; padding: 7px 14px; border-radius: 16px; font-size: .7rem; letter-spacing: .5px; }
+.instrument-section { margin-top: 42px; }
+.detail-label { display: flex; align-items: center; gap: 10px; color: #a2aabd; font-size: .9rem; letter-spacing: 2px; }
+.detail-label ion-icon { color: $gold; font-size: 18px; }
+.instrument-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+.instrument-tags span { padding: 7px 13px; border: 1px solid #30343b; border-radius: 18px; color: $muted; font-size: .9rem; }
+.card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 54px; }
+.card-actions ion-button { --border-color: #30343b; --color: $white; --border-radius: 18px; height: 40px; margin: 0; border: 1px solid #30343b; font-weight: 700; text-transform: none; }
+.edit-panel { display: grid; gap: 10px; margin-top: 24px; }
+.edit-panel ion-input, .edit-panel ion-select { --background: #202227; --color: $white; --border-color: #343841; padding: 8px 10px; }
+.edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+.empty-state { display: grid; place-items: center; min-height: 280px; color: $muted; text-align: center; }
+.empty-state ion-icon { color: $gold; font-size: 44px; }
+.empty-state h2 { margin: 18px 0 4px; color: $white; }
+.empty-state p { margin: 0; }
+
+@media (max-width: 1050px) {
+  .musicos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .musicos-body { padding: 28px 18px 44px; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
+  .section-heading h2 { line-height: 1.5; }
+  .musicos-grid { grid-template-columns: 1fr; }
+  .musico-card { min-height: 0; }
+}

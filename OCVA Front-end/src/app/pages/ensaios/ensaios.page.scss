@@ -1,34 +1,255 @@
-.ensaios-page {
-	--background: #2f3235;
+:host {
+  --fundo-principal: #121316;
+  --fundo-card: #18191d;
+  --cor-borda: #282a30;
+  --dourado: #d4a359;
+  --dourado-claro: #f5c77e;
+  --cinza-texto: #9e9ea7;
+  --cinza-fraco: #60626a;
 }
 
-.ensaios-page ion-list {
-	width: min(100%, 900px);
-	margin: 0 auto;
-	padding: 12px 16px 24px;
-	background: transparent;
+.ensaios-content {
+  --background: var(--fundo-principal);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.ensaios-page ion-card {
-	width: 100%;
-	margin: 0;
-	border-radius: 20px;
-	background: rgba(44, 46, 49, 0.96);
-	color: #f4f4f4;
-	box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+.custom-header {
+  ion-toolbar {
+    --background: #121316;
+    --border-color: #24252a;
+    border-bottom: 1px solid #24252a;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    width: 100%;
+  }
+
+  .toolbar-logo {
+    height: 38px;
+    display: block;
+  }
+
+  .header-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dourado-claro);
+
+    .title-icon {
+      font-size: 1.2rem;
+    }
+
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .btn-novo-ensaio {
+    --background: var(--dourado);
+    --background-hover: #c4944d;
+    --color: #121316;
+    --border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: none;
+    margin: 0;
+  }
 }
 
-.ensaios-page ion-card-title {
-	color: #f2f2f2;
+.container-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
 }
 
-.ensaios-page ion-item {
-	--background: transparent;
-	--border-color: transparent;
-	color: #f4f4f4;
+.section-badge-title {
+  color: var(--cinza-texto);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
 
-.ensaios-page ion-card-content,
-.ensaios-page div[style*='padding:16px'] {
-	color: #f4f4f4;
+.empty-state {
+  text-align: center;
+  margin-top: 80px;
+  color: var(--cinza-texto);
+
+  .empty-icon {
+    font-size: 3rem;
+    color: var(--cinza-fraco);
+    margin-bottom: 12px;
+  }
+}
+
+/* Grelha moderna responsiva */
+.ensaios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Card individual */
+.card-ensaio {
+  background: var(--fundo-card);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: #3e424d;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .tag-tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--dourado);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 0.9rem;
+    }
+  }
+
+  .ensaio-titulo {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+  }
+
+  .ensaio-data {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--cinza-texto);
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+
+    ion-icon {
+      color: var(--dourado);
+      font-size: 1rem;
+    }
+  }
+
+  .ensaio-descricao {
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin-bottom: 16px;
+
+    .desc-label {
+      color: #dedee3;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .desc-texto {
+      color: var(--cinza-texto);
+    }
+  }
+
+  .card-divider {
+    height: 1px;
+    background: #25262c;
+    margin: auto 0 14px 0;
+  }
+
+  .musicos-section {
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--dourado);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+
+      ion-icon {
+        font-size: 0.9rem;
+      }
+    }
+
+    .sem-musicos {
+      color: var(--cinza-fraco);
+      font-size: 0.8rem;
+      font-style: italic;
+      margin: 0;
+    }
+
+    .musicos-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .musico-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #222329;
+      border: 1px solid #31333b;
+      padding: 4px 10px 4px 4px;
+      border-radius: 20px;
+      color: #e0e0e0;
+      font-size: 0.8rem;
+
+      .avatar-iniciais {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #2f271a;
+        color: var(--dourado-claro);
+        font-weight: 700;
+        font-size: 0.65rem;
+        border: 1px solid rgba(212, 163, 89, 0.4);
+      }
+
+      .nome-musico {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .card-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #23242a;
+
+    .btn-acao {
+      --color: var(--cinza-texto);
+      margin: 0;
+
+      &.edit:hover {
+        --color: var(--dourado-claro);
+      }
+      &.delete:hover {
+        --color: #eb445a;
+      }
+    }
+  }
 }

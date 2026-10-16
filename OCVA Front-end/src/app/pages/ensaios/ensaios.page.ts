@@ -1,27 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { 
   IonContent, 
   IonHeader, 
-  IonTitle, 
   IonToolbar, 
-  IonButtons, 
-  IonBackButton, 
-  IonCard, 
-  IonCardHeader, 
-  IonCardTitle, 
-  IonCardSubtitle, 
-  IonCardContent, 
-  IonChip,         
-  IonLabel,
-  IonButton
+  IonButton,
+  IonIcon
 } from '@ionic/angular/standalone';
-import { EnsaiosService } from '../../services/ensaios-service'; // Ajuste o caminho se necessário
-import { UsuarioService } from '../../services/usuario-service'; // Ajuste o caminho se necessário
-import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { 
+  musicalNotesOutline, 
+  musicalNote, 
+  calendarOutline, 
+  peopleOutline, 
+  createOutline, 
+  trashOutline,
+  addOutline
+} from 'ionicons/icons';
+
+import { EnsaiosService } from '../../services/ensaios-service';
+import { UsuarioService } from '../../services/usuario-service';
+import { Ensaio } from '../../models/ensaio';
 
 @Component({
   selector: 'app-ensaios',
@@ -34,23 +36,12 @@ import { AlertController, ToastController } from '@ionic/angular';
     RouterLink,
     IonContent, 
     IonHeader, 
-    IonTitle, 
     IonToolbar, 
-    IonButtons, 
-    IonBackButton, 
-    IonCard, 
-    IonCardHeader, 
-    IonCardTitle, 
-    IonCardSubtitle, 
-    IonCardContent,
-    IonChip,         
-    IonLabel,
-    IonButton        
+    IonButton,
+    IonIcon
   ]
 })
 export class EnsaiosPage implements OnInit {
-  
-  // Alterado para any[] para evitar erros de compilação com propriedades dinâmicas no HTML
   ensaios: any[] = []; 
   usuarioAutenticado: any = null;
 
@@ -60,15 +51,28 @@ export class EnsaiosPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
-  ) {}
+  ) {
+    addIcons({
+      musicalNotesOutline,
+      musicalNote,
+      calendarOutline,
+      peopleOutline,
+      createOutline,
+      trashOutline,
+      addOutline
+    });
+  }
 
   ngOnInit() {
-    // 1. Recupera o usuário que está logado no sistema
+    this.carregarEnsaios();
+  }
+
+  carregarEnsaios() {
     this.usuarioAutenticado = this.usuarioService.buscarAutenticacao();
 
     this.ensaiosService.listar().subscribe({
-      next: (todosOsEnsaios) => {
-        let ensaiosFiltrados: any[] = [];
+      next: (todosOsEnsaios: Ensaio[]) => {
+        let ensaiosFiltrados: Ensaio[] = [];
 
         if (this.usuarioAutenticado && (this.usuarioAutenticado.tipo === 'maestro' || this.usuarioAutenticado.tipo === 'diretoria')) {
           ensaiosFiltrados = todosOsEnsaios;
@@ -83,6 +87,7 @@ export class EnsaiosPage implements OnInit {
 
         this.ensaios = ensaiosFiltrados.map((ensaio: any) => ({
           ...ensaio,
+          dataExibicao: this.formatarDataExibicao(ensaio.data),
           nomesMusicos: (ensaio.musicos || []).map((m: any) => m.nome)
         }));
       },
@@ -96,11 +101,12 @@ export class EnsaiosPage implements OnInit {
     return this.usuarioAutenticado?.tipo === 'maestro';
   }
 
-  editarEnsaio(ensaio: any) {
-    if (!ensaio.id) {
-      return;
-    }
+  criarNovoEnsaio() {
+    this.router.navigate(['/criar-ensaio']);
+  }
 
+  editarEnsaio(ensaio: any) {
+    if (!ensaio.id) return;
     this.router.navigate(['/criar-ensaio'], { queryParams: { id: ensaio.id } });
   }
 
@@ -110,10 +116,43 @@ export class EnsaiosPage implements OnInit {
     }
   }
 
-  async excluirEnsaio(ensaio: any) {
-    if (!ensaio.id) {
-      return;
+  getIniciais(nome: string): string {
+    if (!nome) return '';
+    const partes = nome.trim().split(' ');
+    if (partes.length === 1) {
+      return partes[0].substring(0, 2).toUpperCase();
     }
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  }
+
+  formatarDataExibicao(dataOriginal: string): string {
+    if (!dataOriginal) return '';
+    const data = new Date(dataOriginal);
+    if (isNaN(data.getTime())) return dataOriginal;
+
+    const dataFormatada = data.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    const diaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long' });
+    const diaSemanaCapitalizado = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
+
+    const horaFormatada = data.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).replace(':', 'h');
+
+    return `${dataFormatada} · ${diaSemanaCapitalizado} · ${horaFormatada}`;
+  }
+
+  async excluirEnsaio(ensaio: any) {
+    console.log('Dados do ensaio a excluir:', ensaio);
+    const ensaioId = Number(ensaio?.id);
+    if (!Number.isInteger(ensaioId) || ensaioId <= 0)
+    return;
+  
 
     const alert = await this.alertController.create({
       header: 'Confirmar exclusão',
@@ -124,14 +163,22 @@ export class EnsaiosPage implements OnInit {
           text: 'Excluir',
           role: 'destructive',
           handler: () => {
-            this.ensaiosService.excluir(ensaio.id as number).subscribe({
+            this.ensaiosService.excluir(ensaioId).subscribe({
               next: async () => {
-                const toast = await this.toastController.create({ message: 'Ensaio excluído com sucesso', duration: 1500, color: 'warning' });
+                const toast = await this.toastController.create({ 
+                  message: 'Ensaio excluído com sucesso', 
+                  duration: 1500, 
+                  color: 'warning' 
+                });
                 await toast.present();
-                this.ngOnInit();
+                this.carregarEnsaios();
               },
               error: async () => {
-                const toast = await this.toastController.create({ message: 'Erro ao excluir ensaio', duration: 2000, color: 'danger' });
+                const toast = await this.toastController.create({ 
+                  message: 'Erro ao excluir ensaio', 
+                  duration: 2000, 
+                  color: 'danger' 
+                });
                 await toast.present();
               }
             });
@@ -142,5 +189,4 @@ export class EnsaiosPage implements OnInit {
 
     await alert.present();
   }
-
 }

@@ -1,63 +1,110 @@
-<ion-header>
+<ion-header class="custom-header">
   <ion-toolbar>
-  
-    <div class="toolbar-brand">
-      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
-        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
-      </a>
+    <div class="header-inner">
+      <div class="header-left">
+        <ion-icon name="book-outline" class="title-icon"></ion-icon>
+        <span class="header-title">{{ modoEdicao ? 'Editar ensaio' : 'Novo ensaio' }}</span>
+      </div>
+      <button type="button" class="btn-voltar" routerLink="/ensaios">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        <span>Voltar aos ensaios</span>
+      </button>
     </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="criar-ensaio-page">
-  <ion-card class="surface-card">
-    <ion-card-header>
-      <ion-card-title>{{ modoEdicao ? 'Editar ensaio' : 'Registrar novo ensaio' }}</ion-card-title>
-    </ion-card-header>
+<ion-content [fullscreen]="true" class="criar-ensaio-content">
+  <div class="form-container">
+    <div class="card-form">
+      <div class="card-header-custom">
+        <div class="titulo-destaque">
+          <ion-icon name="musical-notes-outline"></ion-icon>
+          <h2>Dados do ensaio</h2>
+        </div>
+        <p class="subtitulo">Informe a data, o horário e quem participará.</p>
+      </div>
 
-    <ion-card-content>
-        <form [formGroup]="formGroup" (ngSubmit)="salvar()">
-          <div class="criar-ensaio-grid">
-            <div class="left-col">
-              <p class="field-label">Data</p>
-              <ion-datetime class="calendar" presentation="date" displayFormat="DD/MM/YYYY" formControlName="data"></ion-datetime>
-              <div *ngIf="isInvalid('data')" class="ion-text-danger" style="margin-top:6px">Preencha a data do ensaio.</div>
-            </div>
+      <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+        <!-- Título -->
+        <div class="campo-grupo">
+          <label>Título</label>
+          <input 
+            type="text" 
+            class="input-dark" 
+            placeholder="Ex.: Ensaio Geral" 
+            formControlName="titulo" 
+          />
+          <span *ngIf="isInvalid('titulo')" class="msg-erro">Preencha o título do ensaio.</span>
+        </div>
 
-            <div class="right-col">
-              <div class="field">
-                <ion-label class="field-label">Descrição</ion-label>
-                <ion-input class="field-input" placeholder="Descrição do ensaio" formControlName="descricao"></ion-input>
-                <div *ngIf="isInvalid('descricao')" class="ion-text-danger" style="margin-top:6px">Preencha a descrição do ensaio.</div>
-              </div>
+        <!-- Data e Horário -->
+        <div class="linha-dupla">
+          <div class="campo-grupo">
+            <label>Data</label>
+            <input 
+              type="date" 
+              class="input-dark" 
+              formControlName="data" 
+            />
+            <span *ngIf="isInvalid('data')" class="msg-erro">Preencha a data.</span>
+          </div>
 
-              <div class="field">
-                <ion-label class="field-label">Músicos presentes</ion-label>
-                <ion-select class="field-input" placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
-                  <ion-select-option *ngFor="let musico of musicos" [value]="musico">
-                    {{ musico.nome }}
-                  </ion-select-option>
-                </ion-select>
-                <div *ngIf="isInvalid('musicos')" class="ion-text-danger" style="margin-top:6px">Selecione pelo menos um músico.</div>
-              </div>
+          <div class="campo-grupo">
+            <label>Horário</label>
+            <input 
+              type="time" 
+              class="input-dark" 
+              formControlName="horario" 
+            />
+            <span *ngIf="isInvalid('horario')" class="msg-erro">Preencha o horário.</span>
+          </div>
+        </div>
 
-              <div class="actions-row">
-                <ion-button type="button" class="cancel-button" (click)="cancelar()" [disabled]="isSaving">
-                  CANCELAR
-                </ion-button>
+        <!-- Descrição -->
+        <div class="campo-grupo">
+          <label>Descrição</label>
+          <textarea 
+            rows="4" 
+            class="input-dark textarea-dark" 
+            placeholder="Repertório, orientações e observações." 
+            formControlName="descricao"
+          ></textarea>
+          <span *ngIf="isInvalid('descricao')" class="msg-erro">Preencha a descrição do ensaio.</span>
+        </div>
 
-                <ion-button type="submit" expand="block" class="enter-button" [disabled]="!formGroup.valid || isSaving">
-                  <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-                  <span *ngIf="!isSaving">{{ modoEdicao ? 'ATUALIZAR' : 'SALVAR' }}</span>
-                </ion-button>
+        <!-- Músicos Escalados -->
+        <div class="campo-grupo">
+          <div class="musicos-header">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>Músicos escalados</span>
+          </div>
 
-                <ion-button *ngIf="modoEdicao" type="button" expand="block" color="danger" class="enter-button" (click)="excluir()" [disabled]="isSaving">
-                  EXCLUIR
-                </ion-button>
-              </div>
+          <div class="grid-musicos">
+            <div 
+              *ngFor="let musico of musicos" 
+              class="item-musico" 
+              [class.selecionado]="isMusicoSelecionado(musico)"
+              (click)="toggleMusico(musico)"
+            >
+              <div class="circulo-selecao"></div>
+              <span class="nome-musico">{{ musico.nome }}</span>
             </div>
           </div>
-        </form>
-      </ion-card-content>
-  </ion-card>
+          <span *ngIf="isInvalid('musicos')" class="msg-erro">Selecione pelo menos um músico.</span>
+        </div>
+
+        <!-- Ações -->
+        <div class="acoes-rodape">
+          <button *ngIf="modoEdicao" type="button" class="btn-excluir" (click)="excluir()" [disabled]="isSaving">
+            Excluir
+          </button>
+
+          <button type="submit" class="btn-submit" [disabled]="isSaving">
+            <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+            <span *ngIf="!isSaving">+ {{ modoEdicao ? 'Atualizar ensaio' : 'Criar ensaio' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </ion-content>

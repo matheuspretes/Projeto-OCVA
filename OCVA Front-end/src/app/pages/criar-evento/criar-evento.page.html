@@ -1,66 +1,112 @@
 <ion-header>
   <ion-toolbar>
-  
-    <div class="toolbar-brand">
-      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
-        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+    <div class="topbar">
+      <div class="page-heading">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ modoEdicao ? 'Editar evento' : 'Criar evento' }}</span>
+      </div>
+      <a routerLink="/eventos" class="back-link">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        Voltar aos eventos
       </a>
     </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="criar-evento-page">
-  <ion-card class="surface-card">
-    <ion-card-header>
-      <ion-card-title>{{ modoEdicao ? 'Editar evento' : 'Registrar novo evento' }}</ion-card-title>
-    </ion-card-header>
+  <main class="form-shell">
+    <section class="form-card">
+      <header class="form-heading">
+        <h1><ion-icon name="calendar-outline"></ion-icon> Dados do evento</h1>
+        <p>Preencha as informações abaixo para registrar o evento.</p>
+      </header>
 
-    <ion-card-content>
-        <form [formGroup]="formGroup" (ngSubmit)="salvar()">
-          <div class="criar-ensaio-grid">
-            <div class="left-col">
-              <p class="field-label">Data</p>
-              <ion-datetime class="calendar" presentation="date" displayFormat="DD/MM/YYYY" formControlName="data"></ion-datetime>
-              <div *ngIf="isInvalid('data')" class="ion-text-danger" style="margin-top:6px">Preencha a data do evento.</div>
-            </div>
-
-            <div class="right-col">
-              <div class="field">
-                <ion-label class="field-label">Descrição</ion-label>
-                <ion-input class="field-input" placeholder="Descrição do evento" formControlName="descricao"></ion-input>
-                <div *ngIf="isInvalid('descricao')" class="ion-text-danger" style="margin-top:6px">Preencha a descrição do evento.</div>
-              </div>
-
-              <div class="field">
-                <ion-label class="field-label">Músicos presentes</ion-label>
-                <ion-select class="field-input" placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
-                  <ion-select-option *ngFor="let musico of musicos" [value]="musico">
-                    {{ musico.nome }}
-                  </ion-select-option>
-                </ion-select>
-                <div *ngIf="isInvalid('musicos')" class="ion-text-danger" style="margin-top:6px">Selecione pelo menos um músico.</div>
-                <div *ngIf="musicos.length === 0" class="ion-text-warning" style="margin-top:6px">
-                  Só aparecem músicos com pelo menos 2 presenças em ensaios.
-                </div>
-              </div>
-
-              <div class="actions-row">
-                <ion-button type="button" class="cancel-button" (click)="cancelar()" [disabled]="isSaving">
-                  CANCELAR
-                </ion-button>
-
-                <ion-button type="submit" expand="block" class="enter-button" [disabled]="!formGroup.valid || isSaving">
-                  <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-                  <span *ngIf="!isSaving">{{ modoEdicao ? 'ATUALIZAR' : 'SALVAR' }}</span>
-                </ion-button>
-
-                <ion-button *ngIf="modoEdicao" type="button" expand="block" color="danger" class="enter-button" (click)="excluir()" [disabled]="isSaving">
-                  EXCLUIR
-                </ion-button>
-              </div>
-            </div>
+      <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+        <div class="banner-field">
+          <label>Banner do evento <span>(opcional)</span></label>
+          <div
+            class="banner-dropzone"
+            [class.has-image]="bannerPreview"
+            (click)="abrirSeletorDeBanner()"
+            (dragover)="$event.preventDefault()"
+            (drop)="aoSoltarBanner($event)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="abrirSeletorDeBanner()"
+            (keydown.space)="abrirSeletorDeBanner()"
+            aria-label="Escolher banner do evento"
+          >
+            <img *ngIf="bannerPreview" [src]="bannerPreview" alt="Prévia do banner do evento">
+            <ng-container *ngIf="!bannerPreview">
+              <ion-icon name="image-outline"></ion-icon>
+              <strong>Arraste uma imagem ou clique para escolher</strong>
+              <small>PNG, JPG ou WEBP</small>
+            </ng-container>
           </div>
-        </form>
-      </ion-card-content>
-  </ion-card>
+          <input
+            #bannerInput
+            class="banner-input"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            (change)="aoSelecionarBanner($event)"
+          >
+        </div>
+
+        <div class="field">
+          <ion-label>Título do evento</ion-label>
+          <ion-input class="field-input" placeholder="Ex.: Culto de Santa Ceia" formControlName="titulo"></ion-input>
+        </div>
+
+        <div class="two-columns">
+          <div class="field">
+            <ion-label>Data</ion-label>
+            <ion-input class="field-input" type="date" formControlName="data"></ion-input>
+          </div>
+          <div class="field">
+            <ion-label>Horário</ion-label>
+            <ion-input class="field-input" type="time" formControlName="horario"></ion-input>
+          </div>
+        </div>
+
+        <div class="field">
+          <ion-label>Local</ion-label>
+          <ion-input class="field-input" placeholder="Ex.: Igreja Central" formControlName="local"></ion-input>
+        </div>
+
+        <div class="field">
+          <ion-label>Descrição</ion-label>
+          <ion-textarea class="field-input description-input" placeholder="Descreva o evento, o repertório previsto ou observações para a equipe." formControlName="descricao"></ion-textarea>
+        </div>
+
+        <div class="field musicians-field">
+          <ion-label>Músicos escalados para o evento</ion-label>
+          <ion-input
+            class="field-input"
+            placeholder="Procurar músico pelo nome"
+            [(ngModel)]="termoBuscaMusico"
+            [ngModelOptions]="{ standalone: true }"
+            (ionInput)="buscarMusicos()"
+          ></ion-input>
+          <ion-select class="field-input" placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
+            <ion-select-option *ngFor="let musico of musicos" [value]="musico">{{ musico.nome }}</ion-select-option>
+          </ion-select>
+          <small class="eligibility-help">
+            A lista inicial mostra músicos elegíveis. Use a busca para localizar e adicionar um músico que não conseguiu participar dos ensaios.
+          </small>
+          <p *ngIf="musicos.length === 0" class="eligibility-empty">
+            Nenhum músico atende aos critérios no momento.
+          </p>
+        </div>
+
+        <div class="actions-row">
+          <ion-button type="button" fill="clear" class="cancel-button" (click)="cancelar()" [disabled]="isSaving">Cancelar</ion-button>
+          <ion-button type="submit" class="save-button" [disabled]="!formGroup.valid || isSaving">
+            <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+            <span *ngIf="!isSaving"><ion-icon name="calendar-outline"></ion-icon> {{ modoEdicao ? 'Atualizar evento' : 'Criar evento' }}</span>
+          </ion-button>
+          <ion-button *ngIf="modoEdicao" type="button" fill="clear" class="delete-button" (click)="excluir()" [disabled]="isSaving">Excluir</ion-button>
+        </div>
+      </form>
+    </section>
+  </main>
 </ion-content>

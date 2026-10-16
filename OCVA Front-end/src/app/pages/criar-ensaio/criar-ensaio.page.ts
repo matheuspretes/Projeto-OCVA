@@ -2,8 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonButton, IonButtons, IonBackButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonDatetime, IonHeader, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonSpinner, IonToolbar, ToastController } from '@ionic/angular/standalone';
+import { 
+  IonContent, 
+  IonHeader, 
+  IonToolbar, 
+  IonIcon, 
+  IonSpinner, 
+  ToastController 
+} from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { 
+  bookOutline, 
+  arrowBackOutline, 
+  musicalNotesOutline, 
+  peopleOutline 
+} from 'ionicons/icons';
+
 import { Ensaio } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
@@ -14,7 +29,16 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   templateUrl: './criar-ensaio.page.html',
   styleUrls: ['./criar-ensaio.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonInput, IonSpinner, IonButton, RouterLink]
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    IonContent, 
+    IonHeader, 
+    IonToolbar, 
+    IonIcon, 
+    IonSpinner, 
+    RouterLink
+  ]
 })
 export class CriarEnsaioPage implements OnInit {
   formGroup: FormGroup;
@@ -33,10 +57,19 @@ export class CriarEnsaioPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    addIcons({
+      bookOutline,
+      arrowBackOutline,
+      musicalNotesOutline,
+      peopleOutline
+    });
+
     this.formGroup = this.formBuilder.group({
-      data: ['', Validators.compose([Validators.required])],
-      descricao: ['', Validators.compose([Validators.required])]
-      ,musicos: [[], Validators.compose([Validators.required])]
+      titulo: ['', Validators.required],
+      data: ['', Validators.required],
+      horario: ['', Validators.required],
+      descricao: ['', Validators.required],
+      musicos: [[], Validators.required]
     });
   }
 
@@ -54,9 +87,7 @@ export class CriarEnsaioPage implements OnInit {
       }
 
       const id = Number(idParam);
-      if (Number.isNaN(id)) {
-        return;
-      }
+      if (Number.isNaN(id)) return;
 
       this.ensaioId = id;
       this.modoEdicao = true;
@@ -67,38 +98,85 @@ export class CriarEnsaioPage implements OnInit {
   private carregarEnsaio(id: number) {
     this.isSaving = true;
     this.ensaiosService.buscarPorId(id).subscribe({
-      next: (ensaio) => {
+      next: (ensaio: any) => {
+        let dataStr = '';
+        let horaStr = '';
+
+        if (ensaio.data) {
+          const partes = ensaio.data.split('T');
+          dataStr = partes[0] || '';
+          horaStr = partes[1] ? partes[1].substring(0, 5) : '';
+        }
+
         this.formGroup.patchValue({
-          data: ensaio.data,
-          descricao: ensaio.descricao,
+          titulo: ensaio.titulo || '',
+          data: dataStr,
+          horario: horaStr,
+          descricao: ensaio.descricao || '',
           musicos: ensaio.musicos || []
         });
         this.isSaving = false;
       },
       error: async () => {
         this.isSaving = false;
-        const errorToast = await this.toastController.create({ message: 'Não foi possível carregar o ensaio', duration: 2000, color: 'danger' });
-        await errorToast.present();
+        const toast = await this.toastController.create({
+          message: 'Não foi possível carregar o ensaio',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
         this.router.navigate(['/ensaios']);
       }
     });
   }
 
+  isMusicoSelecionado(musico: Usuario): boolean {
+    const selecionados: Usuario[] = this.formGroup.get('musicos')?.value || [];
+    return selecionados.some((m) => m.id === musico.id);
+  }
+
+  toggleMusico(musico: Usuario) {
+    const selecionados: Usuario[] = [...(this.formGroup.get('musicos')?.value || [])];
+    const index = selecionados.findIndex((m) => m.id === musico.id);
+
+    if (index >= 0) {
+      selecionados.splice(index, 1);
+    } else {
+      selecionados.push(musico);
+    }
+
+    this.formGroup.patchValue({ musicos: selecionados });
+    this.formGroup.get('musicos')?.markAsDirty();
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.formGroup.get(controlName);
+    if (!control) return false;
+    return control.invalid && (control.touched || control.dirty || this.submitted);
+  }
+
   async salvar() {
     this.submitted = true;
-    this.isSaving = true;
     if (this.formGroup.invalid) {
-      const t = await this.toastController.create({ message: 'Preencha todos os campos', duration: 2000, color: 'red' });
+      const t = await this.toastController.create({ 
+        message: 'Preencha todos os campos obrigatórios', 
+        duration: 2000, 
+        color: 'danger' 
+      });
       await t.present();
-      this.isSaving = false;
       return;
     }
 
+    this.isSaving = true;
     const form = this.formGroup.value;
     const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
-    const ensaio: Ensaio = {
+
+    const dataFinal = `${form.data}T${form.horario}:00`;
+
+    const ensaio: any = {
       id: this.ensaioId ?? undefined,
-      data: this.formatDateOnly(form.data),
+      titulo: form.titulo,
+      data: dataFinal,
       descricao: form.descricao,
       musicos: form.musicos || [],
       criador: usuarioAutenticado
@@ -110,68 +188,29 @@ export class CriarEnsaioPage implements OnInit {
 
     requisicao.subscribe({
       next: async () => {
-        const success = await this.toastController.create({ message: this.modoEdicao ? 'Ensaio atualizado com sucesso' : 'Ensaio salvo com sucesso', duration: 1500, color: 'success' });
-        await success.present();
-
-        this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-        await this.router.navigate(['/ensaios']);
+        const toast = await this.toastController.create({
+          message: this.modoEdicao ? 'Ensaio atualizado com sucesso' : 'Ensaio salvo com sucesso',
+          duration: 1500,
+          color: 'success'
+        });
+        await toast.present();
+        this.router.navigate(['/ensaios']);
         this.isSaving = false;
       },
       error: async () => {
-        const errorToast = await this.toastController.create({ message: this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio', duration: 2000, color: 'danger' });
-        await errorToast.present();
+        const toast = await this.toastController.create({
+          message: this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
         this.isSaving = false;
       }
     });
   }
 
-  isInvalid(controlName: string): boolean {
-    const control = this.formGroup.get(controlName);
-    if (!control) return false;
-    return control.invalid && (control.touched || control.dirty || this.submitted);
-  }
-
-  formatDateOnly(value: any): string {
-    if (!value) return '';
-    if (typeof value === 'string') {
-      const tIndex = value.indexOf('T');
-      if (tIndex > 0) return value.slice(0, tIndex);
-      try {
-        const d = new Date(value);
-        if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
-      } catch {
-        return value;
-      }
-    }
-    if (value instanceof Date) {
-      return value.toISOString().slice(0, 10);
-    }
-    try {
-      const d = new Date(value);
-      if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
-    } catch {
-
-    }
-    return '';
-  }
-
-  cancelar() {
-    this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-    this.router.navigate(['/inicio']);
-  }
-
   async excluir() {
-    if (!this.modoEdicao || !this.ensaioId) {
-      const ok = window.confirm('Deseja descartar este ensaio?');
-      if (!ok) {
-        return;
-      }
-      this.formGroup.reset({ data: '', descricao: '', musicos: [] });
-      const t = await this.toastController.create({ message: 'Ensaio descartado', duration: 1500, color: 'warning' });
-      await t.present();
-      this.router.navigate(['/ensaios']);
-      return;
-    }
+    if (!this.ensaioId) return;
 
     const alert = await this.alertController.create({
       header: 'Confirmar exclusão',
@@ -184,13 +223,21 @@ export class CriarEnsaioPage implements OnInit {
           handler: () => {
             this.ensaiosService.excluir(this.ensaioId as number).subscribe({
               next: async () => {
-                const t = await this.toastController.create({ message: 'Ensaio excluído com sucesso', duration: 1500, color: 'warning' });
-                await t.present();
+                const toast = await this.toastController.create({ 
+                  message: 'Ensaio excluído com sucesso', 
+                  duration: 1500, 
+                  color: 'warning' 
+                });
+                await toast.present();
                 this.router.navigate(['/ensaios']);
               },
               error: async () => {
-                const t = await this.toastController.create({ message: 'Erro ao excluir o ensaio', duration: 2000, color: 'danger' });
-                await t.present();
+                const toast = await this.toastController.create({ 
+                  message: 'Erro ao excluir ensaio', 
+                  duration: 2000, 
+                  color: 'danger' 
+                });
+                await toast.present();
               }
             });
           }
@@ -199,10 +246,5 @@ export class CriarEnsaioPage implements OnInit {
     });
 
     await alert.present();
-  }
-
-  sairDaConta() {
-    this.usuarioService.encerrarAutenticacao();
-    this.router.navigate(['/login']);
   }
 }

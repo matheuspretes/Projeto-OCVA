@@ -50,6 +50,10 @@ export const routes: Routes = [
     path: 'musicos',
     loadComponent: () => import('./pages/musicos/musicos.page').then( m => m.MusicosPage)
   },
+  {
+    path: 'partituras',
+    loadComponent: () => import('./pages/partituras/partituras.page').then( m => m.PartiturasPage)
+  },
 
   
 ];

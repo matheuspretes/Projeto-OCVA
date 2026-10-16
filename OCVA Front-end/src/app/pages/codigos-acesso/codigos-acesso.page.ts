@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
   IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton,
   IonItem, IonLabel, IonButton, IonCard, IonCardContent,
   IonCardHeader, IonCardTitle, IonBadge, IonList, IonIcon,
-  IonSelect, IonSelectOption
+  IonSelect, IonSelectOption, IonMenu, IonSplitPane
 } from '@ionic/angular/standalone';
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { copyOutline, trashOutline, refreshOutline, addOutline } from 'ionicons/icons';
+import { addOutline, calendarOutline, copyOutline, documentTextOutline, fileTrayOutline, homeOutline, keyOutline, lockClosedOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, personOutline, shieldCheckmarkOutline, trashOutline } from 'ionicons/icons';
 import { CodigoAcessoService } from 'src/app/services/codigo-acesso-service';
 import { CodigoAcesso } from 'src/app/models/codigo-acesso';
 
@@ -20,34 +20,58 @@ import { CodigoAcesso } from 'src/app/models/codigo-acesso';
   styleUrls: ['./codigos-acesso.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, RouterLink,
+    CommonModule, FormsModule, RouterLink,
     IonIcon, IonList, IonBadge, IonLabel, IonItem, IonBackButton,
     IonButtons, IonButton, IonContent, IonHeader, IonToolbar,
     IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-    IonSelect, IonSelectOption
+    IonSelect, IonSelectOption, IonMenu, IonSplitPane
   ]
 })
 export class CodigosAcessoPage implements OnInit {
   codigos: CodigoAcesso[] = [];
+  usuario: any = null;
   filtroStatus = 'todos';
   carregando = false;
-  formGroup: FormGroup;
 
   constructor(
     private service: CodigoAcessoService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController,
-    private formBuilder: FormBuilder
+    private loadingCtrl: LoadingController
   ) {
-    addIcons({ copyOutline, trashOutline, refreshOutline, addOutline });
-    this.formGroup = this.formBuilder.group({
-      filtro: ['todos']
-    });
+    addIcons({ addOutline, calendarOutline, copyOutline, documentTextOutline, fileTrayOutline, homeOutline, keyOutline, lockClosedOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, personOutline, shieldCheckmarkOutline, trashOutline });
   }
 
   ngOnInit() {
+    const autenticacao = localStorage.getItem('usuarioAutenticado');
+    this.usuario = autenticacao ? JSON.parse(autenticacao) : null;
     this.carregarCodigos();
+  }
+
+  ehDiretoria(): boolean {
+    return this.usuario?.tipo === 'diretoria';
+  }
+
+  gerarCodigo() {
+    if (!this.ehDiretoria()) return;
+    const codigo = this.gerarCodigoAleatorio();
+    this.salvarCodigoDigitado(codigo);
+  }
+
+  perfilDoCodigo(): string {
+    return 'Acesso geral';
+  }
+
+  private gerarCodigoAleatorio(): string {
+    const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let codigo = '';
+
+    for (let indice = 0; indice < 8; indice++) {
+      const posicao = Math.floor(Math.random() * caracteres.length);
+      codigo += caracteres[posicao];
+    }
+
+    return codigo;
   }
 
   carregarCodigos() {
@@ -128,7 +152,7 @@ export class CodigosAcessoPage implements OnInit {
   }
 
   aplicarFiltro() {
-    this.filtroStatus = this.formGroup.get('filtro')?.value || 'todos';
+    this.filtroStatus = this.filtroStatus || 'todos';
   }
 
   get codigosFiltrados(): CodigoAcesso[] {

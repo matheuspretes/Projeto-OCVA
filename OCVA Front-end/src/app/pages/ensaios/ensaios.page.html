@@ -1,54 +1,98 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="custom-header">
   <ion-toolbar color="dark">
-    <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
-      <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
-    </a>
+    <div class="header-inner">
+      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
+        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
+      </a>
+      
+      <div class="header-title-container">
+        <ion-icon name="calendar-outline" class="title-icon"></ion-icon>
+        <span class="header-title">Ensaios</span>
+      </div>
+
+      <ion-button *ngIf="podeEditarOuExcluir()" class="btn-novo-ensaio" (click)="criarNovoEnsaio()">
+        <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
+        Novo ensaio
+      </ion-button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <div *ngIf="!ensaios || ensaios.length === 0" style="text-align: center; margin-top: 50px; color: #aaa;">
-    <p>Nenhum ensaio agendado encontrado.</p>
-  </div>
+<ion-content [fullscreen]="true" class="ensaios-content">
+  <div class="container-wrapper">
+    
+    <!-- Subtítulo da secção -->
+    <div class="section-badge-title">
+      TODOS OS ENSAIOS PREVISTOS
+    </div>
 
-  <ion-card *ngFor="let ensaio of ensaios" style="margin-bottom: 20px; cursor: pointer;" (click)="abrirDetalhes(ensaio)">
-    <ion-card-header>
-      <ion-card-title style="font-weight: bold; color: #ffffff;">
-        {{ ensaio.titulo || 'Ensaio Geral' }}
-      </ion-card-title>
-      <ion-card-subtitle style="color: #bbb;">
-        Data: {{ ensaio.data }}
-      </ion-card-subtitle>
-    </ion-card-header>
+    <!-- Estado Vazio -->
+    <div *ngIf="!ensaios || ensaios.length === 0" class="empty-state">
+      <ion-icon name="musical-notes-outline" class="empty-icon"></ion-icon>
+      <p>Nenhum ensaio agendado encontrado.</p>
+    </div>
 
-    <ion-card-content>
-      <p style="font-size: 1.1em; margin-bottom: 15px; color: #ddd;">
-        <strong>Descrição:</strong> {{ ensaio.descricao }}
-      </p>
-
-      <hr style="border-top: 1px solid #444; margin: 15px 0;" />
-
-      <div class="musicos-section">
-        <h6 style="margin-bottom: 10px; font-weight: bold; color: #deb887; font-size: 1em;">
-          Músicos escalados:
-        </h6>
-
-        <p *ngIf="!ensaio.nomesMusicos || ensaio.nomesMusicos.length === 0"
-          style="font-style: italic; color: #888; margin: 5px 0;">
-          Nenhum músico escalado para este ensaio.
-        </p>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-          <ion-chip *ngFor="let nome of ensaio.nomesMusicos" color="primary">
-            <ion-label style="font-weight: 500;">{{ nome }}</ion-label>
-          </ion-chip>
+    <!-- Grelha de Ensaios -->
+    <div class="ensaios-grid" *ngIf="ensaios && ensaios.length > 0">
+      <div 
+        class="card-ensaio" 
+        *ngFor="let ensaio of ensaios" 
+        (click)="abrirDetalhes(ensaio)"
+      >
+        <!-- Tag superior do card -->
+        <div class="tag-tipo">
+          <ion-icon name="musical-note"></ion-icon>
+          <span>ENSAIO</span>
         </div>
 
-        <div *ngIf="podeEditarOuExcluir()" style="display:flex; gap:8px; margin-top:16px; flex-wrap: wrap;">
-          <ion-button size="small" fill="outline" (click)="$event.stopPropagation(); editarEnsaio(ensaio)">Editar</ion-button>
-          <ion-button size="small" color="danger" fill="outline" (click)="$event.stopPropagation(); excluirEnsaio(ensaio)">Excluir</ion-button>
+        <!-- Título do Ensaio -->
+        <h2 class="ensaio-titulo">{{ ensaio.titulo || 'Ensaio Geral' }}</h2>
+
+        <!-- Data e Horário -->
+        <div class="ensaio-data">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ ensaio.data }}</span>
         </div>
+
+        <!-- Descrição -->
+        <div class="ensaio-descricao">
+          <span class="desc-label">Descrição:</span> 
+          <span class="desc-texto">{{ ensaio.descricao || 'Sem descrição' }}</span>
+        </div>
+
+        <!-- Divisor discreto -->
+        <div class="card-divider"></div>
+
+        <!-- Secção Músicos Escalados -->
+        <div class="musicos-section">
+          <div class="section-label">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>MÚSICOS ESCALADOS</span>
+          </div>
+
+          <p *ngIf="!ensaio.nomesMusicos || ensaio.nomesMusicos.length === 0" class="sem-musicos">
+            Nenhum músico escalado.
+          </p>
+
+          <div class="musicos-chips" *ngIf="ensaio.nomesMusicos && ensaio.nomesMusicos.length > 0">
+            <div class="musico-badge" *ngFor="let nome of ensaio.nomesMusicos">
+              <span class="avatar-iniciais">{{ getIniciais(nome) }}</span>
+              <span class="nome-musico">{{ nome }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação (Apenas para utilizadores com permissão) -->
+        <div *ngIf="podeEditarOuExcluir()" class="card-acoes" (click)="$event.stopPropagation()">
+          <ion-button fill="clear" size="small" class="btn-acao edit" (click)="editarEnsaio(ensaio)">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" class="btn-acao delete" (click)="excluirEnsaio(ensaio)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+
       </div>
-    </ion-card-content>
-  </ion-card>
+    </div>
+  </div>
 </ion-content>

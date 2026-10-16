@@ -8,7 +8,7 @@ import { Ensaio } from '../models/ensaio';
 })
 export class EnsaiosService {
   private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/ensaios';
-  
+
   constructor(private http: HttpClient) {}
 
   salvar(ensaio: Ensaio): Observable<Ensaio> {
@@ -32,6 +32,10 @@ export class EnsaiosService {
       `${this.API_URL}/${ensaioId}/presenca/${musicoId}?presente=${presente}`,
       {}
     );
+  }
+
+  removerPresenca(ensaioId: number, musicoId: number): Observable<Ensaio> {
+    return this.http.delete<Ensaio>(`${this.API_URL}/${ensaioId}/presenca/${musicoId}`);
   }
 
   excluir(id: number): Observable<Ensaio> {
