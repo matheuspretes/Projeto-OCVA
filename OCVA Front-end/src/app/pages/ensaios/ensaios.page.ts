@@ -98,7 +98,7 @@ export class EnsaiosPage implements OnInit {
   }
 
   podeEditarOuExcluir(): boolean {
-    return this.usuarioAutenticado?.tipo === 'maestro';
+    return this.usuarioAutenticado?.tipo === 'diretoria';
   }
 
   criarNovoEnsaio() {

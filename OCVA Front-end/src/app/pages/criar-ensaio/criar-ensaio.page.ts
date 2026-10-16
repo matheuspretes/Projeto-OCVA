@@ -74,6 +74,12 @@ export class CriarEnsaioPage implements OnInit {
   }
 
   ngOnInit() {
+    const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
+    if (usuarioAutenticado?.tipo !== 'diretoria') {
+      this.router.navigate(['/ensaios']);
+      return;
+    }
+
     this.usuarioService.listar().subscribe((usuarios) => {
       this.musicos = usuarios.filter((usuario) => usuario.tipo === 'musico');
     });
@@ -156,6 +162,12 @@ export class CriarEnsaioPage implements OnInit {
   }
 
   async salvar() {
+    const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
+    if (usuarioAutenticado?.tipo !== 'diretoria') {
+      this.router.navigate(['/ensaios']);
+      return;
+    }
+
     this.submitted = true;
     if (this.formGroup.invalid) {
       const t = await this.toastController.create({ 
@@ -169,7 +181,6 @@ export class CriarEnsaioPage implements OnInit {
 
     this.isSaving = true;
     const form = this.formGroup.value;
-    const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
 
     const dataFinal = `${form.data}T${form.horario}:00`;
 
