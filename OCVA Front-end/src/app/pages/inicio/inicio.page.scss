@@ -101,6 +101,7 @@ ion-menu {
         }
 
         &.active, &:hover {
+          --background: #24272b;
           --color: #{$text-light};
           ion-icon {
             color: $text-light;
@@ -124,6 +125,13 @@ ion-menu {
     display: flex;
     align-items: center;
     gap: 12px;
+
+    .menu-toggle {
+      display: none;
+      --color: #{$text-muted};
+      --padding-start: 0;
+      --padding-end: 0;
+    }
 
     .panel-icon {
       color: $text-muted;
@@ -365,5 +373,11 @@ ion-menu {
   }
   .poll-options {
     grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .menu-toggle {
+    display: block !important;
   }
 }

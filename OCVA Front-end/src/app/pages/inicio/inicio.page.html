@@ -1,6 +1,6 @@
 <ion-split-pane contentId="main-content">
   <!-- Sidebar / Menu Lateral -->
-  <ion-menu contentId="main-content" type="overlay">
+  <ion-menu id="main-menu" contentId="main-content" type="overlay">
     <div class="sidebar-container">
       <!-- Logo Maestro -->
       <div class="brand">
@@ -61,6 +61,7 @@
     <!-- Topbar / Cabeçalho Superior -->
     <header class="topbar">
       <div class="welcome">
+        <ion-menu-button menu="main-menu" class="menu-toggle" aria-label="Abrir menu"></ion-menu-button>
         <ion-icon name="grid-outline" class="panel-icon"></ion-icon>
         <span class="welcome-text">Olá, {{ nomeUsuario || 'usuário' }}</span>
       </div>
