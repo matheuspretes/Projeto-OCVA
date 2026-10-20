@@ -8,3 +8,12 @@ export interface Ensaio {
   criador?: any;
   titulo?: string; 
 }
+
+export interface EnsaioRequest {
+  id?: number;
+  data: string;
+  descricao: string;
+  titulo?: string;
+  musicoIds: number[];
+  criadorId?: number;
+}

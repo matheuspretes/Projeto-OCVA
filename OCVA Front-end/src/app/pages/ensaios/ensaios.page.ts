@@ -87,8 +87,7 @@ export class EnsaiosPage implements OnInit {
 
         this.ensaios = ensaiosFiltrados.map((ensaio: any) => ({
           ...ensaio,
-          dataExibicao: this.formatarDataExibicao(ensaio.data),
-          nomesMusicos: (ensaio.musicos || []).map((m: any) => m.nome)
+          dataExibicao: this.formatarDataExibicao(ensaio.data)
         }));
       },
       error: () => {
@@ -123,6 +122,14 @@ export class EnsaiosPage implements OnInit {
       return partes[0].substring(0, 2).toUpperCase();
     }
     return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  }
+
+  getNomeMusico(musico: any): string {
+    if (typeof musico === 'string') {
+      return musico.trim();
+    }
+
+    return musico?.nome || musico?.nomeCompleto || musico?.login || '';
   }
 
   formatarDataExibicao(dataOriginal: string): string {
