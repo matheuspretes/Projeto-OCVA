@@ -19,7 +19,7 @@ import {
   peopleOutline 
 } from 'ionicons/icons';
 
-import { Ensaio } from 'src/app/models/ensaio';
+import { EnsaioRequest } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
@@ -184,13 +184,15 @@ export class CriarEnsaioPage implements OnInit {
 
     const dataFinal = `${form.data}T${form.horario}:00`;
 
-    const ensaio: any = {
+    const ensaio: EnsaioRequest = {
       id: this.ensaioId ?? undefined,
       titulo: form.titulo,
       data: dataFinal,
       descricao: form.descricao,
-      musicos: form.musicos || [],
-      criador: usuarioAutenticado
+      musicoIds: (form.musicos || [])
+        .map((musico: Usuario | { id?: number }) => musico.id)
+        .filter((id: number | undefined): id is number => id !== undefined),
+      criadorId: usuarioAutenticado?.id
     };
 
     const requisicao = this.modoEdicao && this.ensaioId

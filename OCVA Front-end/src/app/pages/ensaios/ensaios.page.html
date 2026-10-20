@@ -70,14 +70,14 @@
             <span>MÚSICOS ESCALADOS</span>
           </div>
 
-          <p *ngIf="!ensaio.nomesMusicos || ensaio.nomesMusicos.length === 0" class="sem-musicos">
+          <p *ngIf="!ensaio.musicos || ensaio.musicos.length === 0" class="sem-musicos">
             Nenhum músico escalado.
           </p>
 
-          <div class="musicos-chips" *ngIf="ensaio.nomesMusicos && ensaio.nomesMusicos.length > 0">
-            <div class="musico-badge" *ngFor="let nome of ensaio.nomesMusicos">
-              <span class="avatar-iniciais">{{ getIniciais(nome) }}</span>
-              <span class="nome-musico">{{ nome }}</span>
+          <div class="musicos-chips" *ngIf="ensaio.musicos && ensaio.musicos.length > 0">
+            <div class="musico-badge" *ngFor="let musico of ensaio.musicos">
+              <span class="avatar-iniciais">{{ getIniciais(getNomeMusico(musico)) }}</span>
+              <span class="nome-musico">{{ getNomeMusico(musico) }}</span>
             </div>
           </div>
         </div>

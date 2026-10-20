@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Ensaio } from '../models/ensaio';
+import { Ensaio, EnsaioRequest } from '../models/ensaio';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class EnsaiosService {
 
   constructor(private http: HttpClient) {}
 
-  salvar(ensaio: Ensaio): Observable<Ensaio> {
+  salvar(ensaio: EnsaioRequest): Observable<Ensaio> {
     return this.http.post<Ensaio>(this.API_URL, ensaio);
   }
 
@@ -23,7 +23,7 @@ export class EnsaiosService {
     return this.http.get<Ensaio>(`${this.API_URL}/${id}`);
   }
 
-  editar(ensaio: Ensaio): Observable<Ensaio> {
+  editar(ensaio: EnsaioRequest): Observable<Ensaio> {
     return this.http.put<Ensaio>(this.API_URL, ensaio);
   }
 
