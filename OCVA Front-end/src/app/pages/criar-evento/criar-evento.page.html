@@ -60,7 +60,7 @@
         <div class="two-columns">
           <div class="field">
             <ion-label>Data</ion-label>
-            <ion-input class="field-input" type="date" formControlName="data"></ion-input>
+            <ion-input class="field-input" type="date" formControlName="data" [min]="dataMinima" [max]="dataMaxima"></ion-input>
           </div>
           <div class="field">
             <ion-label>Horário</ion-label>
@@ -96,6 +96,54 @@
           <p *ngIf="musicos.length === 0" class="eligibility-empty">
             Nenhum músico atende aos critérios no momento.
           </p>
+        </div>
+
+        <div class="field">
+          <ion-label>Instrumentos necessários</ion-label>
+          <div class="linha-instrumento">
+            <input
+              type="text"
+              class="input-simples"
+              placeholder="Instrumento (ex.: Violão)"
+              list="lista-instrumentos-evento"
+              [(ngModel)]="novoInstrumento"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <datalist id="lista-instrumentos-evento">
+              <option *ngFor="let nome of instrumentosDisponiveis" [value]="nome"></option>
+            </datalist>
+            <input
+              type="number"
+              min="1"
+              class="input-simples input-quantidade"
+              [(ngModel)]="novaQuantidade"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <button type="button" class="btn-adicionar" (click)="adicionarInstrumento()">Adicionar</button>
+          </div>
+
+          <div *ngFor="let item of instrumentos; let i = index" class="item-lista">
+            <span>{{ item.quantidade }}x {{ item.instrumento }}</span>
+            <small>{{ contarEscalados(item.instrumento) }} de {{ item.quantidade }} escalados</small>
+            <button type="button" class="btn-remover" (click)="removerInstrumento(i)">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+          <small *ngIf="instrumentos.length === 0" class="eligibility-help">Nenhum instrumento adicionado.</small>
+        </div>
+
+        <div class="field">
+          <ion-label>Partituras</ion-label>
+          <label *ngFor="let partitura of partituras" class="item-lista item-partitura">
+            <input
+              type="checkbox"
+              [checked]="isPartituraSelecionada(partitura)"
+              (change)="togglePartitura(partitura)"
+            />
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span>{{ partitura.nome }}</span>
+          </label>
+          <small *ngIf="partituras.length === 0" class="eligibility-help">Nenhuma partitura cadastrada.</small>
         </div>
 
         <div class="actions-row">

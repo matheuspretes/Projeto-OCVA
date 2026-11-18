@@ -252,3 +252,64 @@
     }
   }
 }
+/* Instrumentos necessários e partituras */
+.card-form {
+  .linha-instrumento {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+
+    .input-dark {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .input-quantidade {
+      flex: 0 0 80px;
+    }
+  }
+
+  .btn-adicionar {
+    background: transparent;
+    border: 1px solid var(--gold-accent);
+    border-radius: 6px;
+    color: var(--gold-accent);
+    padding: 0 14px;
+    cursor: pointer;
+  }
+
+  .item-lista {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    background: #111215;
+    border: 1px solid var(--border-card);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 0.88rem;
+
+    span {
+      flex: 1;
+    }
+
+    small {
+      color: var(--text-muted);
+    }
+  }
+
+  .btn-remover {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+  }
+
+  .texto-vazio {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+}

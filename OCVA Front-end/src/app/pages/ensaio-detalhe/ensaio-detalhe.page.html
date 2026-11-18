@@ -41,6 +41,32 @@
       <ng-template #semMusicos>
         <p class="empty-state">Nenhum músico foi escalado para este ensaio.</p>
       </ng-template>
+
+      <h2>Instrumentos necessários</h2>
+      <ion-list *ngIf="ensaio.instrumentos?.length; else semInstrumentos">
+        <ion-item *ngFor="let item of ensaio.instrumentos">
+          <ion-label><h3>{{ item.quantidade }}x {{ item.instrumento }}</h3></ion-label>
+          <ion-badge [color]="(item.escalados || 0) >= item.quantidade ? 'success' : 'warning'">
+            {{ item.escalados || 0 }} de {{ item.quantidade }}
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+      <ng-template #semInstrumentos>
+        <p class="empty-state">Nenhum instrumento foi pedido para este ensaio.</p>
+      </ng-template>
+
+      <h2>Partituras</h2>
+      <ion-list *ngIf="ensaio.partituras?.length; else semPartituras">
+        <ion-item *ngFor="let partitura of ensaio.partituras" [href]="partitura.url" target="_blank">
+          <ion-label>
+            <h3>{{ partitura.nome }}</h3>
+            <p *ngIf="partitura.compositor">{{ partitura.compositor }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <ng-template #semPartituras>
+        <p class="empty-state">Nenhuma partitura foi adicionada a este ensaio.</p>
+      </ng-template>
     </ion-card-content>
   </ion-card>
 

@@ -265,3 +265,74 @@ ion-textarea.field-input {
     justify-content: space-between;
   }
 }
+
+/* Instrumentos necessários e partituras */
+.linha-instrumento {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.input-simples {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 10px;
+  background: #191a1e;
+  border: 1px solid #303239;
+  border-radius: 8px;
+  color: #dfe1e5;
+  font-size: .9rem;
+  outline: none;
+}
+
+.input-simples:focus {
+  border-color: $gold;
+}
+
+.input-quantidade {
+  flex: 0 0 80px;
+}
+
+.btn-adicionar {
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid $gold;
+  border-radius: 8px;
+  color: $gold;
+  cursor: pointer;
+}
+
+.item-lista {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  background: #191a1e;
+  border: 1px solid #303239;
+  border-radius: 8px;
+  color: $text;
+  font-size: .88rem;
+}
+
+.item-lista span {
+  flex: 1;
+}
+
+.item-lista small {
+  color: $muted;
+}
+
+.item-partitura {
+  cursor: pointer;
+}
+
+.btn-remover {
+  display: flex;
+  background: transparent;
+  border: none;
+  color: $muted;
+  font-size: 1.1rem;
+  cursor: pointer;
+}

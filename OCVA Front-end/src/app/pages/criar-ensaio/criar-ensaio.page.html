@@ -45,6 +45,8 @@
               type="date" 
               class="input-dark" 
               formControlName="data" 
+              [min]="dataMinima"
+              [max]="dataMaxima"
             />
             <span *ngIf="isInvalid('data')" class="msg-erro">Preencha a data.</span>
           </div>
@@ -91,6 +93,66 @@
             </div>
           </div>
           <span *ngIf="isInvalid('musicos')" class="msg-erro">Selecione pelo menos um músico.</span>
+        </div>
+
+        <!-- Instrumentos necessários -->
+        <div class="campo-grupo">
+          <div class="musicos-header">
+            <ion-icon name="musical-notes-outline"></ion-icon>
+            <span>Instrumentos necessários</span>
+          </div>
+
+          <div class="linha-instrumento">
+            <input
+              type="text"
+              class="input-dark"
+              placeholder="Instrumento (ex.: Violão)"
+              list="lista-instrumentos-ensaio"
+              [(ngModel)]="novoInstrumento"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <datalist id="lista-instrumentos-ensaio">
+              <option *ngFor="let nome of instrumentosDisponiveis" [value]="nome"></option>
+            </datalist>
+            <input
+              type="number"
+              min="1"
+              class="input-dark input-quantidade"
+              [(ngModel)]="novaQuantidade"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <button type="button" class="btn-adicionar" (click)="adicionarInstrumento()">Adicionar</button>
+          </div>
+
+          <div *ngFor="let item of instrumentos; let i = index" class="item-lista">
+            <span>{{ item.quantidade }}x {{ item.instrumento }}</span>
+            <small>{{ contarEscalados(item.instrumento) }} de {{ item.quantidade }} escalados</small>
+            <button type="button" class="btn-remover" (click)="removerInstrumento(i)">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+          <span *ngIf="instrumentos.length === 0" class="texto-vazio">Nenhum instrumento adicionado.</span>
+        </div>
+
+        <!-- Partituras -->
+        <div class="campo-grupo">
+          <div class="musicos-header">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span>Partituras</span>
+          </div>
+
+          <div class="grid-musicos">
+            <div
+              *ngFor="let partitura of partituras"
+              class="item-musico"
+              [class.selecionado]="isPartituraSelecionada(partitura)"
+              (click)="togglePartitura(partitura)"
+            >
+              <div class="circulo-selecao"></div>
+              <span class="nome-musico">{{ partitura.nome }}</span>
+            </div>
+          </div>
+          <span *ngIf="partituras.length === 0" class="texto-vazio">Nenhuma partitura cadastrada.</span>
         </div>
 
         <!-- Ações -->

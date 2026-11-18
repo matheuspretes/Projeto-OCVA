@@ -10,8 +10,12 @@ import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { EventosService } from 'src/app/services/eventos-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { Evento } from 'src/app/models/evento';
+import { InstrumentoNecessario } from 'src/app/models/instrumento-necessario';
+import { Partitura } from 'src/app/models/partitura';
+import { PartiturasService } from 'src/app/services/partituras-service';
+import { dataMaxima, dataMinima, mensagemDeErro } from 'src/app/services/agenda-datas';
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, calendarOutline, imageOutline, locationOutline, musicalNotesOutline, timeOutline } from 'ionicons/icons';
+import { arrowBackOutline, calendarOutline, closeOutline, documentTextOutline, imageOutline, locationOutline, musicalNotesOutline, timeOutline } from 'ionicons/icons';
 import { ElementRef, ViewChild } from '@angular/core';
 import { finalize, timeout } from 'rxjs';
 
@@ -36,11 +40,25 @@ export class CriarEventoPage implements OnInit {
   modoEdicao = false;
   bannerPreview = '';
 
+  // Limites do calendário (a API faz a mesma validação)
+  dataMinima = dataMinima();
+  dataMaxima = dataMaxima();
+
+  // Instrumentos necessários para o evento
+  instrumentos: InstrumentoNecessario[] = [];
+  novoInstrumento = '';
+  novaQuantidade = 1;
+
+  // Partituras do evento
+  partituras: Partitura[] = [];
+  partiturasSelecionadas: number[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private usuarioService: UsuarioService,
     private ensaiosService: EnsaiosService,
     private eventosService: EventosService,
+    private partiturasService: PartiturasService,
     private toastController: ToastController,
     private alertController: AlertController,
     private router: Router,
@@ -49,6 +67,8 @@ export class CriarEventoPage implements OnInit {
     addIcons({
       arrowBackOutline,
       calendarOutline,
+      closeOutline,
+      documentTextOutline,
       imageOutline,
       locationOutline,
       musicalNotesOutline,
@@ -88,6 +108,10 @@ export class CriarEventoPage implements OnInit {
       error: () => {
         this.musicos = [];
       }
+    });
+
+    this.partiturasService.listar().subscribe((partituras) => {
+      this.partituras = partituras;
     });
 
     this.route.queryParamMap.subscribe((params) => {
@@ -176,6 +200,8 @@ export class CriarEventoPage implements OnInit {
           musicos: evento.musicos || []
         });
         this.bannerPreview = evento.banner || '';
+        this.instrumentos = evento.instrumentos || [];
+        this.partiturasSelecionadas = (evento.partituras || []).map((partitura) => partitura.id as number);
         this.isSaving = false;
       },
       error: async () => {
@@ -205,7 +231,10 @@ export class CriarEventoPage implements OnInit {
       local: form.local,
       banner: this.bannerPreview || undefined,
       descricao: form.descricao,
-      musicos: form.musicos || []
+      musicos: form.musicos || [],
+      musicoIds: (form.musicos || []).map((musico: Usuario) => musico.id),
+      instrumentos: this.instrumentos,
+      partituraIds: this.partiturasSelecionadas
     };
 
     const requisicao = this.modoEdicao && this.eventoId
@@ -228,8 +257,8 @@ export class CriarEventoPage implements OnInit {
         this.router.navigate(['/eventos']);
       },
       error: async (error) => {
-        const mensagem = error?.status === 400
-          ? 'Verifique os dados informados para o evento.'
+        const mensagem = error?.status === 400 || error?.status === 409
+          ? mensagemDeErro(error, 'Verifique os dados informados para o evento.')
           : error?.status === 413
             ? 'A descrição ou o banner do evento é muito grande.'
             : this.modoEdicao
@@ -243,6 +272,65 @@ export class CriarEventoPage implements OnInit {
         await errorToast.present();
       }
     });
+  }
+
+  // Lista de instrumentos dos músicos, usada como sugestão no campo
+  get instrumentosDisponiveis(): string[] {
+    const nomes: string[] = [];
+    for (const musico of this.todosOsMusicos) {
+      if (musico.instrumento && !nomes.includes(musico.instrumento)) {
+        nomes.push(musico.instrumento);
+      }
+    }
+    return nomes;
+  }
+
+  async adicionarInstrumento() {
+    const nome = this.novoInstrumento.trim();
+    if (!nome || this.novaQuantidade < 1) {
+      await this.mostrarErro('Informe o instrumento e uma quantidade maior que zero.');
+      return;
+    }
+
+    const jaExiste = this.instrumentos.some((item) => item.instrumento.toLowerCase() === nome.toLowerCase());
+    if (jaExiste) {
+      await this.mostrarErro('Esse instrumento já foi adicionado.');
+      return;
+    }
+
+    this.instrumentos.push({ instrumento: nome, quantidade: this.novaQuantidade });
+    this.novoInstrumento = '';
+    this.novaQuantidade = 1;
+  }
+
+  removerInstrumento(index: number) {
+    this.instrumentos.splice(index, 1);
+  }
+
+  // Quantos músicos selecionados tocam o instrumento
+  contarEscalados(instrumento: string): number {
+    const selecionados: Usuario[] = this.formGroup.get('musicos')?.value || [];
+    return selecionados.filter((musico) =>
+      (musico.instrumento || '').toLowerCase() === instrumento.toLowerCase()
+    ).length;
+  }
+
+  isPartituraSelecionada(partitura: Partitura): boolean {
+    return this.partiturasSelecionadas.includes(partitura.id as number);
+  }
+
+  togglePartitura(partitura: Partitura) {
+    const id = partitura.id as number;
+    if (this.isPartituraSelecionada(partitura)) {
+      this.partiturasSelecionadas = this.partiturasSelecionadas.filter((item) => item !== id);
+    } else {
+      this.partiturasSelecionadas.push(id);
+    }
+  }
+
+  private async mostrarErro(mensagem: string) {
+    const toast = await this.toastController.create({ message: mensagem, duration: 2500, color: 'danger' });
+    await toast.present();
   }
 
   isInvalid(controlName: string): boolean {

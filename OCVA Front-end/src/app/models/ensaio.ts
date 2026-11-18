@@ -1,3 +1,6 @@
+import { InstrumentoNecessario } from './instrumento-necessario';
+import { Partitura } from './partitura';
+
 export interface Ensaio {
   id?: number;
   data: string;
@@ -6,7 +9,9 @@ export interface Ensaio {
   presencas?: any[];
   faltas?: any[];
   criador?: any;
-  titulo?: string; 
+  titulo?: string;
+  instrumentos?: InstrumentoNecessario[];
+  partituras?: Partitura[];
 }
 
 export interface EnsaioRequest {
@@ -16,4 +21,6 @@ export interface EnsaioRequest {
   titulo?: string;
   musicoIds: number[];
   criadorId?: number;
+  instrumentos: InstrumentoNecessario[];
+  partituraIds: number[];
 }

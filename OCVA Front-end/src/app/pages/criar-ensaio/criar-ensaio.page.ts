@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { 
   IonContent, 
@@ -16,13 +16,19 @@ import {
   bookOutline, 
   arrowBackOutline, 
   musicalNotesOutline, 
-  peopleOutline 
+  peopleOutline,
+  documentTextOutline,
+  closeOutline
 } from 'ionicons/icons';
 
 import { EnsaioRequest } from 'src/app/models/ensaio';
+import { InstrumentoNecessario } from 'src/app/models/instrumento-necessario';
+import { Partitura } from 'src/app/models/partitura';
 import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { PartiturasService } from 'src/app/services/partituras-service';
+import { dataMaxima, dataMinima, mensagemDeErro } from 'src/app/services/agenda-datas';
 
 @Component({
   selector: 'app-criar-ensaio',
@@ -31,6 +37,7 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   standalone: true,
   imports: [
     CommonModule, 
+    FormsModule,
     ReactiveFormsModule, 
     IonContent, 
     IonHeader, 
@@ -48,10 +55,24 @@ export class CriarEnsaioPage implements OnInit {
   ensaioId: number | null = null;
   modoEdicao = false;
 
+  // Limites do calendário (a API faz a mesma validação)
+  dataMinima = dataMinima();
+  dataMaxima = dataMaxima();
+
+  // Instrumentos necessários para o ensaio
+  instrumentos: InstrumentoNecessario[] = [];
+  novoInstrumento = '';
+  novaQuantidade = 1;
+
+  // Partituras do ensaio
+  partituras: Partitura[] = [];
+  partiturasSelecionadas: number[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private usuarioService: UsuarioService,
     private ensaiosService: EnsaiosService,
+    private partiturasService: PartiturasService,
     private toastController: ToastController,
     private alertController: AlertController,
     private router: Router,
@@ -61,7 +82,9 @@ export class CriarEnsaioPage implements OnInit {
       bookOutline,
       arrowBackOutline,
       musicalNotesOutline,
-      peopleOutline
+      peopleOutline,
+      documentTextOutline,
+      closeOutline
     });
 
     this.formGroup = this.formBuilder.group({
@@ -82,6 +105,10 @@ export class CriarEnsaioPage implements OnInit {
 
     this.usuarioService.listar().subscribe((usuarios) => {
       this.musicos = usuarios.filter((usuario) => usuario.tipo === 'musico');
+    });
+
+    this.partiturasService.listar().subscribe((partituras) => {
+      this.partituras = partituras;
     });
 
     this.route.queryParamMap.subscribe((params) => {
@@ -121,6 +148,8 @@ export class CriarEnsaioPage implements OnInit {
           descricao: ensaio.descricao || '',
           musicos: ensaio.musicos || []
         });
+        this.instrumentos = ensaio.instrumentos || [];
+        this.partiturasSelecionadas = (ensaio.partituras || []).map((partitura: Partitura) => partitura.id);
         this.isSaving = false;
       },
       error: async () => {
@@ -153,6 +182,65 @@ export class CriarEnsaioPage implements OnInit {
 
     this.formGroup.patchValue({ musicos: selecionados });
     this.formGroup.get('musicos')?.markAsDirty();
+  }
+
+  // Lista de instrumentos dos músicos, usada como sugestão no campo
+  get instrumentosDisponiveis(): string[] {
+    const nomes: string[] = [];
+    for (const musico of this.musicos) {
+      if (musico.instrumento && !nomes.includes(musico.instrumento)) {
+        nomes.push(musico.instrumento);
+      }
+    }
+    return nomes;
+  }
+
+  async adicionarInstrumento() {
+    const nome = this.novoInstrumento.trim();
+    if (!nome || this.novaQuantidade < 1) {
+      await this.mostrarErro('Informe o instrumento e uma quantidade maior que zero.');
+      return;
+    }
+
+    const jaExiste = this.instrumentos.some((item) => item.instrumento.toLowerCase() === nome.toLowerCase());
+    if (jaExiste) {
+      await this.mostrarErro('Esse instrumento já foi adicionado.');
+      return;
+    }
+
+    this.instrumentos.push({ instrumento: nome, quantidade: this.novaQuantidade });
+    this.novoInstrumento = '';
+    this.novaQuantidade = 1;
+  }
+
+  removerInstrumento(index: number) {
+    this.instrumentos.splice(index, 1);
+  }
+
+  // Quantos músicos selecionados tocam o instrumento
+  contarEscalados(instrumento: string): number {
+    const selecionados: Usuario[] = this.formGroup.get('musicos')?.value || [];
+    return selecionados.filter((musico) =>
+      (musico.instrumento || '').toLowerCase() === instrumento.toLowerCase()
+    ).length;
+  }
+
+  isPartituraSelecionada(partitura: Partitura): boolean {
+    return this.partiturasSelecionadas.includes(partitura.id as number);
+  }
+
+  togglePartitura(partitura: Partitura) {
+    const id = partitura.id as number;
+    if (this.isPartituraSelecionada(partitura)) {
+      this.partiturasSelecionadas = this.partiturasSelecionadas.filter((item) => item !== id);
+    } else {
+      this.partiturasSelecionadas.push(id);
+    }
+  }
+
+  private async mostrarErro(mensagem: string) {
+    const toast = await this.toastController.create({ message: mensagem, duration: 2500, color: 'danger' });
+    await toast.present();
   }
 
   isInvalid(controlName: string): boolean {
@@ -192,7 +280,9 @@ export class CriarEnsaioPage implements OnInit {
       musicoIds: (form.musicos || [])
         .map((musico: Usuario | { id?: number }) => musico.id)
         .filter((id: number | undefined): id is number => id !== undefined),
-      criadorId: usuarioAutenticado?.id
+      criadorId: usuarioAutenticado?.id,
+      instrumentos: this.instrumentos,
+      partituraIds: this.partiturasSelecionadas
     };
 
     const requisicao = this.modoEdicao && this.ensaioId
@@ -210,13 +300,9 @@ export class CriarEnsaioPage implements OnInit {
         this.router.navigate(['/ensaios']);
         this.isSaving = false;
       },
-      error: async () => {
-        const toast = await this.toastController.create({
-          message: this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio',
-          duration: 2000,
-          color: 'danger'
-        });
-        await toast.present();
+      error: async (error) => {
+        const padrao = this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio';
+        await this.mostrarErro(mensagemDeErro(error, padrao));
         this.isSaving = false;
       }
     });
