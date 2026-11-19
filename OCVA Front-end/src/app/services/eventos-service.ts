@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evento } from '../models/evento';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventosService {
-  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/eventos';
+  private readonly API_URL = `${environment.apiBaseUrl}/api/v1/eventos`;
 
   constructor(private http: HttpClient) {
     

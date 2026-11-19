@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class CodigoAcessoService {
-  private readonly api = 'https://ocva-api.onrender.com/api/v1/codigos-acesso';
+  private readonly api = `${environment.apiBaseUrl}/api/v1/codigos-acesso`;
 
   constructor(private http: HttpClient) {}
 

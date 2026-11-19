@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Partitura } from '../models/partitura';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PartiturasService {
-  private readonly api = 'https://ocva-api.onrender.com/api/partituras';
+  private readonly api = `${environment.apiBaseUrl}/api/partituras`;
 
   constructor(private http: HttpClient) {}
 

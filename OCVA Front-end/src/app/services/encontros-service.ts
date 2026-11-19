@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Encontro, EncontroRequest, TipoEncontro } from '../models/encontro';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EncontrosService {
-  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/encontros';
+  private readonly API_URL = `${environment.apiBaseUrl}/api/v1/encontros`;
 
   constructor(private http: HttpClient) {}
 
