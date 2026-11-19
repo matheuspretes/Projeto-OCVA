@@ -269,3 +269,8 @@ $text-muted: #8b8f97;
   }
 }
 
+
+// Espaço entre as duas enquetes
+.poll-card + .poll-card {
+  margin-top: 16px;
+}

@@ -86,6 +86,9 @@ export class EnsaiosPage implements OnInit {
           );
         }
 
+        // Arquivo: do mais recente para o mais antigo
+        ensaiosFiltrados = [...ensaiosFiltrados].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+
         this.ensaios = ensaiosFiltrados.map((ensaio: any) => ({
           ...ensaio,
           dataExibicao: this.formatarDataExibicao(ensaio.data)

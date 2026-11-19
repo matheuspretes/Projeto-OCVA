@@ -95,6 +95,21 @@ ion-menu {
       font-weight: 700;
     }
 
+    &.arquivo.destaque {
+      font-weight: 700;
+    }
+
+    .seta {
+      margin: 0;
+      font-size: 16px;
+      color: #a0a5ae;
+      transition: transform .2s;
+
+      &.aberta {
+        transform: rotate(180deg);
+      }
+    }
+
     &.sair {
       --color: #a0a5ae;
       margin-top: 18px;
@@ -109,6 +124,23 @@ ion-menu {
     margin-right: 12px;
     color: #e0e1e4;
     font-size: 20px;
+  }
+
+  // Opções dentro do "Arquivo"
+  .submenu {
+    margin: -2px 0 6px 22px;
+    padding-left: 10px;
+    border-left: 1px solid #2a2c31;
+
+    ion-item {
+      --min-height: 36px;
+      min-height: 36px;
+      font-size: .93rem;
+    }
+
+    ion-icon {
+      font-size: 17px;
+    }
   }
 }
 

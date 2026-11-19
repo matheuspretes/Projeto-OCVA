@@ -14,17 +14,43 @@
       <nav class="nav-section">
         <span class="nav-label">Ações</span>
         <ion-list lines="none" class="nav-list">
-          <ion-item
-            *ngFor="let item of itensVisiveis"
-            button
-            [routerLink]="item.rota"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: item.rota === '/inicio' }"
-            [class.active]="secao === item.rota"
-          >
-            <ion-icon slot="start" [name]="item.icone"></ion-icon>
-            <ion-label>{{ item.rotulo }}</ion-label>
+          <ng-container *ngTemplateOutlet="listaItens; context: { $implicit: visiveis(itensTopo) }"></ng-container>
+
+          <!-- Arquivo: escolha entre ensaios/encontros e eventos que já passaram -->
+          <ion-item button class="arquivo" [class.destaque]="emArquivo" (click)="alternarArquivo()"
+            [attr.aria-expanded]="arquivoAberto">
+            <ion-icon slot="start" name="archive-outline"></ion-icon>
+            <ion-label>Arquivo</ion-label>
+            <ion-icon slot="end" name="chevron-down-outline" class="seta" [class.aberta]="arquivoAberto"></ion-icon>
           </ion-item>
+          <div class="submenu" *ngIf="arquivoAberto">
+            <ion-item
+              *ngFor="let item of itensArquivo"
+              button
+              [routerLink]="item.rota"
+              routerLinkActive="active"
+              [class.active]="secao === item.rota"
+            >
+              <ion-icon slot="start" [name]="item.icone"></ion-icon>
+              <ion-label>{{ item.rotulo }}</ion-label>
+            </ion-item>
+          </div>
+
+          <ng-container *ngTemplateOutlet="listaItens; context: { $implicit: visiveis(itensBase) }"></ng-container>
+
+          <ng-template #listaItens let-itens>
+            <ion-item
+              *ngFor="let item of itens"
+              button
+              [routerLink]="item.rota"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.rota === '/inicio' }"
+              [class.active]="secao === item.rota"
+            >
+              <ion-icon slot="start" [name]="item.icone"></ion-icon>
+              <ion-label>{{ item.rotulo }}</ion-label>
+            </ion-item>
+          </ng-template>
           <ion-item button class="sair" (click)="sair()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <ion-label>Sair</ion-label>

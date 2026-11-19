@@ -7,6 +7,7 @@ export interface Ensaio {
   faltas?: any[];
   criador?: any;
   titulo?: string;
+  tipo?: string; // tipo do encontro de origem (ex.: "Reunião")
   instrumentos?: { instrumento: string; quantidade: number; escalados?: number }[];
   partituras?: any[];
 }

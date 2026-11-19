@@ -1,4 +1,4 @@
-<app-layout titulo="Ensaios" icone="musical-note-outline">
+<app-layout titulo="Arquivo de ensaios" icone="archive-outline" secao="/ensaios">
   <ion-button acoes *ngIf="podeEditarOuExcluir()" class="topbar-button" (click)="criarNovoEnsaio()">
         <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
         Novo ensaio
@@ -9,13 +9,13 @@
     
     <!-- Subtítulo da secção -->
     <div class="section-badge-title">
-      TODOS OS ENSAIOS PREVISTOS
+      ENSAIOS E ENCONTROS, DO MAIS RECENTE AO MAIS ANTIGO
     </div>
 
     <!-- Estado Vazio -->
     <div *ngIf="!ensaios || ensaios.length === 0" class="empty-state">
       <ion-icon name="musical-notes-outline" class="empty-icon"></ion-icon>
-      <p>Nenhum ensaio agendado encontrado.</p>
+      <p>Nenhum ensaio ou encontro no arquivo.</p>
     </div>
 
     <!-- Grelha de Ensaios -->
@@ -28,7 +28,7 @@
         <!-- Tag superior do card -->
         <div class="tag-tipo">
           <ion-icon name="musical-note"></ion-icon>
-          <span>ENSAIO</span>
+          <span>{{ (ensaio.tipo || 'Ensaio') | uppercase }}</span>
         </div>
 
         <!-- Título do Ensaio -->
@@ -37,7 +37,7 @@
         <!-- Data e Horário -->
         <div class="ensaio-data">
           <ion-icon name="calendar-outline"></ion-icon>
-          <span>{{ ensaio.data }}</span>
+          <span>{{ ensaio.dataExibicao || ensaio.data }}</span>
         </div>
 
         <!-- Descrição -->

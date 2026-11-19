@@ -1,0 +1,148 @@
+<app-layout titulo="Detalhes do evento" icone="calendar-outline" secao="/eventos">
+  <a acoes class="topbar-link" routerLink="/eventos">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>Voltar aos eventos</span>
+  </a>
+
+  <main class="detalhe-body">
+    <div *ngIf="carregando" class="estado-vazio">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div *ngIf="!carregando && !evento" class="estado-vazio">
+      <ion-icon name="musical-note"></ion-icon>
+      <p>Evento não encontrado.</p>
+    </div>
+
+    <ng-container *ngIf="!carregando && evento">
+      <h2 class="section-title">INFORMAÇÕES DO EVENTO</h2>
+
+      <!-- Informações (visualização) -->
+      <section class="detalhe-card" *ngIf="!editando">
+        <div class="card-topo">
+          <span class="tag"><ion-icon name="calendar-outline"></ion-icon> EVENTO</span>
+          <button *ngIf="podeGerenciar()" type="button" class="btn-secundario" (click)="iniciarEdicao()">
+            <ion-icon name="create-outline"></ion-icon> Editar
+          </button>
+        </div>
+
+        <img *ngIf="evento.banner" class="banner" [src]="evento.banner" alt="Banner do evento">
+
+        <h3>{{ evento.titulo || 'Apresentação / Concerto' }}</h3>
+
+        <div class="meta">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ dataFormatada() }}</span>
+        </div>
+        <div class="meta" *ngIf="evento.local">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{ evento.local }}</span>
+        </div>
+
+        <p class="descricao">{{ evento.descricao || 'Sem descrição cadastrada.' }}</p>
+      </section>
+
+      <!-- Informações (edição) -->
+      <section class="detalhe-card" *ngIf="editando">
+        <div class="card-topo">
+          <span class="tag"><ion-icon name="create-outline"></ion-icon> EDITAR EVENTO</span>
+        </div>
+
+        <form [formGroup]="formGroup" (ngSubmit)="salvarEdicao()" class="form-edicao">
+          <label class="campo">
+            <span>Título</span>
+            <input type="text" formControlName="titulo" maxlength="120" placeholder="Ex.: Concerto de Natal">
+            <small *ngIf="campoInvalido('titulo')">Informe o título.</small>
+          </label>
+
+          <div class="linha-dupla">
+            <label class="campo">
+              <span>Data</span>
+              <input type="date" formControlName="data">
+              <small *ngIf="campoInvalido('data')">Informe a data.</small>
+            </label>
+            <label class="campo">
+              <span>Horário</span>
+              <input type="time" formControlName="horario">
+              <small *ngIf="campoInvalido('horario')">Informe o horário.</small>
+            </label>
+          </div>
+
+          <label class="campo">
+            <span>Local</span>
+            <input type="text" formControlName="local" maxlength="160" placeholder="Ex.: Igreja Central">
+            <small *ngIf="campoInvalido('local')">Informe o local.</small>
+          </label>
+
+          <label class="campo">
+            <span>Descrição</span>
+            <textarea rows="4" formControlName="descricao" placeholder="Repertório, orientações e observações."></textarea>
+            <small *ngIf="campoInvalido('descricao')">Informe a descrição.</small>
+          </label>
+
+
+          <div class="acoes">
+            <button type="button" class="btn-secundario" (click)="cancelarEdicao()" [disabled]="salvando">Cancelar</button>
+            <button type="submit" class="btn-primario" [disabled]="salvando">
+              <ion-spinner *ngIf="salvando" name="crescent"></ion-spinner>
+              <span *ngIf="!salvando">Salvar alterações</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Presença -->
+      <h2 class="section-title">PRESENÇA DOS MÚSICOS</h2>
+
+      <section class="detalhe-card">
+        <div class="resumo">
+          <span class="resumo-item presente"><ion-icon name="checkmark-circle"></ion-icon> {{ contar('presente') }} presentes</span>
+          <span class="resumo-item falta"><ion-icon name="close-circle"></ion-icon> {{ contar('falta') }} faltas</span>
+          <span class="resumo-item">{{ contar(null) }} sem marcação</span>
+        </div>
+        <p *ngIf="podeGerenciar()" class="dica">Clique para marcar. Clique de novo na mesma opção para desfazer, ou na outra para trocar.</p>
+
+        <ul class="lista-musicos" *ngIf="evento.musicos?.length; else semMusicos">
+          <li *ngFor="let musico of evento.musicos" class="musico-linha" [class.ocupado]="emAndamento(musico)">
+            <span class="avatar"
+              [class.presente]="situacao(musico) === 'presente'"
+              [class.falta]="situacao(musico) === 'falta'">{{ iniciais(musico.nome) }}</span>
+            <div class="musico-info">
+              <strong>{{ musico.nome }}</strong>
+              <span>{{ musico.instrumento }}</span>
+            </div>
+
+            <div *ngIf="podeGerenciar(); else situacaoSomenteLeitura" class="botoes-presenca">
+              <button type="button" class="btn-presenca presente"
+                [class.ativo]="situacao(musico) === 'presente'"
+                [attr.aria-pressed]="situacao(musico) === 'presente'"
+                [disabled]="emAndamento(musico)"
+                (click)="alternarPresenca(musico, true)">
+                <ion-icon [name]="situacao(musico) === 'presente' ? 'checkmark-circle' : 'checkmark-circle-outline'"></ion-icon>
+                Presente
+              </button>
+              <button type="button" class="btn-presenca falta"
+                [class.ativo]="situacao(musico) === 'falta'"
+                [attr.aria-pressed]="situacao(musico) === 'falta'"
+                [disabled]="emAndamento(musico)"
+                (click)="alternarPresenca(musico, false)">
+                <ion-icon [name]="situacao(musico) === 'falta' ? 'close-circle' : 'close-circle-outline'"></ion-icon>
+                Falta
+              </button>
+            </div>
+
+            <ng-template #situacaoSomenteLeitura>
+              <span class="selo" *ngIf="situacao(musico) === 'presente'">Presente</span>
+              <span class="selo falta" *ngIf="situacao(musico) === 'falta'">Falta</span>
+              <span class="selo neutro" *ngIf="situacao(musico) === null">Sem marcação</span>
+            </ng-template>
+          </li>
+        </ul>
+
+        <ng-template #semMusicos>
+          <p class="vazio">Nenhum músico participou deste evento.</p>
+        </ng-template>
+      </section>
+    </ng-container>
+  </main>
+</app-layout>

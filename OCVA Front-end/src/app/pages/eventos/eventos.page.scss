@@ -191,3 +191,13 @@ $white: #f1f1f2;
     flex-direction: column;
   }
 }
+
+// O card abre os detalhes do evento
+.evento-card {
+  cursor: pointer;
+  transition: border-color .2s;
+
+  &:hover {
+    border-color: #3e424d;
+  }
+}

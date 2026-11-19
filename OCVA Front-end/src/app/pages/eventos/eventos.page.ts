@@ -10,7 +10,10 @@ import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
+  addCircleOutline,
+  archiveOutline,
   bookOutline,
+  checkmarkDoneOutline,
   calendarOutline,
   documentTextOutline,
   homeOutline,
@@ -50,7 +53,10 @@ export class EventosPage implements OnInit {
 
   ngOnInit() {
     addIcons({
+      addCircleOutline,
+      archiveOutline,
       bookOutline,
+      checkmarkDoneOutline,
       calendarOutline,
       documentTextOutline,
       homeOutline,
@@ -83,6 +89,9 @@ export class EventosPage implements OnInit {
           );
         }
 
+        // Arquivo: do mais recente para o mais antigo
+        eventosFiltrados = [...eventosFiltrados].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+
         this.eventos = eventosFiltrados.map((evento: Evento) => ({
           ...evento,
           nomesMusicos: (evento.musicos || []).map((m: any) => m.nome)
@@ -96,6 +105,16 @@ export class EventosPage implements OnInit {
 
   podeEditarOuExcluir(): boolean {
     return this.usuarioAutenticado?.tipo === 'diretoria';
+  }
+
+  podeMarcarEvento(): boolean {
+    return this.usuarioAutenticado?.tipo === 'maestro' || this.usuarioAutenticado?.tipo === 'diretoria';
+  }
+
+  abrirDetalhes(evento: Evento) {
+    if (evento.id) {
+      this.router.navigate(['/eventos', evento.id]);
+    }
   }
 
   criarNovoEvento() {
