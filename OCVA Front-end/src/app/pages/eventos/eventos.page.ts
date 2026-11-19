@@ -22,6 +22,7 @@ import {
   peopleOutline,
   personOutline
 } from 'ionicons/icons';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 
 @Component({
@@ -30,7 +31,7 @@ import {
   styleUrls: ['./eventos.page.scss'],
   standalone: true,
 
-  imports: [IonContent, IonMenu, IonSplitPane, IonList, IonItem, IonLabel, IonIcon, IonButton, CommonModule, FormsModule, RouterLink]
+  imports: [AppLayoutComponent, IonContent, IonMenu, IonSplitPane, IonList, IonItem, IonLabel, IonIcon, IonButton, CommonModule, FormsModule, RouterLink]
 
 })
 export class EventosPage implements OnInit {

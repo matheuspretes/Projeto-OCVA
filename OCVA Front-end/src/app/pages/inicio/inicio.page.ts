@@ -18,6 +18,7 @@ import { EncontrosService } from 'src/app/services/encontros-service';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { EventosService } from 'src/app/services/eventos-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 /**
  * O próximo compromisso da orquestra: pode ser um encontro marcado
@@ -40,7 +41,7 @@ type ProximoCompromisso = {
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, IonContent, IonIcon, IonMenuButton, IonSplitPane, IonMenu, IonList, IonItem, IonLabel, IonGrid, IonRow, IonCol]
+  imports: [AppLayoutComponent, CommonModule, RouterLink, RouterLinkActive, IonContent, IonIcon, IonMenuButton, IonSplitPane, IonMenu, IonList, IonItem, IonLabel, IonGrid, IonRow, IonCol]
 })
 export class InicioPage implements OnInit {
   tipoUsuario: TipoUsuario | null = null;

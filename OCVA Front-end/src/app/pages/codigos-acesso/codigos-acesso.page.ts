@@ -13,13 +13,14 @@ import { addIcons } from 'ionicons';
 import { addOutline, calendarOutline, copyOutline, documentTextOutline, fileTrayOutline, homeOutline, keyOutline, lockClosedOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, personOutline, shieldCheckmarkOutline, trashOutline } from 'ionicons/icons';
 import { CodigoAcessoService } from 'src/app/services/codigo-acesso-service';
 import { CodigoAcesso } from 'src/app/models/codigo-acesso';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-codigos-acesso',
   templateUrl: './codigos-acesso.page.html',
   styleUrls: ['./codigos-acesso.page.scss'],
   standalone: true,
-  imports: [
+  imports: [AppLayoutComponent, 
     CommonModule, FormsModule, RouterLink,
     IonIcon, IonList, IonBadge, IonLabel, IonItem, IonBackButton,
     IonButtons, IonButton, IonContent, IonHeader, IonToolbar,

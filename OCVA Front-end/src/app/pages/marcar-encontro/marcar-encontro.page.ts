@@ -10,6 +10,7 @@ import { finalize, timeout } from 'rxjs';
 import { EncontroRequest, TipoEncontro } from 'src/app/models/encontro';
 import { EncontrosService } from 'src/app/services/encontros-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-marcar-encontro',
@@ -17,7 +18,7 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   // Reaproveita o visual da página de criar evento
   styleUrls: ['../criar-evento/criar-evento.page.scss', './marcar-encontro.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, IonContent, IonHeader, IonToolbar, IonIcon, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton, IonSpinner]
+  imports: [AppLayoutComponent, CommonModule, ReactiveFormsModule, RouterLink, IonContent, IonHeader, IonToolbar, IonIcon, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton, IonSpinner]
 })
 export class MarcarEncontroPage implements OnInit {
   formGroup: FormGroup;

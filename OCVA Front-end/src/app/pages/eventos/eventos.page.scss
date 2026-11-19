@@ -15,133 +15,8 @@ $white: #f1f1f2;
   font-family: 'Inter', sans-serif;
 }
 
-ion-split-pane {
-  --side-width: 316px;
-  --side-max-width: 316px;
-  --side-min-width: 260px;
-}
-
-ion-menu {
-  --background: #{$sidebar};
-  border-right: 1px solid $border;
-}
-
-.sidebar-container {
-  min-height: 100%;
-  padding: 28px 10px;
-  background: $sidebar;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 8px 44px;
-}
-
-.brand-icon {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: #29271e;
-  color: $gold;
-}
-
-.brand-icon ion-icon {
-  font-size: 25px;
-}
-
-.brand-text h1 {
-  margin: 0;
-  color: $gold;
-  font: italic 600 1.25rem 'Playfair Display', serif;
-}
-
-.brand-text span {
-  display: block;
-  margin-top: 3px;
-  color: #8b98ab;
-  font-size: .67rem;
-  letter-spacing: 1.5px;
-}
-
-.nav-label {
-  display: block;
-  margin: 0 10px 14px;
-  color: #a0a5ae;
-  font-size: .78rem;
-  font-weight: 600;
-}
-
-.nav-list {
-  padding: 0;
-  background: transparent;
-}
-
-.nav-list ion-item {
-  --background: transparent;
-  --color: #f1f1f2;
-  --border-radius: 15px;
-  --padding-start: 12px;
-  --inner-padding-end: 12px;
-  min-height: 40px;
-  margin-bottom: 5px;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.nav-list ion-item.active {
-  --background: #24272b;
-  font-weight: 700;
-}
-
-.nav-list ion-icon {
-  margin-right: 12px;
-  color: #e0e1e4;
-  font-size: 20px;
-}
-
 .eventos-content {
   --background: #{$background};
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 78px;
-  padding: 0 24px 0 40px;
-  background: $topbar;
-  border-bottom: 1px solid $border;
-}
-
-.page-heading {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: $gold;
-  font: italic 1.35rem 'Playfair Display', serif;
-}
-
-.page-heading ion-icon {
-  padding-right: 18px;
-  border-right: 1px solid #303238;
-  color: $white;
-  font-size: 19px;
-}
-
-.new-event-button {
-  --background: #e0b641;
-  --background-hover: #f0c655;
-  --color: #171717;
-  --border-radius: 15px;
-  height: 40px;
-  margin: 0;
-  font-size: .92rem;
-  font-weight: 600;
-  text-transform: none;
 }
 
 .eventos-body {
@@ -284,9 +159,7 @@ ion-menu {
 }
 
 @media (max-width: 760px) {
-  .topbar {
-    padding: 0 16px;
-  }
+  
 
   .eventos-body {
     padding: 28px 16px 48px;

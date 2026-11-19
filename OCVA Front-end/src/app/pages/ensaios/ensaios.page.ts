@@ -24,13 +24,14 @@ import {
 import { EnsaiosService } from '../../services/ensaios-service';
 import { UsuarioService } from '../../services/usuario-service';
 import { Ensaio } from '../../models/ensaio';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-ensaios',
   templateUrl: './ensaios.page.html',
   styleUrls: ['./ensaios.page.scss'],
   standalone: true,
-  imports: [
+  imports: [AppLayoutComponent, 
     CommonModule, 
     FormsModule, 
     RouterLink,

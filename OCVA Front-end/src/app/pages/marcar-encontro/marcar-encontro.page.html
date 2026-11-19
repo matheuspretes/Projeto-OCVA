@@ -1,19 +1,10 @@
-<ion-header>
-  <ion-toolbar>
-    <div class="topbar">
-      <div class="page-heading">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <span>{{ modoEdicao ? 'Editar encontro' : 'Marcar encontro' }}</span>
-      </div>
-      <a routerLink="/inicio" class="back-link">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-        Voltar ao início
-      </a>
-    </div>
-  </ion-toolbar>
-</ion-header>
+<app-layout [titulo]="modoEdicao ? 'Editar encontro' : 'Marcar encontro'" icone="add-circle-outline">
+  <a acoes class="topbar-link" routerLink="/inicio">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>Voltar ao início</span>
+  </a>
 
-<ion-content [fullscreen]="true" class="criar-evento-page">
+  <div class="criar-evento-page">
   <main class="form-shell">
     <section class="form-card">
       <header class="form-heading">
@@ -66,4 +57,5 @@
       </form>
     </section>
   </main>
-</ion-content>
+  </div>
+</app-layout>

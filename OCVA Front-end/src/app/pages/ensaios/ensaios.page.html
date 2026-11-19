@@ -1,24 +1,10 @@
-<ion-header [translucent]="true" class="custom-header">
-  <ion-toolbar color="dark">
-    <div class="header-inner">
-      <a class="toolbar-logo-link" routerLink="/inicio" aria-label="Voltar para o início">
-        <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
-      </a>
-      
-      <div class="header-title-container">
-        <ion-icon name="calendar-outline" class="title-icon"></ion-icon>
-        <span class="header-title">Ensaios</span>
-      </div>
-
-      <ion-button *ngIf="podeEditarOuExcluir()" class="btn-novo-ensaio" (click)="criarNovoEnsaio()">
+<app-layout titulo="Ensaios" icone="musical-note-outline">
+  <ion-button acoes *ngIf="podeEditarOuExcluir()" class="topbar-button" (click)="criarNovoEnsaio()">
         <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
         Novo ensaio
       </ion-button>
-    </div>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true" class="ensaios-content">
+  <div class="ensaios-content">
   <div class="container-wrapper">
     
     <!-- Subtítulo da secção -->
@@ -95,4 +81,5 @@
       </div>
     </div>
   </div>
-</ion-content>
+  </div>
+</app-layout>

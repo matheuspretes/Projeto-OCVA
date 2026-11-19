@@ -1,19 +1,10 @@
-<ion-header class="custom-header">
-  <ion-toolbar>
-    <div class="header-inner">
-      <div class="header-left">
-        <ion-icon name="book-outline" class="title-icon"></ion-icon>
-        <span class="header-title">{{ modoEdicao ? 'Editar ensaio' : 'Novo ensaio' }}</span>
-      </div>
-      <button type="button" class="btn-voltar" routerLink="/ensaios">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-        <span>Voltar aos ensaios</span>
-      </button>
-    </div>
-  </ion-toolbar>
-</ion-header>
+<app-layout [titulo]="modoEdicao ? 'Editar ensaio' : 'Novo ensaio'" icone="musical-notes-outline" secao="/ensaios">
+  <a acoes class="topbar-link" routerLink="/ensaios">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>Voltar aos ensaios</span>
+  </a>
 
-<ion-content [fullscreen]="true" class="criar-ensaio-content">
+  <div class="criar-ensaio-content">
   <div class="form-container">
     <div class="card-form">
       <div class="card-header-custom">
@@ -107,4 +98,5 @@
       </form>
     </div>
   </div>
-</ion-content>
+  </div>
+</app-layout>

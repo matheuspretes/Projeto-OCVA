@@ -10,13 +10,14 @@ import { Partitura } from '../../models/partitura';
 import { PartiturasService } from '../../services/partituras-service';
 import { Usuario } from '../../models/usuario';
 import { UsuarioService } from '../../services/usuario-service';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-partituras',
   templateUrl: './partituras.page.html',
   styleUrls: ['./partituras.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonMenu, IonSelect, IonSelectOption, IonSplitPane]
+  imports: [AppLayoutComponent, CommonModule, FormsModule, RouterLink, IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonMenu, IonSelect, IonSelectOption, IonSplitPane]
 })
 export class PartiturasPage implements OnInit {
   partituras: Partitura[] = [];

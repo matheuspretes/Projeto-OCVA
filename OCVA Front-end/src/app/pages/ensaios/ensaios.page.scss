@@ -13,55 +13,6 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.custom-header {
-  ion-toolbar {
-    --background: #121316;
-    --border-color: #24252a;
-    border-bottom: 1px solid #24252a;
-  }
-
-  .header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 16px;
-    width: 100%;
-  }
-
-  .toolbar-logo {
-    height: 38px;
-    display: block;
-  }
-
-  .header-title-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--dourado-claro);
-
-    .title-icon {
-      font-size: 1.2rem;
-    }
-
-    .header-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-  }
-
-  .btn-novo-ensaio {
-    --background: var(--dourado);
-    --background-hover: #c4944d;
-    --color: #121316;
-    --border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: none;
-    margin: 0;
-  }
-}
-
 .container-wrapper {
   max-width: 1200px;
   margin: 0 auto;

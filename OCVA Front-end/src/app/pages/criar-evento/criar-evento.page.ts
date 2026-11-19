@@ -14,13 +14,14 @@ import { addIcons } from 'ionicons';
 import { arrowBackOutline, calendarOutline, imageOutline, locationOutline, musicalNotesOutline, timeOutline } from 'ionicons/icons';
 import { ElementRef, ViewChild } from '@angular/core';
 import { finalize, timeout } from 'rxjs';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-criar-evento',
   templateUrl: './criar-evento.page.html',
   styleUrls: ['./criar-evento.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonInput, IonSpinner, IonTextarea, IonIcon, IonButton, RouterLink]
+  imports: [AppLayoutComponent, CommonModule, FormsModule, ReactiveFormsModule, IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonLabel, IonDatetime, IonSelect, IonSelectOption, IonInput, IonSpinner, IonTextarea, IonIcon, IonButton, RouterLink]
 })
 export class CriarEventoPage implements OnInit {
   @ViewChild('bannerInput') private bannerInput?: ElementRef<HTMLInputElement>;

@@ -1,0 +1,51 @@
+<ion-split-pane [contentId]="contentId">
+  <ion-menu [contentId]="contentId" [menuId]="menuId" type="overlay">
+    <aside class="sidebar-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <ion-icon name="musical-notes-outline"></ion-icon>
+        </div>
+        <div class="brand-text">
+          <h1>{{ tipoUsuarioLabel }}</h1>
+          <span>GESTÃO MUSICAL</span>
+        </div>
+      </div>
+
+      <nav class="nav-section">
+        <span class="nav-label">Ações</span>
+        <ion-list lines="none" class="nav-list">
+          <ion-item
+            *ngFor="let item of itensVisiveis"
+            button
+            [routerLink]="item.rota"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.rota === '/inicio' }"
+            [class.active]="secao === item.rota"
+          >
+            <ion-icon slot="start" [name]="item.icone"></ion-icon>
+            <ion-label>{{ item.rotulo }}</ion-label>
+          </ion-item>
+          <ion-item button class="sair" (click)="sair()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Sair</ion-label>
+          </ion-item>
+        </ion-list>
+      </nav>
+    </aside>
+  </ion-menu>
+
+  <ion-content [id]="contentId" class="layout-content">
+    <header class="topbar">
+      <div class="page-heading">
+        <ion-menu-button [menu]="menuId" class="menu-toggle" aria-label="Abrir menu"></ion-menu-button>
+        <ion-icon [name]="icone"></ion-icon>
+        <span>{{ titulo }}</span>
+      </div>
+      <div class="topbar-actions">
+        <ng-content select="[acoes]"></ng-content>
+      </div>
+    </header>
+
+    <ng-content></ng-content>
+  </ion-content>
+</ion-split-pane>
