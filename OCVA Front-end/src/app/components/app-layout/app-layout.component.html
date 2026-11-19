@@ -1,0 +1,77 @@
+<ion-split-pane [contentId]="contentId">
+  <ion-menu [contentId]="contentId" [menuId]="menuId" type="overlay">
+    <aside class="sidebar-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <ion-icon name="musical-notes-outline"></ion-icon>
+        </div>
+        <div class="brand-text">
+          <h1>{{ tipoUsuarioLabel }}</h1>
+          <span>GESTÃO MUSICAL</span>
+        </div>
+      </div>
+
+      <nav class="nav-section">
+        <span class="nav-label">Ações</span>
+        <ion-list lines="none" class="nav-list">
+          <ng-container *ngTemplateOutlet="listaItens; context: { $implicit: visiveis(itensTopo) }"></ng-container>
+
+          <!-- Arquivo: escolha entre ensaios/encontros e eventos que já passaram -->
+          <ion-item button class="arquivo" [class.destaque]="emArquivo" (click)="alternarArquivo()"
+            [attr.aria-expanded]="arquivoAberto">
+            <ion-icon slot="start" name="archive-outline"></ion-icon>
+            <ion-label>Arquivo</ion-label>
+            <ion-icon slot="end" name="chevron-down-outline" class="seta" [class.aberta]="arquivoAberto"></ion-icon>
+          </ion-item>
+          <div class="submenu" *ngIf="arquivoAberto">
+            <ion-item
+              *ngFor="let item of itensArquivo"
+              button
+              [routerLink]="item.rota"
+              routerLinkActive="active"
+              [class.active]="secao === item.rota"
+            >
+              <ion-icon slot="start" [name]="item.icone"></ion-icon>
+              <ion-label>{{ item.rotulo }}</ion-label>
+            </ion-item>
+          </div>
+
+          <ng-container *ngTemplateOutlet="listaItens; context: { $implicit: visiveis(itensBase) }"></ng-container>
+
+          <ng-template #listaItens let-itens>
+            <ion-item
+              *ngFor="let item of itens"
+              button
+              [routerLink]="item.rota"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.rota === '/inicio' }"
+              [class.active]="secao === item.rota"
+            >
+              <ion-icon slot="start" [name]="item.icone"></ion-icon>
+              <ion-label>{{ item.rotulo }}</ion-label>
+            </ion-item>
+          </ng-template>
+          <ion-item button class="sair" (click)="sair()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Sair</ion-label>
+          </ion-item>
+        </ion-list>
+      </nav>
+    </aside>
+  </ion-menu>
+
+  <ion-content [id]="contentId" class="layout-content">
+    <header class="topbar">
+      <div class="page-heading">
+        <ion-menu-button [menu]="menuId" class="menu-toggle" aria-label="Abrir menu"></ion-menu-button>
+        <ion-icon [name]="icone"></ion-icon>
+        <span>{{ titulo }}</span>
+      </div>
+      <div class="topbar-actions">
+        <ng-content select="[acoes]"></ng-content>
+      </div>
+    </header>
+
+    <ng-content></ng-content>
+  </ion-content>
+</ion-split-pane>

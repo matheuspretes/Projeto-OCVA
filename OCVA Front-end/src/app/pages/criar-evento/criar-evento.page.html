@@ -1,19 +1,10 @@
-<ion-header>
-  <ion-toolbar>
-    <div class="topbar">
-      <div class="page-heading">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <span>{{ modoEdicao ? 'Editar evento' : 'Criar evento' }}</span>
-      </div>
-      <a routerLink="/eventos" class="back-link">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-        Voltar aos eventos
-      </a>
-    </div>
-  </ion-toolbar>
-</ion-header>
+<app-layout [titulo]="modoEdicao ? 'Editar evento' : 'Criar evento'" icone="calendar-outline" secao="/eventos">
+  <a acoes class="topbar-link" routerLink="/eventos">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>Voltar aos eventos</span>
+  </a>
 
-<ion-content [fullscreen]="true" class="criar-evento-page">
+  <div class="criar-evento-page">
   <main class="form-shell">
     <section class="form-card">
       <header class="form-heading">
@@ -109,4 +100,5 @@
       </form>
     </section>
   </main>
-</ion-content>
+  </div>
+</app-layout>

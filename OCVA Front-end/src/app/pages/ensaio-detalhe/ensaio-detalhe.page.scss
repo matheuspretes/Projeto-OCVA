@@ -1,42 +1,427 @@
-.ensaio-detalhe-page {
-  --background: #121212;
+// Mesmo visual das páginas de Eventos / Músicos
+$card: #17181c;
+$border: #292b30;
+$gold: #d8ad3f;
+$muted: #8290a5;
+$white: #f1f1f2;
+$verde: #5fbf7f;
+$vermelho: #d77070;
 
-  ion-card {
-    margin: 0 auto;
-    max-width: 900px;
-    background: #1d1d1d;
+:host {
+  font-family: 'Inter', sans-serif;
+  color: $white;
+}
+
+.detalhe-body {
+  max-width: 960px;
+  padding: 36px 40px 56px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  color: #a0a5ae;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+
+  &:not(:first-child) {
+    margin-top: 36px;
+  }
+}
+
+.estado-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 80px;
+  color: $muted;
+
+  ion-icon {
+    font-size: 2.6rem;
   }
 
-  ion-card-title,
-  h2,
-  h3,
-  p {
-    color: #f2f2f2;
+  ion-spinner {
+    color: $gold;
   }
+}
 
-  h2 {
-    margin-top: 24px;
-    font-size: 1.1rem;
-  }
+.detalhe-card {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: 18px;
+  padding: 26px 28px;
 
-  ion-item {
-    --background: #262626;
-    --border-color: #444;
-    margin-bottom: 4px;
-  }
-
-  .presence-actions {
+  .card-topo {
     display: flex;
-    gap: 4px;
-    margin-left: 12px;
-  }
-
-  .loading-state,
-  .empty-state {
-    display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 120px;
-    color: #aaa;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: $gold;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+  }
+
+  h3 {
+    margin: 0 0 14px;
+    font: italic 600 1.6rem 'Playfair Display', serif;
+    color: $white;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: #c4c9d2;
+    font-size: .92rem;
+
+    ion-icon {
+      color: $gold;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    strong {
+      color: $white;
+    }
+  }
+
+  .descricao {
+    margin: 16px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid #23252a;
+    color: #b5bac4;
+    line-height: 1.55;
+    white-space: pre-line;
+  }
+}
+
+// ---------- Botões ----------
+.btn-primario,
+.btn-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+
+  &:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primario {
+  background: #e0b641;
+  border: none;
+  color: #171717;
+
+  &:hover:not(:disabled) {
+    background: #f0c655;
+  }
+
+  ion-spinner {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.btn-secundario {
+  background: transparent;
+  border: 1px solid #34363d;
+  color: #d4d7dd;
+
+  &:hover:not(:disabled) {
+    border-color: $gold;
+    color: $white;
+  }
+}
+
+// ---------- Formulário de edição ----------
+.form-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 6px;
+
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+
+    > span {
+      color: #e0e1e4;
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: #111215;
+      border: 1px solid $border;
+      border-radius: 10px;
+      color: $white;
+      font: inherit;
+      font-size: .92rem;
+      outline: none;
+      color-scheme: dark;
+
+      &:focus {
+        border-color: $gold;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    small {
+      color: #e5736a;
+      font-size: .78rem;
+    }
+  }
+
+  .linha-dupla {
+    display: flex;
+    gap: 16px;
+  }
+
+  .link-discreto {
+    align-self: flex-start;
+    color: $muted;
+    font-size: .82rem;
+    text-decoration: underline;
+
+    &:hover {
+      color: $gold;
+    }
+  }
+
+  .acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+  }
+}
+
+// ---------- Presença ----------
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+
+  .resumo-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #b5bac4;
+    font-size: .88rem;
+    font-weight: 600;
+
+    &.presente ion-icon {
+      color: $verde;
+    }
+
+    &.falta ion-icon {
+      color: $vermelho;
+    }
+  }
+}
+
+.dica {
+  margin: 10px 0 0;
+  color: $muted;
+  font-size: .8rem;
+}
+
+.lista-musicos {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.musico-linha {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #121316;
+  border: 1px solid #24262b;
+  border-radius: 12px;
+  transition: opacity .2s;
+
+  &.ocupado {
+    opacity: .6;
+  }
+
+  .avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #29271e;
+    color: $gold;
+    font-size: .75rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+
+    &.presente {
+      background: #1c2a21;
+      color: $verde;
+      border-color: rgba(95, 191, 127, .45);
+    }
+
+    &.falta {
+      background: #2e1d1d;
+      color: $vermelho;
+      border-color: rgba(215, 112, 112, .45);
+    }
+  }
+
+  .musico-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+
+    strong {
+      color: $white;
+      font-size: .95rem;
+      font-weight: 600;
+    }
+
+    span {
+      color: $muted;
+      font-size: .8rem;
+    }
+  }
+}
+
+.botoes-presenca {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-presenca {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid #34363d;
+  border-radius: 10px;
+  color: #b5bac4;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+
+  ion-icon {
+    font-size: 16px;
+  }
+
+  &.presente:hover:not(:disabled) {
+    border-color: $verde;
+    color: $verde;
+  }
+
+  &.falta:hover:not(:disabled) {
+    border-color: $vermelho;
+    color: $vermelho;
+  }
+
+  &.presente.ativo {
+    background: #1c2a21;
+    border-color: $verde;
+    color: $verde;
+  }
+
+  &.falta.ativo {
+    background: #2e1d1d;
+    border-color: $vermelho;
+    color: $vermelho;
+  }
+
+  &:disabled {
+    cursor: wait;
+  }
+}
+
+.selo {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #1c2a21;
+  color: $verde;
+  font-size: .75rem;
+  font-weight: 700;
+
+  &.falta {
+    background: #2e1d1d;
+    color: $vermelho;
+  }
+
+  &.neutro {
+    background: #222329;
+    color: $muted;
+  }
+}
+
+.vazio {
+  margin: 18px 0 0;
+  color: $muted;
+  font-style: italic;
+}
+
+@media (max-width: 760px) {
+  .detalhe-body {
+    padding: 28px 16px 48px;
+  }
+
+  .detalhe-card {
+    padding: 20px;
+  }
+
+  .form-edicao .linha-dupla {
+    flex-direction: column;
+  }
+
+  .musico-linha {
+    flex-wrap: wrap;
+  }
+
+  .botoes-presenca {
+    width: 100%;
+
+    .btn-presenca {
+      flex: 1;
+      justify-content: center;
+    }
   }
 }

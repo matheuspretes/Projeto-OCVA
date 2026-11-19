@@ -39,6 +39,18 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/criar-ensaio/criar-ensaio.page').then( m => m.CriarEnsaioPage)
   },
   {
+    path: 'marcar-encontro',
+    loadComponent: () => import('./pages/marcar-encontro/marcar-encontro.page').then( m => m.MarcarEncontroPage)
+  },
+  {
+    path: 'marcar-evento',
+    loadComponent: () => import('./pages/marcar-evento/marcar-evento.page').then( m => m.MarcarEventoPage)
+  },
+  {
+    path: 'eventos/:id',
+    loadComponent: () => import('./pages/evento-detalhe/evento-detalhe.page').then( m => m.EventoDetalhePage)
+  },
+  {
     path: 'criar-evento',
     loadComponent: () => import('./pages/criar-evento/criar-evento.page').then( m => m.CriarEventoPage)
   },

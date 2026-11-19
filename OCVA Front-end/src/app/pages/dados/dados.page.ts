@@ -14,6 +14,7 @@ import { ToastController, NavController, AlertController, LoadingController } fr
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 
 @Component({
@@ -21,7 +22,7 @@ import { checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
   templateUrl: './dados.page.html',
   styleUrls: ['./dados.page.scss'],
   standalone: true,
-  imports: [IonSpinner, IonIcon, IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule, RouterLink]
+  imports: [AppLayoutComponent, IonSpinner, IonIcon, IonSelect, IonSelectOption, IonLabel, IonInput, IonItem, IonBackButton, IonButtons, IonButton, IonContent, IonHeader, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, CommonModule, FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class DadosPage implements OnInit {
   private tipoSub: Subscription | null = null;

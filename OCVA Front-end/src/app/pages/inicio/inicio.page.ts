@@ -1,220 +1,336 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuButton, IonRow, IonSplitPane } from '@ionic/angular/standalone';
-import { NavController } from '@ionic/angular';
-import { forkJoin } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { IonCol, IonGrid, IonIcon, IonRow } from '@ionic/angular/standalone';
+import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { addIcons } from 'ionicons';
+import {
+  addCircleOutline, barChartOutline, calendarOutline, documentTextOutline, gridOutline,
+  locationOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, timeOutline
+} from 'ionicons/icons';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 import { TipoUsuario } from 'src/app/constantes/tipo-usuario';
-import { Evento } from 'src/app/models/evento';
+import { Encontro } from 'src/app/models/encontro';
 import { Ensaio } from 'src/app/models/ensaio';
+import { Evento } from 'src/app/models/evento';
+import { EventoMarcado } from 'src/app/models/evento-marcado';
+import { EncontrosService } from 'src/app/services/encontros-service';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
+import { EventosMarcadosService } from 'src/app/services/eventos-marcados-service';
 import { EventosService } from 'src/app/services/eventos-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
 
-type CardAction = {
-  title: string;
-  description: string;
-  route?: string;
-  kind: 'link' | 'button';
-  types: TipoUsuario[];
+/**
+ * Um compromisso futuro mostrado na página inicial, com sua enquete "vou / não vou".
+ * - encontro / ensaio: o card de próximo ensaio
+ * - eventoMarcado / evento: o card de próximo evento
+ */
+type Compromisso = {
+  origem: 'encontro' | 'ensaio' | 'eventoMarcado' | 'evento';
+  id: number;
+  categoria: string;
+  titulo: string;
+  descricao: string;
+  local?: string;
+  data: string; // aaaa-mm-dd
+  hora: string; // hh:mm
+  vao: any[];
+  naoVao: any[];
 };
+
+type Enquete = 'ensaio' | 'evento';
 
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, IonContent, IonIcon, IonMenuButton, IonSplitPane, IonMenu, IonList, IonItem, IonLabel, IonGrid, IonRow, IonCol]
+  imports: [AppLayoutComponent, CommonModule, RouterLink, IonIcon, IonGrid, IonRow, IonCol]
 })
 export class InicioPage implements OnInit {
   tipoUsuario: TipoUsuario | null = null;
-  visibleCards: CardAction[] = [];
-  proximoEnsaio: Ensaio | null = null;
-  proximoEvento: Evento | null = null;
+  nomeUsuario = '';
   carregandoDados = true;
-  salvandoPresenca = false;
-  minhaResposta: boolean | null = null;
 
-  public nomeUsuario: string = "";
-  public tipoUsuarioLabel = 'Usuário';
-  
+  proximo: Compromisso | null = null;        // próximo ensaio ou encontro
+  proximoEvento: Compromisso | null = null;  // próximo evento
 
-  private readonly cards: CardAction[] = [
-    {
-      title: 'Ensaios',
-      description: 'Acesse seus ensaios cadastrados',
-      route: '/ensaios',
-      kind: 'link',
-      types: ['musico', 'maestro', 'diretoria'],
-    },
-    {
-      title: 'Registrar ensaio',
-      description: 'Registre um ensaio que ocorreu',
-      route: '/criar-ensaio',
-      kind: 'link',
-      types: ['diretoria'],
-    },
-    {
-      title: 'Dados do usuário',
-      description: 'Revise e atualize suas informações',
-      route: '/dados',
-      kind: 'link',
-      types: ['nulo'],
-    },
-    {
-
-      title: 'Eventos',
-      description: 'Confira eventos registrados',
-      route: '/eventos',
-      kind: 'link',
-      types: ['diretoria','maestro','musico'],
-    },
-    {
-      title: 'Registrar evento',
-      description: 'Registre eventos futuros',
-      route: '/criar-evento',
-      kind: 'link',
-      types: ['maestro'],
-    },
-    {
-      title: 'Músicos',
-      description: 'Consulte e gerencie músicos e maestros',
-      route: '/musicos',
-      kind: 'link',
-      types: ['maestro', 'diretoria'],
-    },
-    {
-      title: 'Códigos de Acesso',
-      description: 'Gere e gerencie códigos para usuários',
-      route: '/codigos-acesso',
-      kind: 'link',
-      types: ['diretoria'],
-    },
-  ];
-
+  minhaResposta: Record<string, boolean | null> = { ensaio: null, evento: null };
+  salvando: Record<string, boolean> = { ensaio: false, evento: false };
 
   constructor(
-    private navController: NavController,
     private usuarioService: UsuarioService,
+    private encontrosService: EncontrosService,
     private ensaiosService: EnsaiosService,
+    private eventosMarcadosService: EventosMarcadosService,
     private eventosService: EventosService
-  ) { }
-
-  ngOnInit() {
-    const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
-    this.nomeUsuario = usuarioAutenticado.nome || usuarioAutenticado.login || '';
-    this.tipoUsuario = typeof usuarioAutenticado.tipo === 'string'
-      ? usuarioAutenticado.tipo.trim().toLowerCase() as TipoUsuario
-      : null;
-    this.tipoUsuarioLabel = this.obterRotuloTipo(this.tipoUsuario);
-    this.visibleCards = this.tipoUsuario
-      ? this.cards.filter((card) => card.types.includes(this.tipoUsuario as TipoUsuario))
-      : [];
-
-    forkJoin({
-      ensaios: this.ensaiosService.listar(),
-      eventos: this.eventosService.listar()
-    }).subscribe({
-      next: ({ ensaios, eventos }) => {
-        this.proximoEnsaio = this.selecionarEnsaio(ensaios, usuarioAutenticado);
-        this.proximoEvento = this.selecionarEvento(eventos, usuarioAutenticado);
-        this.atualizarMinhaResposta();
-        this.carregandoDados = false;
-      },
-      error: (erro) => {
-        console.error('Não foi possível carregar os dados da página inicial.', erro);
-        this.carregandoDados = false;
-      }
+  ) {
+    addIcons({
+      addCircleOutline, barChartOutline, calendarOutline, documentTextOutline, gridOutline,
+      locationOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, timeOutline
     });
   }
 
-  responderPresenca(presente: boolean) {
+  ngOnInit() {
     const usuario = this.usuarioService.buscarAutenticacao();
-    const ensaioId = this.proximoEnsaio?.id;
-    const musicoId = usuario.id;
+    this.nomeUsuario = usuario.nome || usuario.login || '';
+    this.tipoUsuario = typeof usuario.tipo === 'string'
+      ? usuario.tipo.trim().toLowerCase() as TipoUsuario
+      : null;
+    this.carregarDados();
+  }
 
-    if (!ensaioId || !musicoId || this.salvandoPresenca) {
+  ionViewWillEnter() {
+    // Recarrega ao voltar para a página (ex.: depois de marcar um encontro ou evento)
+    if (!this.carregandoDados) {
+      this.carregarDados();
+    }
+  }
+
+  private carregarDados() {
+    const usuario = this.usuarioService.buscarAutenticacao();
+    const comFallback = <T>(origem: Observable<T>, oQue: string, padrao: T): Observable<T> =>
+      origem.pipe(catchError((erro) => {
+        console.error(`Não foi possível carregar ${oQue}.`, erro);
+        return of(padrao);
+      }));
+
+    this.carregandoDados = true;
+    forkJoin({
+      encontro: comFallback<Encontro | null>(this.encontrosService.proximo(), 'o próximo encontro', null),
+      ensaios: comFallback<Ensaio[]>(this.ensaiosService.listar(), 'os ensaios', []),
+      eventoMarcado: comFallback<EventoMarcado | null>(this.eventosMarcadosService.proximo(), 'o próximo evento', null),
+      eventos: comFallback<Evento[]>(this.eventosService.listar(), 'os eventos', [])
+    }).subscribe(({ encontro, ensaios, eventoMarcado, eventos }) => {
+      this.proximo = this.maisProximo([
+        ...(encontro ? [this.deEncontro(encontro)] : []),
+        ...this.futurosVisiveis(ensaios, usuario).map((ensaio) => this.deEnsaio(ensaio))
+      ]);
+      this.proximoEvento = this.maisProximo([
+        ...(eventoMarcado ? [this.deEventoMarcado(eventoMarcado)] : []),
+        ...this.futurosVisiveis(eventos, usuario).map((evento) => this.deEvento(evento))
+      ]);
+      this.atualizarRespostas();
+      this.carregandoDados = false;
+    });
+  }
+
+  // ---------- Enquetes "vou / não vou" ----------
+
+  compromisso(enquete: Enquete): Compromisso | null {
+    return enquete === 'ensaio' ? this.proximo : this.proximoEvento;
+  }
+
+  responder(enquete: Enquete, vou: boolean) {
+    const usuario = this.usuarioService.buscarAutenticacao();
+    const atual = this.compromisso(enquete);
+    if (!atual || !usuario.id || this.salvando[enquete]) {
       return;
     }
 
-    this.salvandoPresenca = true;
-    const requisicao = this.minhaResposta === presente
-      ? this.ensaiosService.removerPresenca(ensaioId, musicoId)
-      : this.ensaiosService.marcarPresenca(ensaioId, musicoId, presente);
+    const musicoId: number = usuario.id;
+    const desmarcar = this.minhaResposta[enquete] === vou;
+    let requisicao: Observable<Compromisso>;
 
+    switch (atual.origem) {
+      case 'encontro':
+        requisicao = (desmarcar
+          ? this.encontrosService.removerResposta(atual.id, musicoId)
+          : this.encontrosService.responder(atual.id, musicoId, vou)
+        ).pipe(map((encontro) => this.deEncontro(encontro)));
+        break;
+
+      case 'eventoMarcado':
+        requisicao = (desmarcar
+          ? this.eventosMarcadosService.removerResposta(atual.id, musicoId)
+          : this.eventosMarcadosService.responder(atual.id, musicoId, vou)
+        ).pipe(map((evento) => this.deEventoMarcado(evento)));
+        break;
+
+      case 'evento':
+        // A API de eventos troca a marcação anterior sozinha
+        requisicao = (desmarcar
+          ? this.eventosService.removerPresenca(atual.id, musicoId)
+          : this.eventosService.marcarPresenca(atual.id, musicoId, vou)
+        ).pipe(map((evento) => this.deEvento(evento)));
+        break;
+
+      default: {
+        // A API de ensaios não troca direto: remove a resposta antiga antes de marcar a nova
+        const remover = this.ensaiosService.removerPresenca(atual.id, musicoId);
+        const antes: Observable<unknown> = this.minhaResposta[enquete] === null ? of(null) : remover;
+        requisicao = (desmarcar
+          ? remover
+          : antes.pipe(switchMap(() => this.ensaiosService.marcarPresenca(atual.id, musicoId, vou)))
+        ).pipe(map((ensaio) => this.deEnsaio(ensaio)));
+      }
+    }
+
+    this.salvando[enquete] = true;
     requisicao.subscribe({
-      next: (ensaioAtualizado) => {
-        this.proximoEnsaio = ensaioAtualizado;
-        this.minhaResposta = this.minhaResposta === presente ? null : presente;
-        this.salvandoPresenca = false;
+      next: (atualizado) => {
+        if (enquete === 'ensaio') {
+          this.proximo = atualizado;
+        } else {
+          this.proximoEvento = atualizado;
+        }
+        this.atualizarRespostas();
+        this.salvando[enquete] = false;
       },
       error: (erro) => {
-        console.error('Não foi possível registrar a resposta de presença.', erro);
-        this.salvandoPresenca = false;
+        console.error('Não foi possível registrar a resposta.', erro);
+        this.salvando[enquete] = false;
       }
     });
   }
 
-  podeResponderPresenca(): boolean {
-    const usuario = this.usuarioService.buscarAutenticacao();
-    return !!this.proximoEnsaio
-      && !!usuario.id;
+  podeResponder(enquete: Enquete): boolean {
+    return !!this.compromisso(enquete) && !!this.usuarioService.buscarAutenticacao().id;
   }
 
+  podeMarcar(): boolean {
+    return this.tipoUsuario === 'maestro' || this.tipoUsuario === 'diretoria';
+  }
+
+  // Link "Editar" / "Marcar" de cada card
+  link(enquete: Enquete): { rota: string | any[]; params: any } {
+    const atual = this.compromisso(enquete);
+    switch (atual?.origem) {
+      case 'encontro': return { rota: '/marcar-encontro', params: { id: atual.id } };
+      case 'ensaio': return { rota: ['/ensaios', atual.id], params: {} };
+      case 'eventoMarcado': return { rota: '/marcar-evento', params: { id: atual.id } };
+      case 'evento': return { rota: ['/eventos', atual.id], params: {} };
+      default: return { rota: enquete === 'ensaio' ? '/marcar-encontro' : '/marcar-evento', params: {} };
+    }
+  }
+
+  // ---------- Formatação ----------
+
   formatarDia(data: string | undefined): string {
-    const dataConvertida = this.converterData(data);
-    return dataConvertida ? String(dataConvertida.getDate()).padStart(2, '0') : '--';
+    const d = this.converterData(data);
+    return d ? String(d.getDate()).padStart(2, '0') : '--';
   }
 
   formatarDiaDaSemana(data: string | undefined): string {
-    const dataConvertida = this.converterData(data);
-    return dataConvertida
-      ? ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'][dataConvertida.getDay()]
+    const d = this.converterData(data);
+    return d
+      ? ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'][d.getDay()]
       : 'Data não informada';
   }
 
   formatarMesAno(data: string | undefined): string {
-    const dataConvertida = this.converterData(data);
-    return dataConvertida
-      ? `${['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][dataConvertida.getMonth()]} ${dataConvertida.getFullYear()}`
+    const d = this.converterData(data);
+    return d
+      ? `${['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][d.getMonth()]} de ${d.getFullYear()}`
       : '';
   }
 
-  private selecionarEnsaio(ensaios: Ensaio[], usuario: any): Ensaio | null {
-    const ensaiosVisiveis = this.usuarioPodeVerTudo(usuario)
-      ? ensaios
-      : ensaios.filter((ensaio) => (ensaio.musicos || []).some((musico: any) => this.mesmoUsuario(musico, usuario)));
-
-    return this.ordenarPorData(ensaiosVisiveis)[0] || null;
+  formatarHora(hora: string | undefined): string {
+    return hora ? hora.slice(0, 5).replace(':', 'h') : '';
   }
 
-  private selecionarEvento(eventos: Evento[], usuario: any): Evento | null {
-    const eventosVisiveis = this.usuarioPodeVerTudo(usuario)
-      ? eventos
-      : eventos.filter((evento) => (evento.musicos || []).some((musico: any) => this.mesmoUsuario(musico, usuario)));
+  // ---------- Montagem dos compromissos ----------
 
-    return this.ordenarPorData(eventosVisiveis)[0] || null;
+  private maisProximo(candidatos: Compromisso[]): Compromisso | null {
+    return [...candidatos].sort((a, b) => `${a.data}T${a.hora}`.localeCompare(`${b.data}T${b.hora}`))[0] || null;
   }
 
-  private ordenarPorData<T extends { data: string }>(registros: T[]): T[] {
-    return [...registros].sort((primeiro, segundo) => this.dataEmNumero(primeiro.data) - this.dataEmNumero(segundo.data));
+  // Ensaios/eventos já cadastrados com data de hoje em diante que o usuário pode ver
+  private futurosVisiveis<T extends { data: string; musicos?: any[] }>(registros: T[], usuario: any): T[] {
+    const hoje = this.hojeTexto();
+    return registros
+      .filter((registro) => (registro.data || '').slice(0, 10) >= hoje)
+      .filter((registro) => this.usuarioPodeVerTudo(usuario)
+        || (registro.musicos || []).some((musico: any) => this.mesmoUsuario(musico, usuario)));
   }
 
-  private dataEmNumero(data: string | undefined): number {
-    return this.converterData(data)?.getTime() || Number.MAX_SAFE_INTEGER;
+  private deEncontro(encontro: Encontro): Compromisso {
+    return {
+      origem: 'encontro',
+      id: encontro.id as number,
+      categoria: encontro.tipo?.nome || 'Encontro',
+      titulo: encontro.titulo,
+      descricao: encontro.descricao,
+      data: encontro.data,
+      hora: (encontro.hora || '').slice(0, 5),
+      vao: encontro.interessados || [],
+      naoVao: encontro.recusados || []
+    };
+  }
+
+  private deEnsaio(ensaio: Ensaio): Compromisso {
+    const [data, hora] = (ensaio.data || '').split('T');
+    return {
+      origem: 'ensaio',
+      id: ensaio.id as number,
+      categoria: ensaio.tipo || 'Ensaio',
+      titulo: ensaio.titulo || 'Ensaio',
+      descricao: ensaio.descricao,
+      data,
+      hora: (hora || '').slice(0, 5),
+      vao: ensaio.presencas || [],
+      naoVao: ensaio.faltas || []
+    };
+  }
+
+  private deEventoMarcado(evento: EventoMarcado): Compromisso {
+    return {
+      origem: 'eventoMarcado',
+      id: evento.id as number,
+      categoria: 'Evento',
+      titulo: evento.titulo,
+      descricao: evento.descricao,
+      local: evento.local,
+      data: evento.data,
+      hora: (evento.hora || '').slice(0, 5),
+      vao: evento.interessados || [],
+      naoVao: evento.recusados || []
+    };
+  }
+
+  private deEvento(evento: Evento): Compromisso {
+    const [data, hora] = (evento.data || '').split('T');
+    return {
+      origem: 'evento',
+      id: evento.id as number,
+      categoria: 'Evento',
+      titulo: evento.titulo || 'Evento',
+      descricao: evento.descricao,
+      local: evento.local,
+      data,
+      hora: (hora || '').slice(0, 5),
+      vao: evento.presencas || [],
+      naoVao: evento.faltas || []
+    };
+  }
+
+  private atualizarRespostas() {
+    const id = this.usuarioService.buscarAutenticacao().id;
+    const mesmo = (musico: any) => String(musico.id) === String(id);
+    (['ensaio', 'evento'] as Enquete[]).forEach((enquete) => {
+      const atual = this.compromisso(enquete);
+      this.minhaResposta[enquete] = !id || !atual ? null
+        : atual.vao.some(mesmo) ? true
+        : atual.naoVao.some(mesmo) ? false
+        : null;
+    });
+  }
+
+  // ---------- Auxiliares ----------
+
+  private hojeTexto(): string {
+    const agora = new Date();
+    return `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
   }
 
   private converterData(data: string | undefined): Date | null {
     if (!data) {
       return null;
     }
-
-    const dataSomente = data.slice(0, 10);
-    const partes = dataSomente.split('-').map(Number);
+    const partes = data.slice(0, 10).split('-').map(Number);
     if (partes.length !== 3 || partes.some(Number.isNaN)) {
       return null;
     }
-
     return new Date(partes[0], partes[1] - 1, partes[2]);
   }
 
@@ -222,42 +338,8 @@ export class InicioPage implements OnInit {
     return usuario?.tipo === 'maestro' || usuario?.tipo === 'diretoria';
   }
 
-  private obterRotuloTipo(tipo: TipoUsuario | null): string {
-    const rotulos: Record<TipoUsuario, string> = {
-      musico: 'Músico',
-      maestro: 'Maestro',
-      diretoria: 'Diretoria',
-      secretaria: 'Secretaria',
-      nulo: 'Usuário'
-    };
-
-    return tipo ? rotulos[tipo] : 'Usuário';
-  }
-
   private mesmoUsuario(primeiro: any, segundo: any): boolean {
     return (primeiro.id != null && primeiro.id === segundo.id)
       || (primeiro.login && primeiro.login === segundo.login);
-  }
-
-  private atualizarMinhaResposta() {
-    const usuario = this.usuarioService.buscarAutenticacao();
-    const id = usuario.id;
-    if (!id || !this.proximoEnsaio) {
-      this.minhaResposta = null;
-      return;
-    }
-
-    if ((this.proximoEnsaio.presencas || []).some((musico: any) => String(musico.id) === String(id))) {
-      this.minhaResposta = true;
-    } else if ((this.proximoEnsaio.faltas || []).some((musico: any) => String(musico.id) === String(id))) {
-      this.minhaResposta = false;
-    } else {
-      this.minhaResposta = null;
-    }
-  }
-
-  sair() {
-    this.usuarioService.encerrarAutenticacao();
-    this.navController.navigateRoot('/login');
   }
 }

@@ -1,0 +1,79 @@
+<app-layout [titulo]="modoEdicao ? 'Editar evento marcado' : 'Marcar evento'" icone="add-circle-outline">
+  <a acoes class="topbar-link" routerLink="/inicio">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+    <span>Voltar ao início</span>
+  </a>
+
+  <div class="criar-evento-page">
+    <main class="form-shell">
+      <section class="form-card">
+        <header class="form-heading">
+          <h1><ion-icon name="calendar-outline"></ion-icon> Dados do evento</h1>
+          <p>Os músicos dizem se vão na página inicial. Depois da data, o evento vai para o Arquivo com quem respondeu "Vou" como participante.</p>
+        </header>
+
+        <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+          <div class="banner-field">
+            <label>Banner do evento <span>(opcional)</span></label>
+            <div
+              class="banner-dropzone"
+              [class.has-image]="bannerPreview"
+              (click)="abrirSeletorDeBanner()"
+              (dragover)="$event.preventDefault()"
+              (drop)="aoSoltarBanner($event)"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="abrirSeletorDeBanner()"
+              (keydown.space)="abrirSeletorDeBanner()"
+              aria-label="Escolher banner do evento"
+            >
+              <img *ngIf="bannerPreview" [src]="bannerPreview" alt="Prévia do banner do evento">
+              <ng-container *ngIf="!bannerPreview">
+                <ion-icon name="image-outline"></ion-icon>
+                <strong>Arraste uma imagem ou clique para escolher</strong>
+                <small>PNG, JPG ou WEBP</small>
+              </ng-container>
+            </div>
+            <input #bannerInput class="banner-input" type="file" accept="image/png,image/jpeg,image/webp" (change)="aoSelecionarBanner($event)">
+            <small *ngIf="bannerPreview" class="eligibility-help"><a href="" (click)="$event.preventDefault(); removerBanner($event)">Remover banner</a></small>
+          </div>
+
+          <div class="field">
+            <ion-label>Título do evento</ion-label>
+            <ion-input class="field-input" placeholder="Ex.: Concerto de Natal" formControlName="titulo" maxlength="120"></ion-input>
+          </div>
+
+          <div class="two-columns">
+            <div class="field">
+              <ion-label>Data</ion-label>
+              <ion-input class="field-input" type="date" formControlName="data" [min]="hoje"></ion-input>
+            </div>
+            <div class="field">
+              <ion-label>Horário</ion-label>
+              <ion-input class="field-input" type="time" formControlName="hora"></ion-input>
+            </div>
+          </div>
+
+          <div class="field">
+            <ion-label>Local</ion-label>
+            <ion-input class="field-input" placeholder="Ex.: Igreja Central" formControlName="local" maxlength="160"></ion-input>
+          </div>
+
+          <div class="field">
+            <ion-label>Descrição</ion-label>
+            <ion-textarea class="field-input description-input" placeholder="Descreva o evento, o repertório previsto ou observações para a equipe." formControlName="descricao"></ion-textarea>
+          </div>
+
+          <div class="actions-row">
+            <ion-button type="button" fill="clear" class="cancel-button" (click)="cancelar()" [disabled]="isSaving">Cancelar</ion-button>
+            <ion-button *ngIf="modoEdicao" type="button" fill="clear" class="delete-button" (click)="excluir()" [disabled]="isSaving">Desmarcar</ion-button>
+            <ion-button type="submit" class="save-button" [disabled]="formGroup.invalid || isSaving">
+              <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+              <span *ngIf="!isSaving"><ion-icon name="calendar-outline"></ion-icon> {{ modoEdicao ? 'Salvar alterações' : 'Marcar evento' }}</span>
+            </ion-button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+</app-layout>

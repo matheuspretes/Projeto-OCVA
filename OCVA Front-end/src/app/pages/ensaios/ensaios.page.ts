@@ -24,13 +24,14 @@ import {
 import { EnsaiosService } from '../../services/ensaios-service';
 import { UsuarioService } from '../../services/usuario-service';
 import { Ensaio } from '../../models/ensaio';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-ensaios',
   templateUrl: './ensaios.page.html',
   styleUrls: ['./ensaios.page.scss'],
   standalone: true,
-  imports: [
+  imports: [AppLayoutComponent, 
     CommonModule, 
     FormsModule, 
     RouterLink,
@@ -84,6 +85,9 @@ export class EnsaiosPage implements OnInit {
             (ensaio.musicos || []).some((m: any) => m.login === userLogin || m.id === userId)
           );
         }
+
+        // Arquivo: do mais recente para o mais antigo
+        ensaiosFiltrados = [...ensaiosFiltrados].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
 
         this.ensaios = ensaiosFiltrados.map((ensaio: any) => ({
           ...ensaio,

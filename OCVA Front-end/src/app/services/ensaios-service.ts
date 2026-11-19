@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Ensaio, EnsaioRequest } from '../models/ensaio';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EnsaiosService {
-  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/ensaios';
+  private readonly API_URL = `${environment.apiBaseUrl}/api/v1/ensaios`;
 
   constructor(private http: HttpClient) {}
 

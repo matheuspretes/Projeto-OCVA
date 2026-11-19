@@ -17,149 +17,8 @@ $text-muted: #8b8f97;
 }
 
 // Layout Geral & Menu Lateral
-ion-split-pane {
-  --side-max-width: 250px;
-  --side-width: 240px;
-}
-
-ion-menu {
-  --background: #{$sidebar-bg};
-  border-right: 1px solid $border-color;
-}
-
-.sidebar-container {
-  padding: 24px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      background: #1e1d1a;
-      border: 1px solid #3d321c;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      ion-icon {
-        font-size: 20px;
-        color: $gold-primary;
-      }
-    }
-
-    .brand-text {
-      .serif-title {
-        font-family: 'Playfair Display', serif;
-        font-style: italic;
-        font-size: 1.3rem;
-        margin: 0;
-        color: $gold-primary;
-      }
-
-      span {
-        font-size: 0.65rem;
-        letter-spacing: 1.5px;
-        color: $text-muted;
-        font-weight: 500;
-      }
-    }
-  }
-
-  .nav-section {
-    .nav-label {
-      font-size: 0.75rem;
-      color: $text-muted;
-      margin-left: 10px;
-      display: inline-block;
-      margin-bottom: 12px;
-    }
-
-    .nav-list {
-      background: transparent;
-      padding: 0;
-
-      ion-item {
-        --background: transparent;
-        --color: #{$text-muted};
-        --border-radius: 8px;
-        --padding-start: 12px;
-        --min-height: 40px;
-        font-size: 0.88rem;
-        margin-bottom: 4px;
-
-        ion-icon {
-          font-size: 17px;
-          margin-right: 12px;
-          color: $text-muted;
-        }
-
-        &.active, &:hover {
-          --background: #24272b;
-          --color: #{$text-light};
-          ion-icon {
-            color: $text-light;
-          }
-        }
-      }
-    }
-  }
-}
 
 // Topbar Superior
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 32px;
-  border-bottom: 1px solid $border-color;
-  background-color: $bg-dark;
-
-  .welcome {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .menu-toggle {
-      display: none;
-      --color: #{$text-muted};
-      --padding-start: 0;
-      --padding-end: 0;
-    }
-
-    .panel-icon {
-      color: $text-muted;
-      font-size: 18px;
-    }
-
-    .welcome-text {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.2rem;
-      color: $gold-primary;
-    }
-  }
-
-  .btn-logout {
-    background: transparent;
-    border: none;
-    color: $text-muted;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    &:hover {
-      color: $text-light;
-    }
-  }
-}
 
 // Corpo da Dashboard
 .dashboard-body {
@@ -208,6 +67,18 @@ ion-menu {
 
     ion-icon {
       font-size: 14px;
+    }
+
+    .badge-action {
+      margin-left: auto;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      color: $text-muted;
+      text-decoration: none;
+
+      &:hover {
+        color: $gold-primary;
+      }
     }
   }
 
@@ -286,6 +157,23 @@ ion-menu {
     }
   }
 
+  .chips-group-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $text-light;
+    margin-bottom: 8px;
+
+    &.nao-vao {
+      color: #d77070;
+    }
+  }
+
+  .empty-state + .chips-group-label,
+  .musicians-chips + .chips-group-label {
+    margin-top: 4px;
+  }
+
   .musicians-chips {
     display: flex;
     gap: 10px;
@@ -314,6 +202,11 @@ ion-menu {
         justify-content: center;
         font-size: 0.65rem;
         font-weight: 600;
+      }
+
+      &.nao-vao .avatar {
+        background: #2e1d1d;
+        color: #d77070;
       }
     }
   }
@@ -376,8 +269,8 @@ ion-menu {
   }
 }
 
-@media (max-width: 767px) {
-  .menu-toggle {
-    display: block !important;
-  }
+
+// Espaço entre as duas enquetes
+.poll-card + .poll-card {
+  margin-top: 16px;
 }

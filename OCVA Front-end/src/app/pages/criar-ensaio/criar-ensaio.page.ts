@@ -23,13 +23,14 @@ import { EnsaioRequest } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-criar-ensaio',
   templateUrl: './criar-ensaio.page.html',
   styleUrls: ['./criar-ensaio.page.scss'],
   standalone: true,
-  imports: [
+  imports: [AppLayoutComponent, 
     CommonModule, 
     ReactiveFormsModule, 
     IonContent, 

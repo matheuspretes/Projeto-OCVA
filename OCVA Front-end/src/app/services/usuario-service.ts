@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario';
 import { CodigoAcesso } from '../models/codigo-acesso';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
 
-  private readonly API_URL = 'https://ocva-api.onrender.com/api/v1/musicos';
+  private readonly API_URL = `${environment.apiBaseUrl}/api/v1/musicos`;
 
   constructor(private http: HttpClient) {
     

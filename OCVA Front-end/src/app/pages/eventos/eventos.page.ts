@@ -10,7 +10,10 @@ import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
+  addCircleOutline,
+  archiveOutline,
   bookOutline,
+  checkmarkDoneOutline,
   calendarOutline,
   documentTextOutline,
   homeOutline,
@@ -22,6 +25,7 @@ import {
   peopleOutline,
   personOutline
 } from 'ionicons/icons';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 
 @Component({
@@ -30,7 +34,7 @@ import {
   styleUrls: ['./eventos.page.scss'],
   standalone: true,
 
-  imports: [IonContent, IonMenu, IonSplitPane, IonList, IonItem, IonLabel, IonIcon, IonButton, CommonModule, FormsModule, RouterLink]
+  imports: [AppLayoutComponent, IonContent, IonMenu, IonSplitPane, IonList, IonItem, IonLabel, IonIcon, IonButton, CommonModule, FormsModule, RouterLink]
 
 })
 export class EventosPage implements OnInit {
@@ -49,7 +53,10 @@ export class EventosPage implements OnInit {
 
   ngOnInit() {
     addIcons({
+      addCircleOutline,
+      archiveOutline,
       bookOutline,
+      checkmarkDoneOutline,
       calendarOutline,
       documentTextOutline,
       homeOutline,
@@ -82,6 +89,9 @@ export class EventosPage implements OnInit {
           );
         }
 
+        // Arquivo: do mais recente para o mais antigo
+        eventosFiltrados = [...eventosFiltrados].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+
         this.eventos = eventosFiltrados.map((evento: Evento) => ({
           ...evento,
           nomesMusicos: (evento.musicos || []).map((m: any) => m.nome)
@@ -95,6 +105,16 @@ export class EventosPage implements OnInit {
 
   podeEditarOuExcluir(): boolean {
     return this.usuarioAutenticado?.tipo === 'diretoria';
+  }
+
+  podeMarcarEvento(): boolean {
+    return this.usuarioAutenticado?.tipo === 'maestro' || this.usuarioAutenticado?.tipo === 'diretoria';
+  }
+
+  abrirDetalhes(evento: Evento) {
+    if (evento.id) {
+      this.router.navigate(['/eventos', evento.id]);
+    }
   }
 
   criarNovoEvento() {

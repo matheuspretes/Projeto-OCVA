@@ -8,13 +8,14 @@ import { addIcons } from 'ionicons';
 import { calendarOutline, documentTextOutline, homeOutline, keyOutline, lockClosedOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, personOutline } from 'ionicons/icons';
 import { Usuario } from 'src/app/models/usuario';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
   selector: 'app-musicos',
   templateUrl: './musicos.page.html',
   styleUrls: ['./musicos.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, IonBadge, IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonMenu, IonSelect, IonSelectOption, IonSplitPane]
+  imports: [AppLayoutComponent, CommonModule, FormsModule, RouterLink, IonBadge, IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonList, IonMenu, IonSelect, IonSelectOption, IonSplitPane]
 })
 export class MusicosPage implements OnInit {
   musicos: Usuario[] = [];
