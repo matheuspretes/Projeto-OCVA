@@ -61,156 +61,134 @@
     </div>
   </ion-menu>
 
-  <!-- Conteúdo Principal (mesmo padrão da página de Ensaios) -->
-  <div class="ion-page" id="main-content">
-    <ion-header class="custom-header">
-      <ion-toolbar>
-        <div class="header-inner">
-          <div class="header-left">
-            <ion-menu-button menu="main-menu" class="menu-toggle" aria-label="Abrir menu"></ion-menu-button>
-            <img class="toolbar-logo" src="/assets/icon/ocva-header.png" alt="OCVA - Orquestra de Câmara do Vale do Aço">
-          </div>
+  <!-- Conteúdo Principal -->
+  <ion-content id="main-content" class="main-viewport">
+    <!-- Topbar / Cabeçalho Superior -->
+    <header class="topbar">
+      <div class="welcome">
+        <ion-menu-button menu="main-menu" class="menu-toggle" aria-label="Abrir menu"></ion-menu-button>
+        <ion-icon name="grid-outline" class="panel-icon"></ion-icon>
+        <span class="welcome-text">Olá, {{ nomeUsuario || 'usuário' }}</span>
+      </div>
+      <button class="btn-logout" aria-label="Sair" (click)="sair()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </button>
+    </header>
 
-          <div class="header-title-container">
-            <ion-icon name="home-outline" class="title-icon"></ion-icon>
-            <span class="header-title">Início</span>
-          </div>
+    <main class="dashboard-body">
+      <h3 class="section-title">VISÃO GERAL</h3>
 
-          <div class="header-right">
-            <button *ngIf="podeMarcarEncontro()" type="button" class="btn-novo" routerLink="/marcar-encontro">
-              <ion-icon name="add-circle-outline"></ion-icon>
-              <span>Marcar encontro</span>
-            </button>
-            <button type="button" class="btn-sair" (click)="sair()" aria-label="Sair" title="Sair">
-              <ion-icon name="log-out-outline"></ion-icon>
-            </button>
+      <!-- Grid com os dois cards principais -->
+      <ion-grid class="cards-grid">
+        <ion-row>
+          <ion-col size="12" size-md="6">
+            <div class="info-card">
+              <div class="card-header-badge">
+                <ion-icon name="musical-notes-outline"></ion-icon>
+                <span>PRÓXIMO {{ (proximo?.categoria || 'ensaio') | uppercase }}</span>
+                <a *ngIf="podeMarcarEncontro()" class="badge-action"
+                  [routerLink]="proximo ? linkEdicao().rota : '/marcar-encontro'" [queryParams]="proximo ? linkEdicao().params : {}">
+                  {{ proximo ? 'Editar' : 'Marcar' }}
+                </a>
+              </div>
+
+              <div *ngIf="carregandoDados" class="empty-state">Carregando ensaio...</div>
+              <div *ngIf="!carregandoDados && proximo" class="date-display">
+                <span class="day-number">{{ formatarDia(proximo.data) }}</span>
+                <div class="date-details">
+                  <h4>{{ formatarDiaDaSemana(proximo.data) }}<ng-container *ngIf="proximo.hora"> · {{ formatarHora(proximo.hora) }}</ng-container></h4>
+                  <p>{{ formatarMesAno(proximo.data) }}</p>
+                </div>
+              </div>
+              <p *ngIf="!carregandoDados && !proximo" class="empty-state">Nenhum ensaio ou encontro marcado.</p>
+
+              <div *ngIf="proximo" class="card-footer-info">
+                <span class="info-pill">
+                  <ion-icon name="musical-note-outline"></ion-icon> {{ proximo.titulo }}
+                </span>
+                <span class="info-pill">
+                  <ion-icon name="document-text-outline"></ion-icon> {{ proximo.descricao || 'Sem descrição cadastrada' }}
+                </span>
+              </div>
+            </div>
+          </ion-col>
+
+          <ion-col size="12" size-md="6">
+            <div class="info-card">
+              <div class="card-header-badge">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>PRÓXIMO EVENTO</span>
+              </div>
+
+              <div *ngIf="carregandoDados" class="empty-state">Carregando evento...</div>
+              <div *ngIf="!carregandoDados && proximoEvento" class="date-display">
+                <span class="day-number">{{ formatarDia(proximoEvento.data) }}</span>
+                <div class="date-details">
+                  <h4>{{ formatarDiaDaSemana(proximoEvento.data) }}</h4>
+                  <p>{{ formatarMesAno(proximoEvento.data) }}</p>
+                </div>
+              </div>
+              <p *ngIf="!carregandoDados && !proximoEvento" class="empty-state">Nenhum evento cadastrado.</p>
+
+              <div *ngIf="proximoEvento" class="card-footer-info">
+                <span class="info-pill">
+                  <ion-icon name="document-text-outline"></ion-icon> {{ proximoEvento.descricao || 'Sem descrição cadastrada' }}
+                </span>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Card da Enquete: só aparece quando há ensaio ou encontro futuro -->
+      <div *ngIf="!carregandoDados && proximo" class="info-card poll-card">
+        <div class="card-header-badge">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+          <span>ENQUETE</span>
+        </div>
+
+        <h3 class="poll-question">{{ proximo.titulo }} · {{ formatarDia(proximo.data) }} de {{ formatarMesAno(proximo.data) }}</h3>
+
+        <div class="poll-subtitle">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>MÚSICOS QUE DEMONSTRARAM INTERESSE</span>
+        </div>
+
+        <span class="chips-group-label">Vão ({{ proximo.vao.length }})</span>
+        <div class="musicians-chips" *ngIf="proximo.vao.length">
+          <div *ngFor="let musico of proximo.vao" class="musician-chip">
+            <span class="avatar">{{ (musico.nome || '?').slice(0, 2).toUpperCase() }}</span>
+            <span>{{ musico.nome }}</span>
           </div>
         </div>
-      </ion-toolbar>
-    </ion-header>
+        <p *ngIf="!proximo.vao.length" class="empty-state">Ainda não há confirmações.</p>
 
-    <ion-content class="inicio-content">
-      <div class="container-wrapper">
-        <div class="section-badge-title">Olá, {{ nomeUsuario || 'usuário' }} · próximos compromissos</div>
-
-        <div *ngIf="carregandoDados" class="empty-state">
-          <ion-spinner name="crescent"></ion-spinner>
-          <p>Carregando agenda...</p>
+        <span class="chips-group-label nao-vao">Não vão ({{ proximo.naoVao.length }})</span>
+        <div class="musicians-chips" *ngIf="proximo.naoVao.length">
+          <div *ngFor="let musico of proximo.naoVao" class="musician-chip nao-vao">
+            <span class="avatar">{{ (musico.nome || '?').slice(0, 2).toUpperCase() }}</span>
+            <span>{{ musico.nome }}</span>
+          </div>
         </div>
+        <p *ngIf="!proximo.naoVao.length" class="empty-state">Ninguém recusou.</p>
 
-        <div class="cards-grid" *ngIf="!carregandoDados">
-          <!-- Próximo ensaio / encontro -->
-          <div class="card-item">
-            <div class="tag-tipo">
-              <ion-icon name="musical-note"></ion-icon>
-              <span>PRÓXIMO {{ (proximo?.categoria || 'ensaio') | uppercase }}</span>
+        <div class="poll-options">
+          <button class="poll-btn" [disabled]="!podeResponder() || salvandoPresenca" (click)="responderPresenca(true)">
+            <div class="btn-content">
+              <span>{{ minhaResposta === true ? 'Desmarcar presença' : 'Vou' }}</span>
+              <span *ngIf="minhaResposta === true" class="indicator-dot"></span>
             </div>
+            <div class="progress-bar"></div>
+          </button>
 
-            <ng-container *ngIf="proximo; else semProximo">
-              <h2 class="card-titulo">{{ proximo.titulo }}</h2>
-              <div class="card-data">
-                <ion-icon name="calendar-outline"></ion-icon>
-                <span>{{ formatarDiaDaSemana(proximo.data) }}, {{ formatarDia(proximo.data) }} de {{ formatarMesAno(proximo.data) }}<ng-container *ngIf="proximo.hora"> · {{ formatarHora(proximo.hora) }}</ng-container></span>
-              </div>
-              <div class="card-descricao">
-                <span class="desc-label">Descrição:</span>
-                <span class="desc-texto">{{ proximo.descricao || 'Sem descrição' }}</span>
-              </div>
-            </ng-container>
-            <ng-template #semProximo>
-              <p class="sem-conteudo">Nenhum ensaio ou encontro marcado.</p>
-            </ng-template>
-
-            <div *ngIf="podeMarcarEncontro() && proximo" class="card-acoes">
-              <button type="button" class="btn-acao edit" title="Editar" aria-label="Editar"
-                [routerLink]="linkEdicao().rota" [queryParams]="linkEdicao().params">
-                <ion-icon name="create-outline"></ion-icon>
-              </button>
+          <button class="poll-btn" [disabled]="!podeResponder() || salvandoPresenca" (click)="responderPresenca(false)">
+            <div class="btn-content">
+              <span>{{ minhaResposta === false ? 'Desmarcar ausência' : 'Não vou' }}</span>
             </div>
-          </div>
-
-          <!-- Próximo evento -->
-          <div class="card-item">
-            <div class="tag-tipo">
-              <ion-icon name="calendar-outline"></ion-icon>
-              <span>PRÓXIMO EVENTO</span>
-            </div>
-
-            <ng-container *ngIf="proximoEvento; else semEvento">
-              <h2 class="card-titulo">{{ proximoEvento.titulo || 'Evento' }}</h2>
-              <div class="card-data">
-                <ion-icon name="calendar-outline"></ion-icon>
-                <span>{{ formatarDiaDaSemana(proximoEvento.data) }}, {{ formatarDia(proximoEvento.data) }} de {{ formatarMesAno(proximoEvento.data) }}<ng-container *ngIf="horaDoEvento(proximoEvento)"> · {{ horaDoEvento(proximoEvento) }}</ng-container></span>
-              </div>
-              <div class="card-data" *ngIf="proximoEvento.local">
-                <ion-icon name="location-outline"></ion-icon>
-                <span>{{ proximoEvento.local }}</span>
-              </div>
-              <div class="card-descricao">
-                <span class="desc-label">Descrição:</span>
-                <span class="desc-texto">{{ proximoEvento.descricao || 'Sem descrição' }}</span>
-              </div>
-            </ng-container>
-            <ng-template #semEvento>
-              <p class="sem-conteudo">Nenhum evento marcado.</p>
-            </ng-template>
-          </div>
-
-          <!-- Mostrar interesse: só aparece quando há ensaio ou encontro futuro -->
-          <div *ngIf="proximo" class="card-item card-largo">
-            <div class="tag-tipo">
-              <ion-icon name="people-outline"></ion-icon>
-              <span>MOSTRAR INTERESSE</span>
-            </div>
-            <h2 class="card-titulo">Você vai ao {{ proximo.categoria.toLowerCase() }} de {{ formatarDia(proximo.data) }}/{{ proximo.data.slice(5, 7) }}?</h2>
-
-            <div class="opcoes">
-              <button type="button" class="opcao" [class.selecionada]="minhaResposta === true"
-                [disabled]="!podeResponder() || salvandoPresenca" (click)="responderPresenca(true)">
-                <ion-icon name="checkmark-circle-outline"></ion-icon>
-                <span>Vou</span>
-              </button>
-              <button type="button" class="opcao negativa" [class.selecionada]="minhaResposta === false"
-                [disabled]="!podeResponder() || salvandoPresenca" (click)="responderPresenca(false)">
-                <ion-icon name="close-circle-outline"></ion-icon>
-                <span>Não vou</span>
-              </button>
-            </div>
-            <p class="dica" *ngIf="minhaResposta !== null">Clique de novo na opção marcada para desfazer.</p>
-
-            <div class="card-divider"></div>
-
-            <div class="musicos-section">
-              <div class="section-label">
-                <ion-icon name="people-outline"></ion-icon>
-                <span>MÚSICOS QUE DEMONSTRARAM INTERESSE</span>
-              </div>
-
-              <div class="grupo">
-                <span class="grupo-titulo">Vão ({{ proximo.vao.length }})</span>
-                <div class="musicos-chips" *ngIf="proximo.vao.length; else ninguemVai">
-                  <div class="musico-badge" *ngFor="let musico of proximo.vao">
-                    <span class="avatar-iniciais">{{ iniciais(musico.nome) }}</span>
-                    <span class="nome-musico">{{ musico.nome }}</span>
-                  </div>
-                </div>
-                <ng-template #ninguemVai><p class="sem-conteudo">Ninguém confirmou ainda.</p></ng-template>
-              </div>
-
-              <div class="grupo">
-                <span class="grupo-titulo negativa">Não vão ({{ proximo.naoVao.length }})</span>
-                <div class="musicos-chips" *ngIf="proximo.naoVao.length; else ninguemRecusou">
-                  <div class="musico-badge negativa" *ngFor="let musico of proximo.naoVao">
-                    <span class="avatar-iniciais">{{ iniciais(musico.nome) }}</span>
-                    <span class="nome-musico">{{ musico.nome }}</span>
-                  </div>
-                </div>
-                <ng-template #ninguemRecusou><p class="sem-conteudo">Ninguém recusou.</p></ng-template>
-              </div>
-            </div>
-          </div>
+            <div class="progress-bar"></div>
+          </button>
         </div>
       </div>
-    </ion-content>
-  </div>
+    </main>
+  </ion-content>
 </ion-split-pane>

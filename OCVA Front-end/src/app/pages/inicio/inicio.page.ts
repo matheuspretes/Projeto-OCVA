@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuButton, IonSpinner, IonSplitPane, IonToolbar } from '@ionic/angular/standalone';
+import { IonCol, IonContent, IonGrid, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuButton, IonRow, IonSplitPane } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { addIcons } from 'ionicons';
 import {
-  addCircleOutline, calendarOutline, checkmarkCircleOutline, closeCircleOutline, createOutline, documentTextOutline,
-  homeOutline, keyOutline, locationOutline, logOutOutline, musicalNote, musicalNoteOutline, musicalNotesOutline,
-  peopleOutline, personOutline, timeOutline
+  addCircleOutline, barChartOutline, calendarOutline, documentTextOutline, gridOutline,
+  homeOutline, keyOutline, logOutOutline, musicalNoteOutline, musicalNotesOutline,
+  peopleOutline, personOutline
 } from 'ionicons/icons';
 import { TipoUsuario } from 'src/app/constantes/tipo-usuario';
 import { Evento } from 'src/app/models/evento';
@@ -40,7 +40,7 @@ type ProximoCompromisso = {
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, IonContent, IonHeader, IonToolbar, IonIcon, IonMenuButton, IonSplitPane, IonMenu, IonList, IonItem, IonLabel, IonSpinner]
+  imports: [CommonModule, RouterLink, RouterLinkActive, IonContent, IonIcon, IonMenuButton, IonSplitPane, IonMenu, IonList, IonItem, IonLabel, IonGrid, IonRow, IonCol]
 })
 export class InicioPage implements OnInit {
   tipoUsuario: TipoUsuario | null = null;
@@ -61,9 +61,9 @@ export class InicioPage implements OnInit {
     private eventosService: EventosService
   ) {
     addIcons({
-      addCircleOutline, calendarOutline, checkmarkCircleOutline, closeCircleOutline, createOutline, documentTextOutline,
-      homeOutline, keyOutline, locationOutline, logOutOutline, musicalNote, musicalNoteOutline, musicalNotesOutline,
-      peopleOutline, personOutline, timeOutline
+      addCircleOutline, barChartOutline, calendarOutline, documentTextOutline, gridOutline,
+      homeOutline, keyOutline, logOutOutline, musicalNoteOutline, musicalNotesOutline,
+      peopleOutline, personOutline
     });
   }
 
@@ -162,11 +162,6 @@ export class InicioPage implements OnInit {
     return { rota: '/marcar-encontro', params: this.proximo ? { id: this.proximo.id } : {} };
   }
 
-  iniciais(nome: string | undefined): string {
-    const partes = (nome || '?').trim().split(/\s+/);
-    return ((partes[0]?.[0] || '') + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase() || '?';
-  }
-
   // ---------- Formatação ----------
 
   formatarDia(data: string | undefined): string {
@@ -190,10 +185,6 @@ export class InicioPage implements OnInit {
 
   formatarHora(hora: string | undefined): string {
     return hora ? hora.slice(0, 5).replace(':', 'h') : '';
-  }
-
-  horaDoEvento(evento: Evento): string {
-    return this.formatarHora(evento.data?.split('T')[1]);
   }
 
   // ---------- Escolha do próximo compromisso ----------
