@@ -209,6 +209,18 @@ ion-menu {
     ion-icon {
       font-size: 14px;
     }
+
+    .badge-action {
+      margin-left: auto;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      color: $text-muted;
+      text-decoration: none;
+
+      &:hover {
+        color: $gold-primary;
+      }
+    }
   }
 
   .date-display {

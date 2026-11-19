@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <div class="topbar">
+      <div class="page-heading">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ modoEdicao ? 'Editar encontro' : 'Marcar encontro' }}</span>
+      </div>
+      <a routerLink="/inicio" class="back-link">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        Voltar ao início
+      </a>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="criar-evento-page">
+  <main class="form-shell">
+    <section class="form-card">
+      <header class="form-heading">
+        <h1><ion-icon name="calendar-outline"></ion-icon> Dados do encontro</h1>
+        <p>Depois que o dia do encontro passar, ele é registrado automaticamente como ensaio.</p>
+      </header>
+
+      <form [formGroup]="formGroup" (ngSubmit)="salvar()">
+        <div class="field">
+          <ion-label>Título</ion-label>
+          <ion-input class="field-input" placeholder="Ex.: Ensaio geral de Natal" formControlName="titulo" maxlength="120"></ion-input>
+        </div>
+
+        <div class="field">
+          <ion-label>Tipo</ion-label>
+          <div class="tipo-row">
+            <ion-select class="field-input" placeholder="Selecione o tipo" formControlName="tipoId" interface="popover">
+              <ion-select-option *ngFor="let tipo of tipos" [value]="tipo.id">{{ tipo.nome }}</ion-select-option>
+            </ion-select>
+            <button type="button" class="add-tipo" (click)="adicionarTipo()" aria-label="Adicionar categoria" title="Adicionar categoria">
+              <ion-icon name="add"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="two-columns">
+          <div class="field">
+            <ion-label>Data</ion-label>
+            <ion-input class="field-input" type="date" formControlName="data" [min]="hoje"></ion-input>
+          </div>
+          <div class="field">
+            <ion-label>Hora</ion-label>
+            <ion-input class="field-input" type="time" formControlName="hora"></ion-input>
+          </div>
+        </div>
+
+        <div class="field">
+          <ion-label>Descrição</ion-label>
+          <ion-textarea class="field-input description-input" placeholder="Pauta, repertório ou observações para os músicos." formControlName="descricao" maxlength="255" [counter]="true"></ion-textarea>
+        </div>
+
+        <div class="actions-row">
+          <ion-button type="button" fill="clear" class="cancel-button" (click)="cancelar()" [disabled]="isSaving">Cancelar</ion-button>
+          <ion-button *ngIf="modoEdicao" type="button" fill="clear" class="delete-button" (click)="excluir()" [disabled]="isSaving">Desmarcar</ion-button>
+          <ion-button type="submit" class="save-button" [disabled]="formGroup.invalid || isSaving">
+            <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+            <span *ngIf="!isSaving"><ion-icon name="calendar-outline"></ion-icon> {{ modoEdicao ? 'Salvar alterações' : 'Marcar encontro' }}</span>
+          </ion-button>
+        </div>
+      </form>
+    </section>
+  </main>
+</ion-content>

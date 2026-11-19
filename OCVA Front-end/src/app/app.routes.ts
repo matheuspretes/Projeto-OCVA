@@ -39,6 +39,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/criar-ensaio/criar-ensaio.page').then( m => m.CriarEnsaioPage)
   },
   {
+    path: 'marcar-encontro',
+    loadComponent: () => import('./pages/marcar-encontro/marcar-encontro.page').then( m => m.MarcarEncontroPage)
+  },
+  {
     path: 'criar-evento',
     loadComponent: () => import('./pages/criar-evento/criar-evento.page').then( m => m.CriarEventoPage)
   },

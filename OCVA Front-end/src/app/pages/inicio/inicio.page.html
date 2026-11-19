@@ -27,6 +27,11 @@
             <ion-label>Ensaios</ion-label>
           </ion-item>
 
+          <ion-item *ngIf="podeMarcarEncontro()" button routerLink="/marcar-encontro" routerLinkActive="active">
+            <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+            <ion-label>Marcar Encontro</ion-label>
+          </ion-item>
+
           <ion-item button routerLink="/eventos" routerLinkActive="active">
             <ion-icon slot="start" name="calendar-outline"></ion-icon>
             <ion-label>Eventos</ion-label>
@@ -80,22 +85,29 @@
             <div class="info-card">
               <div class="card-header-badge">
                 <ion-icon name="musical-notes-outline"></ion-icon>
-                <span>PRÓXIMO ENSAIO</span>
+                <span>{{ proximoEncontro ? rotuloProximoEncontro() : 'PRÓXIMO ENSAIO' }}</span>
+                <a *ngIf="podeMarcarEncontro()" class="badge-action"
+                  [routerLink]="'/marcar-encontro'" [queryParams]="proximoEncontro ? { id: proximoEncontro.id } : {}">
+                  {{ proximoEncontro ? 'Editar' : 'Marcar' }}
+                </a>
               </div>
 
-              <div *ngIf="carregandoDados" class="empty-state">Carregando ensaio...</div>
-              <div *ngIf="!carregandoDados && proximoEnsaio" class="date-display">
-                <span class="day-number">{{ formatarDia(proximoEnsaio.data) }}</span>
+              <div *ngIf="carregandoDados" class="empty-state">Carregando encontro...</div>
+              <div *ngIf="!carregandoDados && proximoEncontro" class="date-display">
+                <span class="day-number">{{ formatarDia(proximoEncontro.data) }}</span>
                 <div class="date-details">
-                  <h4>{{ formatarDiaDaSemana(proximoEnsaio.data) }}</h4>
-                  <p>{{ formatarMesAno(proximoEnsaio.data) }}</p>
+                  <h4>{{ formatarDiaDaSemana(proximoEncontro.data) }} · {{ formatarHora(proximoEncontro.hora) }}</h4>
+                  <p>{{ formatarMesAno(proximoEncontro.data) }}</p>
                 </div>
               </div>
-              <p *ngIf="!carregandoDados && !proximoEnsaio" class="empty-state">Nenhum ensaio cadastrado.</p>
+              <p *ngIf="!carregandoDados && !proximoEncontro" class="empty-state">Nenhum encontro marcado.</p>
 
-              <div *ngIf="proximoEnsaio" class="card-footer-info">
+              <div *ngIf="proximoEncontro" class="card-footer-info">
                 <span class="info-pill">
-                  <ion-icon name="document-text-outline"></ion-icon> {{ proximoEnsaio.descricao || 'Sem descrição cadastrada' }}
+                  <ion-icon name="musical-note-outline"></ion-icon> {{ proximoEncontro.titulo }}
+                </span>
+                <span class="info-pill">
+                  <ion-icon name="document-text-outline"></ion-icon> {{ proximoEncontro.descricao || 'Sem descrição cadastrada' }}
                 </span>
               </div>
             </div>
@@ -135,7 +147,7 @@
           <span>ENQUETE</span>
         </div>
 
-        <h3 class="poll-question">{{ proximoEnsaio ? 'Ensaio de ' + formatarMesAno(proximoEnsaio.data) : 'Próximo ensaio' }}</h3>
+        <h3 class="poll-question">{{ proximoEncontro ? proximoEncontro.titulo + ' · ' + formatarDia(proximoEncontro.data) + ' de ' + formatarMesAno(proximoEncontro.data) : 'Próximo encontro' }}</h3>
 
         <div class="poll-subtitle">
           <ion-icon name="people-outline"></ion-icon>
@@ -143,12 +155,12 @@
         </div>
 
         <div class="musicians-chips">
-          <div *ngFor="let musico of (proximoEnsaio?.presencas || [])" class="musician-chip">
+          <div *ngFor="let musico of (proximoEncontro?.interessados || [])" class="musician-chip">
             <span class="avatar">{{ (musico.nome || '?').slice(0, 2).toUpperCase() }}</span>
             <span>{{ musico.nome }}</span>
           </div>
         </div>
-        <p *ngIf="!proximoEnsaio?.presencas?.length" class="empty-state">Ainda não há confirmações.</p>
+        <p *ngIf="!proximoEncontro?.interessados?.length" class="empty-state">Ainda não há confirmações.</p>
 
         <div class="poll-options">
           <button class="poll-btn" [disabled]="!podeResponderPresenca() || salvandoPresenca" (click)="responderPresenca(true)">
