@@ -1,0 +1,108 @@
+<app-layout titulo="Perfil do músico" icone="person-outline" secao="/musicos">
+  <main class="detalhe-body">
+    <a routerLink="/musicos" class="voltar">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+      Voltar aos músicos
+    </a>
+
+    <div *ngIf="carregando" class="estado">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div *ngIf="!carregando && !podeAcessar" class="estado">
+      <p>Esta área está disponível apenas para maestro e diretoria.</p>
+    </div>
+
+    <div *ngIf="!carregando && podeAcessar && (erro || !musico)" class="estado">
+      <p>Não foi possível carregar os dados do músico.</p>
+    </div>
+
+    <ng-container *ngIf="!carregando && podeAcessar && musico">
+      <!-- Cabeçalho com os dados do músico -->
+      <section class="perfil">
+        <div class="avatar">{{ iniciais }}</div>
+        <div class="perfil-info">
+          <h1>{{ musico.nome }}</h1>
+          <p>
+            <ion-icon name="musical-note-outline"></ion-icon>
+            {{ musico.instrumento || 'Instrumento não informado' }}
+            <span class="separador">•</span>
+            {{ musico.tipo === 'maestro' ? 'Maestro' : 'Músico' }}
+          </p>
+        </div>
+        <span class="status" [class.suspenso]="musico.ativo === false">
+          {{ musico.ativo === false ? 'SUSPENSO' : 'ATIVO' }}
+        </span>
+      </section>
+
+      <!-- Resumo -->
+      <section class="resumo">
+        <div class="resumo-card">
+          <strong>{{ ensaiosRealizados.length }}</strong>
+          <span>Ensaios realizados</span>
+        </div>
+        <div class="resumo-card">
+          <strong>{{ eventosRealizados.length }}</strong>
+          <span>Eventos realizados</span>
+        </div>
+        <div class="resumo-card">
+          <strong>{{ proximosEnsaios.length + proximosEventos.length }}</strong>
+          <span>Próximos compromissos</span>
+        </div>
+        <div class="resumo-card">
+          <strong>{{ percentualPresenca }}%</strong>
+          <span>{{ totalPresencas }} presenças • {{ totalFaltas }} faltas</span>
+        </div>
+      </section>
+
+      <!-- Próximos compromissos -->
+      <h2 class="secao-titulo">PRÓXIMOS COMPROMISSOS</h2>
+      <section class="colunas">
+        <div class="coluna">
+          <h3><ion-icon name="musical-notes-outline"></ion-icon> Ensaios</h3>
+          <ng-container *ngTemplateOutlet="lista; context: { itens: proximosEnsaios, vazio: 'Nenhum ensaio marcado para este músico.' }"></ng-container>
+        </div>
+        <div class="coluna">
+          <h3><ion-icon name="star-outline"></ion-icon> Eventos</h3>
+          <ng-container *ngTemplateOutlet="lista; context: { itens: proximosEventos, vazio: 'Nenhum evento marcado para este músico.' }"></ng-container>
+        </div>
+      </section>
+
+      <!-- Histórico -->
+      <h2 class="secao-titulo">HISTÓRICO</h2>
+      <section class="colunas">
+        <div class="coluna">
+          <h3><ion-icon name="musical-notes-outline"></ion-icon> Ensaios realizados</h3>
+          <ng-container *ngTemplateOutlet="lista; context: { itens: ensaiosRealizados, vazio: 'Nenhum ensaio realizado ainda.' }"></ng-container>
+        </div>
+        <div class="coluna">
+          <h3><ion-icon name="star-outline"></ion-icon> Eventos realizados</h3>
+          <ng-container *ngTemplateOutlet="lista; context: { itens: eventosRealizados, vazio: 'Nenhum evento realizado ainda.' }"></ng-container>
+        </div>
+      </section>
+    </ng-container>
+
+    <!-- Lista usada em todas as seções -->
+    <ng-template #lista let-itens="itens" let-vazio="vazio">
+      <p *ngIf="itens.length === 0" class="vazio">{{ vazio }}</p>
+
+      <a *ngFor="let item of itens" class="item" [class.sem-link]="!item.link" [routerLink]="item.link">
+        <div class="item-data">
+          <strong>{{ formatarDia(item.data) }}</strong>
+          <span>{{ formatarMesAno(item.data) }}</span>
+        </div>
+        <div class="item-info">
+          <span class="item-tipo">{{ item.tipo | uppercase }}</span>
+          <h4>{{ item.titulo }}</h4>
+          <p>
+            <ion-icon name="time-outline"></ion-icon> {{ formatarHora(item.data) }}
+            <ng-container *ngIf="item.local">
+              <ion-icon name="location-outline"></ion-icon> {{ item.local }}
+            </ng-container>
+          </p>
+        </div>
+        <span class="situacao" [ngClass]="item.classe">{{ item.situacao }}</span>
+      </a>
+    </ng-template>
+  </main>
+</app-layout>

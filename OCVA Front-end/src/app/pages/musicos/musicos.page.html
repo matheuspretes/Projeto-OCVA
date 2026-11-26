@@ -14,7 +14,7 @@
 
       <section *ngIf="musicos.length > 0" class="musicos-grid">
         <article class="musico-card" *ngFor="let musico of musicos">
-          <div class="card-top">
+          <div class="card-top card-link" [routerLink]="['/musicos', musico.id]" title="Ver ensaios e eventos do músico">
             <div class="avatar">{{ (musico.nome || musico.login || '?').slice(0, 2).toUpperCase() }}</div>
             <div class="person-heading">
               <h3>{{ musico.nome }}</h3>
@@ -31,6 +31,11 @@
               <span>{{ musico.instrumento || 'Não informado' }}</span>
             </div>
           </div>
+
+          <a class="ver-agenda" [routerLink]="['/musicos', musico.id]">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Ver ensaios e eventos
+          </a>
 
           <div class="card-actions" *ngIf="ehDiretoria() && editandoId !== musico.id">
             <ion-button fill="clear" (click)="iniciarEdicao(musico)">Editar</ion-button>

@@ -30,6 +30,10 @@ $white: #f1f1f2;
 .person-heading h3 { margin: 4px 0 4px; color: $white; font: italic 600 1.65rem/1.15 'Playfair Display', serif; overflow-wrap: anywhere; }
 .person-heading span { color: $gold; font-size: 1rem; font-weight: 600; }
 .musico-card ion-badge { --background: #e0b641; --color: #181818; margin-top: 1px; padding: 7px 14px; border-radius: 16px; font-size: .7rem; letter-spacing: .5px; }
+.card-link { cursor: pointer; }
+.card-link:hover h3 { color: $gold; }
+.ver-agenda { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; color: $gold; font-size: .88rem; font-weight: 600; text-decoration: none; }
+.ver-agenda:hover { text-decoration: underline; }
 .instrument-section { margin-top: 42px; }
 .detail-label { display: flex; align-items: center; gap: 10px; color: #a2aabd; font-size: .9rem; letter-spacing: 2px; }
 .detail-label ion-icon { color: $gold; font-size: 18px; }
