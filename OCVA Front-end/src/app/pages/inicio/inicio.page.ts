@@ -6,7 +6,7 @@ import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { addIcons } from 'ionicons';
 import {
   addCircleOutline, barChartOutline, calendarOutline, documentTextOutline, gridOutline,
-  locationOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, timeOutline
+  locationOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, personOutline, timeOutline
 } from 'ionicons/icons';
 import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 import { TipoUsuario } from 'src/app/constantes/tipo-usuario';
@@ -32,6 +32,8 @@ type Compromisso = {
   titulo: string;
   descricao: string;
   local?: string;
+  maestro?: string; // maestro responsável
+  evento?: string;  // evento do ensaio
   data: string; // aaaa-mm-dd
   hora: string; // hh:mm
   vao: any[];
@@ -67,7 +69,7 @@ export class InicioPage implements OnInit {
   ) {
     addIcons({
       addCircleOutline, barChartOutline, calendarOutline, documentTextOutline, gridOutline,
-      locationOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, timeOutline
+      locationOutline, musicalNoteOutline, musicalNotesOutline, peopleOutline, personOutline, timeOutline
     });
   }
 
@@ -235,11 +237,11 @@ export class InicioPage implements OnInit {
     return [...candidatos].sort((a, b) => `${a.data}T${a.hora}`.localeCompare(`${b.data}T${b.hora}`))[0] || null;
   }
 
-  // Ensaios/eventos já cadastrados com data de hoje em diante que o usuário pode ver
+  // Ensaios/eventos já cadastrados cujo horário ainda não passou e que o usuário pode ver
   private futurosVisiveis<T extends { data: string; musicos?: any[] }>(registros: T[], usuario: any): T[] {
-    const hoje = this.hojeTexto();
+    const agora = new Date();
     return registros
-      .filter((registro) => (registro.data || '').slice(0, 10) >= hoje)
+      .filter((registro) => new Date(registro.data) > agora)
       .filter((registro) => this.usuarioPodeVerTudo(usuario)
         || (registro.musicos || []).some((musico: any) => this.mesmoUsuario(musico, usuario)));
   }
@@ -251,6 +253,8 @@ export class InicioPage implements OnInit {
       categoria: encontro.tipo?.nome || 'Encontro',
       titulo: encontro.titulo,
       descricao: encontro.descricao,
+      maestro: encontro.maestro?.nome,
+      evento: encontro.evento?.titulo,
       data: encontro.data,
       hora: (encontro.hora || '').slice(0, 5),
       vao: encontro.interessados || [],
@@ -266,6 +270,8 @@ export class InicioPage implements OnInit {
       categoria: ensaio.tipo || 'Ensaio',
       titulo: ensaio.titulo || 'Ensaio',
       descricao: ensaio.descricao,
+      maestro: ensaio.maestro?.nome,
+      evento: ensaio.evento?.titulo,
       data,
       hora: (hora || '').slice(0, 5),
       vao: ensaio.presencas || [],
@@ -281,6 +287,7 @@ export class InicioPage implements OnInit {
       titulo: evento.titulo,
       descricao: evento.descricao,
       local: evento.local,
+      maestro: evento.maestro?.nome,
       data: evento.data,
       hora: (evento.hora || '').slice(0, 5),
       vao: evento.interessados || [],
@@ -297,6 +304,7 @@ export class InicioPage implements OnInit {
       titulo: evento.titulo || 'Evento',
       descricao: evento.descricao,
       local: evento.local,
+      maestro: evento.maestro?.nome,
       data,
       hora: (hora || '').slice(0, 5),
       vao: evento.presencas || [],
@@ -317,11 +325,6 @@ export class InicioPage implements OnInit {
   }
 
   // ---------- Auxiliares ----------
-
-  private hojeTexto(): string {
-    const agora = new Date();
-    return `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
-  }
 
   private converterData(data: string | undefined): Date | null {
     if (!data) {

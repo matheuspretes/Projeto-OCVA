@@ -27,8 +27,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/codigos-acesso/codigos-acesso.page').then( m => m.CodigosAcessoPage)
   },
   {
+    // Arquivo > Encontros: reuniões e outros tipos (sem os ensaios)
+    path: 'encontros',
+    loadComponent: () => import('./pages/encontros/encontros.page').then( m => m.EncontrosPage),
+    data: { modo: 'encontros' }
+  },
+  {
+    // Arquivo > Ensaios: a mesma página, mostrando só os ensaios
     path: 'ensaios',
-    loadComponent: () => import('./pages/ensaios/ensaios.page').then( m => m.EnsaiosPage)
+    loadComponent: () => import('./pages/encontros/encontros.page').then( m => m.EncontrosPage),
+    data: { modo: 'ensaios' }
   },
   {
     path: 'ensaios/:id',

@@ -57,6 +57,14 @@ export class MusicosPage implements OnInit {
     });
   }
 
+  // Músicos cadastrados antes da lista só têm o campo "instrumento"
+  instrumentosDe(musico: Usuario): string[] {
+    if (musico.instrumentos?.length) {
+      return musico.instrumentos;
+    }
+    return musico.instrumento ? [musico.instrumento] : [];
+  }
+
   ehDiretoria(): boolean {
     return this.usuarioAutenticado?.tipo === 'diretoria';
   }
@@ -92,7 +100,7 @@ export class MusicosPage implements OnInit {
           this.musicos[indice] = resultado;
         }
         this.exibirToast(
-          resultado.ativo === false ? 'Usuário suspenso' : 'Usuário ativado',
+          resultado.ativo === false ? 'Músico desativado' : 'Músico ativado',
           resultado.ativo === false ? 'warning' : 'success'
         );
       },

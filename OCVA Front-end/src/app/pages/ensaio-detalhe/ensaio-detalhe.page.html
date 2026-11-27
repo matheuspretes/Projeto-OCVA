@@ -32,6 +32,14 @@
           <ion-icon name="calendar-outline"></ion-icon>
           <span>{{ dataFormatada() }}</span>
         </div>
+        <div class="meta">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>Maestro responsável: <strong>{{ ensaio.maestro?.nome || 'Não definido' }}</strong></span>
+        </div>
+        <div class="meta" *ngIf="ensaio.evento">
+          <ion-icon name="star-outline"></ion-icon>
+          <span>Evento: <strong>{{ ensaio.evento.titulo }}</strong></span>
+        </div>
         <div class="meta" *ngIf="ensaio.criador">
           <ion-icon name="person-outline"></ion-icon>
           <span>Criado por <strong>{{ ensaio.criador.nome }}</strong></span>

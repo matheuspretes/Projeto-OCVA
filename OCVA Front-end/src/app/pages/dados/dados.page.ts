@@ -10,6 +10,7 @@ import {
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { CodigoAcessoService } from 'src/app/services/codigo-acesso-service';
 import { Usuario } from 'src/app/models/usuario';
+import { INSTRUMENTOS } from 'src/app/constantes/instrumentos';
 import { ToastController, NavController, AlertController, LoadingController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -52,7 +53,7 @@ export class DadosPage implements OnInit {
       'login': ['', Validators.compose([Validators.required])],
       'senha': ['', Validators.compose([Validators.required])],
       'tipo': [''],
-      'instrumento': [''],
+      'instrumentos': [[]],
       'codigoAcesso': ['']
     });
   }
@@ -66,15 +67,15 @@ export class DadosPage implements OnInit {
         login: this.usuario?.login,
         senha: this.usuario?.senha,
         tipo: this.usuario?.tipo,
-        instrumento: this.usuario?.instrumento,
+        instrumentos: this.instrumentosDoUsuario(),
         codigoAcesso: this.usuario?.codigoAcesso || ''
       });
     }
 
-    // Clear instrumento when tipo is not 'musico'
+    // Limpa os instrumentos quando o tipo não é 'musico'
     this.tipoSub = this.formGroup.get('tipo')?.valueChanges.subscribe((val) => {
       if (val !== 'musico') {
-        this.formGroup.get('instrumento')?.setValue('');
+        this.formGroup.get('instrumentos')?.setValue([]);
       }
     }) || null;
   }
@@ -88,10 +89,24 @@ export class DadosPage implements OnInit {
         login: this.usuario?.login,
         senha: this.usuario?.senha,
         tipo: this.usuario?.tipo,
-        instrumento: this.usuario?.instrumento,
+        instrumentos: this.instrumentosDoUsuario(),
         codigoAcesso: this.usuario?.codigoAcesso || ''
       });
     }
+  }
+
+  // Músicos cadastrados antes da lista só têm o campo "instrumento"
+  private instrumentosDoUsuario(): string[] {
+    if (this.usuario?.instrumentos?.length) {
+      return this.usuario.instrumentos;
+    }
+    return this.usuario?.instrumento ? [this.usuario.instrumento] : [];
+  }
+
+  // Lista de instrumentos + os do usuário que não estão nela (para não sumirem do campo)
+  get opcoesDeInstrumentos(): string[] {
+    const extras = this.instrumentosDoUsuario().filter((nome) => !INSTRUMENTOS.includes(nome));
+    return [...extras, ...INSTRUMENTOS];
   }
 
   ngOnDestroy(): void {
@@ -114,7 +129,10 @@ export class DadosPage implements OnInit {
     this.usuario.login = dados.login;
     this.usuario.senha = dados.senha;
     this.usuario.tipo = dados.tipo;
-    this.usuario.instrumento = dados.instrumento;
+    // O primeiro instrumento escolhido fica como principal
+    const instrumentos: string[] = dados.instrumentos || [];
+    this.usuario.instrumentos = instrumentos;
+    this.usuario.instrumento = instrumentos[0] || '';
     this.usuario.codigoAcesso = dados.codigoAcesso;
 
     this.usuarioService.salvar(this.usuario).subscribe({

@@ -17,7 +17,7 @@ type ItemMenu = {
 };
 
 // Páginas que ficam dentro do item "Arquivo"
-const ROTAS_ARQUIVO = ['/ensaios', '/eventos'];
+const ROTAS_ARQUIVO = ['/encontros', '/ensaios', '/eventos'];
 
 let contador = 0;
 
@@ -41,7 +41,7 @@ let contador = 0;
 export class AppLayoutComponent implements OnInit {
   @Input() titulo = '';
   @Input() icone = 'musical-notes-outline';
-  // Rota do menu que fica destacada mesmo fora dela (ex.: "/ensaios" no cadastro de ensaio)
+  // Rota do menu que fica destacada mesmo fora dela (ex.: "/encontros" no cadastro de ensaio)
   @Input() secao = '';
 
   readonly menuId = `menu-${++contador}`;
@@ -54,9 +54,10 @@ export class AppLayoutComponent implements OnInit {
     { rota: '/marcar-evento', rotulo: 'Marcar Evento', icone: 'add-circle-outline', somente: ['maestro', 'diretoria'] },
   ];
 
-  // Opções do "Arquivo": ensaios/encontros e eventos que já passaram
+  // Opções do "Arquivo": ensaios, outros encontros (ex.: reuniões) e eventos
   readonly itensArquivo: ItemMenu[] = [
-    { rota: '/ensaios', rotulo: 'Ensaios', icone: 'musical-note-outline' },
+    { rota: '/ensaios', rotulo: 'Ensaios', icone: 'musical-notes-outline' },
+    { rota: '/encontros', rotulo: 'Encontros', icone: 'musical-note-outline' },
     { rota: '/eventos', rotulo: 'Eventos', icone: 'calendar-outline' },
   ];
 

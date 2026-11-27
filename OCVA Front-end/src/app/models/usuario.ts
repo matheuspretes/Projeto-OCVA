@@ -7,7 +7,8 @@ export class Usuario {
     senha: string;
     tipo: TipoUsuario;
     idade: number;
-    instrumento: string;
+    instrumento: string;          // instrumento principal (o primeiro da lista)
+    instrumentos?: string[];      // todos os instrumentos que o músico toca
     ativo?: boolean;
     codigoAcesso?: string;
     codigoAcessoId?: number;

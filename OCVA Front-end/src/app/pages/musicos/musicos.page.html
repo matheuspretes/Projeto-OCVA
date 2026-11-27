@@ -21,14 +21,15 @@
               <span>{{ musico.tipo === 'maestro' ? 'Maestro' : 'Músico' }}</span>
             </div>
             <ion-badge [color]="musico.ativo === false ? 'medium' : 'warning'">
-              {{ musico.ativo === false ? 'SUSPENSO' : 'ATIVO' }}
+              {{ musico.ativo === false ? 'DESATIVADO' : 'ATIVO' }}
             </ion-badge>
           </div>
 
           <div class="instrument-section">
             <span class="detail-label"><ion-icon name="musical-note-outline"></ion-icon> INSTRUMENTOS</span>
             <div class="instrument-tags">
-              <span>{{ musico.instrumento || 'Não informado' }}</span>
+              <span *ngFor="let nome of instrumentosDe(musico)">{{ nome }}</span>
+              <span *ngIf="instrumentosDe(musico).length === 0">Não informado</span>
             </div>
           </div>
 
@@ -40,7 +41,7 @@
           <div class="card-actions" *ngIf="ehDiretoria() && editandoId !== musico.id">
             <ion-button fill="clear" (click)="iniciarEdicao(musico)">Editar</ion-button>
             <ion-button fill="clear" [color]="musico.ativo === false ? 'success' : 'warning'" (click)="alternarStatus(musico)">
-              {{ musico.ativo === false ? 'Ativar' : 'Suspender' }}
+              {{ musico.ativo === false ? 'Ativar' : 'Desativar' }}
             </ion-button>
           </div>
 
@@ -49,7 +50,6 @@
             <ion-input label="Login" label-placement="stacked" [(ngModel)]="usuarioEditado.login"></ion-input>
             <ion-input label="Senha" label-placement="stacked" type="password" [(ngModel)]="usuarioEditado.senha"></ion-input>
             <ion-input label="Idade" label-placement="stacked" type="number" [(ngModel)]="usuarioEditado.idade"></ion-input>
-            <ion-input label="Instrumento" label-placement="stacked" [(ngModel)]="usuarioEditado.instrumento"></ion-input>
             <ion-select label="Tipo" label-placement="stacked" [(ngModel)]="usuarioEditado.tipo">
               <ion-select-option value="musico">Músico</ion-select-option>
               <ion-select-option value="maestro">Maestro</ion-select-option>

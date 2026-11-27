@@ -1,54 +1,99 @@
 <app-layout titulo="Arquivo de eventos" icone="archive-outline" secao="/eventos">
-  <ion-button acoes *ngIf="podeMarcarEvento()" class="topbar-button" routerLink="/marcar-evento">
+  <ion-button acoes *ngIf="podeMarcarEvento()" class="topbar-button" (click)="marcarEvento()">
     <ion-icon slot="start" name="add-circle-outline"></ion-icon>
     Marcar evento
   </ion-button>
 
+  <main class="eventos-body">
+    <div *ngIf="carregando" class="empty-state">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
 
-    <main class="eventos-body">
-      <h2 class="section-title">TODOS OS EVENTOS, DO MAIS RECENTE AO MAIS ANTIGO</h2>
+    <ng-container *ngIf="!carregando">
+      <p class="dica">Clique em um evento para ver os ensaios dele.</p>
 
-      <div *ngIf="!eventos || eventos.length === 0" class="empty-state">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <p>Nenhum evento no arquivo.</p>
+      <h2 class="section-title">PRÓXIMOS EVENTOS</h2>
+      <p *ngIf="proximos.length === 0" class="vazio">Nenhum evento marcado.</p>
+      <section class="eventos-list">
+        <ng-container *ngFor="let card of proximos">
+          <ng-container *ngTemplateOutlet="cardEvento; context: { $implicit: card }"></ng-container>
+        </ng-container>
+      </section>
+
+      <h2 class="section-title segunda">EVENTOS REALIZADOS, DO MAIS RECENTE AO MAIS ANTIGO</h2>
+      <p *ngIf="realizados.length === 0" class="vazio">Nenhum evento no arquivo.</p>
+      <section class="eventos-list">
+        <ng-container *ngFor="let card of realizados">
+          <ng-container *ngTemplateOutlet="cardEvento; context: { $implicit: card }"></ng-container>
+        </ng-container>
+      </section>
+    </ng-container>
+  </main>
+
+  <!-- Card de evento (marcado ou realizado) -->
+  <ng-template #cardEvento let-card>
+    <article class="evento-card" [class.aberto]="aberto === card.chave" (click)="alternarEnsaios(card)">
+      <div class="evento-banner">
+        <img *ngIf="card.banner" [src]="card.banner" alt="Banner do evento">
+        <ion-icon *ngIf="!card.banner" name="image-outline"></ion-icon>
+        <span *ngIf="!card.banner">BANNER</span>
       </div>
 
-      <section *ngIf="eventos && eventos.length > 0" class="eventos-list">
-        <article class="evento-card" *ngFor="let evento of eventos" (click)="abrirDetalhes(evento)">
-          <div class="evento-banner">
-            <img *ngIf="evento.banner" [src]="evento.banner" alt="Banner do evento">
-            <ion-icon *ngIf="!evento.banner" name="image-outline"></ion-icon>
-            <span *ngIf="!evento.banner">BANNER</span>
-          </div>
+      <div class="evento-details">
+        <div class="evento-meta">
+          <span>{{ formatarDataEvento(card.data) }}</span>
+          <span class="evento-time">
+            <ion-icon name="calendar-outline"></ion-icon>
+            {{ formatarHorario(card.data) }}
+          </span>
+        </div>
+        <h3>{{ card.titulo }}</h3>
+        <p class="evento-description">{{ card.descricao || 'Sem descrição cadastrada.' }}</p>
+        <div class="evento-location">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{ card.local || 'Local a definir' }}</span>
+        </div>
+        <div class="evento-musicos">
+          <ion-icon name="person-outline"></ion-icon>
+          <span><strong>Maestro:</strong> {{ card.maestro || 'Não definido' }}</span>
+        </div>
+        <div class="evento-musicos" *ngIf="card.nomesMusicos.length">
+          <ion-icon name="people-outline"></ion-icon>
+          <span><strong>{{ card.marcado ? 'Confirmaram:' : 'Músicos:' }}</strong> {{ card.nomesMusicos.join(', ') }}</span>
+        </div>
+        <div class="evento-musicos" *ngIf="card.presencas || card.faltas">
+          <ion-icon name="checkmark-done-outline"></ion-icon>
+          <span>{{ card.presencas }} presentes · {{ card.faltas }} faltas</span>
+        </div>
 
-          <div class="evento-details">
-            <div class="evento-meta">
-              <span>{{ formatarDataEvento(evento.data) }}</span>
-              <span class="evento-time">
-                <ion-icon name="calendar-outline"></ion-icon>
-                {{ formatarHorario(evento.data) }}
-              </span>
-            </div>
-            <h3>{{ evento.titulo || 'Apresentação / Concerto' }}</h3>
-            <p class="evento-description">{{ evento.descricao || 'Sem descrição cadastrada.' }}</p>
-            <div class="evento-location">
-              <ion-icon name="location-outline"></ion-icon>
-              <span>{{ evento.local || 'Local a definir' }}</span>
-            </div>
-            <div class="evento-musicos" *ngIf="evento.nomesMusicos?.length">
-              <ion-icon name="people-outline"></ion-icon>
-              <span><strong>Músicos:</strong> {{ evento.nomesMusicos.join(', ') }}</span>
-            </div>
-            <div class="evento-musicos" *ngIf="evento.presencas?.length || evento.faltas?.length">
-              <ion-icon name="checkmark-done-outline"></ion-icon>
-              <span>{{ evento.presencas?.length || 0 }} presentes · {{ evento.faltas?.length || 0 }} faltas</span>
-            </div>
-            <div *ngIf="podeEditarOuExcluir()" class="evento-actions" (click)="$event.stopPropagation()">
-              <ion-button fill="clear" size="small" (click)="editarEvento(evento)">Atualizar</ion-button>
-              <ion-button fill="clear" color="danger" size="small" (click)="excluirEvento(evento)">Excluir</ion-button>
-            </div>
+        <!-- Ensaios do evento -->
+        <div class="ensaios-toggle">
+          <ion-icon name="musical-notes-outline"></ion-icon>
+          <span>{{ card.ensaios.length }} {{ card.ensaios.length === 1 ? 'ensaio' : 'ensaios' }}</span>
+          <ion-icon name="chevron-down-outline" class="seta" [class.virada]="aberto === card.chave"></ion-icon>
+        </div>
+        <div class="ensaios-painel" *ngIf="aberto === card.chave" (click)="$event.stopPropagation()">
+          <p *ngIf="card.ensaios.length === 0" class="vazio">Nenhum ensaio ligado a este evento.</p>
+          <div
+            *ngFor="let ensaio of card.ensaios"
+            class="ensaio-item"
+            [class.com-link]="ensaio.ensaioId"
+            (click)="abrirEnsaio(ensaio)"
+          >
+            <span class="ensaio-data">{{ formatarDataEnsaio(ensaio.data) }}</span>
+            <span class="ensaio-titulo">{{ ensaio.titulo }}</span>
+            <span class="ensaio-status" [class.realizado]="ensaio.realizado">{{ ensaio.realizado ? 'Realizado' : 'Marcado' }}</span>
           </div>
-        </article>
-      </section>
-    </main>
+        </div>
+
+        <div class="evento-actions" (click)="$event.stopPropagation()">
+          <ion-button *ngIf="!card.marcado" fill="clear" size="small" (click)="abrirDetalhes(card)">Detalhes</ion-button>
+          <ion-button *ngIf="card.marcado ? podeMarcarEvento() : podeEditarOuExcluir()" fill="clear" size="small" (click)="editarEvento(card)">
+            {{ card.marcado ? 'Editar' : 'Atualizar' }}
+          </ion-button>
+          <ion-button *ngIf="!card.marcado && podeEditarOuExcluir()" fill="clear" color="danger" size="small" (click)="excluirEvento(card)">Excluir</ion-button>
+        </div>
+      </div>
+    </article>
+  </ng-template>
 </app-layout>

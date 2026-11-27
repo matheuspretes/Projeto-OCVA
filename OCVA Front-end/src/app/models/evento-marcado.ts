@@ -8,6 +8,7 @@ export interface EventoMarcado {
   descricao: string;
   banner?: string;
   criador?: any;
+  maestro?: any;  // maestro responsável
   interessados?: any[];
   recusados?: any[];
 }
@@ -21,4 +22,5 @@ export interface EventoMarcadoRequest {
   descricao: string;
   banner?: string;
   criadorId?: number;
+  maestroId?: number;
 }

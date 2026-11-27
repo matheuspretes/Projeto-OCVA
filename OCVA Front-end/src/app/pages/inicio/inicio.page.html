@@ -48,6 +48,12 @@
           <span class="info-pill">
             <ion-icon name="musical-note-outline"></ion-icon> {{ c.titulo }}
           </span>
+          <span class="info-pill" *ngIf="c.maestro">
+            <ion-icon name="person-outline"></ion-icon> Maestro: {{ c.maestro }}
+          </span>
+          <span class="info-pill" *ngIf="c.evento">
+            <ion-icon name="calendar-outline"></ion-icon> Evento: {{ c.evento }}
+          </span>
           <span class="info-pill" *ngIf="c.local">
             <ion-icon name="location-outline"></ion-icon> {{ c.local }}
           </span>

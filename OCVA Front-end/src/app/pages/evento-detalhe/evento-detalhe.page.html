@@ -34,6 +34,10 @@
           <ion-icon name="calendar-outline"></ion-icon>
           <span>{{ dataFormatada() }}</span>
         </div>
+        <div class="meta">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>Maestro responsável: <strong>{{ evento.maestro?.nome || 'Não definido' }}</strong></span>
+        </div>
         <div class="meta" *ngIf="evento.local">
           <ion-icon name="location-outline"></ion-icon>
           <span>{{ evento.local }}</span>

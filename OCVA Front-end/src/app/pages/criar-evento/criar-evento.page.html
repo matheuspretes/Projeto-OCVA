@@ -60,6 +60,13 @@
         </div>
 
         <div class="field">
+          <ion-label>Maestro responsável</ion-label>
+          <ion-select class="field-input" placeholder="Selecione o maestro" formControlName="maestroId" interface="popover">
+            <ion-select-option *ngFor="let maestro of maestros" [value]="maestro.id">{{ maestro.nome }}</ion-select-option>
+          </ion-select>
+        </div>
+
+        <div class="field">
           <ion-label>Local</ion-label>
           <ion-input class="field-input" placeholder="Ex.: Igreja Central" formControlName="local"></ion-input>
         </div>
@@ -78,7 +85,7 @@
             [ngModelOptions]="{ standalone: true }"
             (ionInput)="buscarMusicos()"
           ></ion-input>
-          <ion-select class="field-input" placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true">
+          <ion-select class="field-input" placeholder="Selecione os músicos presentes" formControlName="musicos" multiple="true" [compareWith]="mesmoMusico">
             <ion-select-option *ngFor="let musico of musicos" [value]="musico">{{ musico.nome }}</ion-select-option>
           </ion-select>
           <small class="eligibility-help">

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonLabel, IonSelect, IonSelectOption, IonSpinner, IonTextarea, IonToolbar, ToastController } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
@@ -9,6 +10,8 @@ import { add, arrowBackOutline, calendarOutline } from 'ionicons/icons';
 import { finalize, timeout } from 'rxjs';
 import { EncontroRequest, TipoEncontro } from 'src/app/models/encontro';
 import { EncontrosService } from 'src/app/services/encontros-service';
+import { Usuario } from 'src/app/models/usuario';
+import { AgendaOpcoesService, OpcaoEvento, chaveDoEvento, idsDoEvento } from 'src/app/services/agenda-opcoes';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
@@ -23,6 +26,8 @@ import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.com
 export class MarcarEncontroPage implements OnInit {
   formGroup: FormGroup;
   tipos: TipoEncontro[] = [];
+  maestros: Usuario[] = [];
+  eventos: OpcaoEvento[] = [];
   encontroId: number | null = null;
   modoEdicao = false;
   isSaving = false;
@@ -31,6 +36,8 @@ export class MarcarEncontroPage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private encontrosService: EncontrosService,
+    private agendaOpcoes: AgendaOpcoesService,
+    private location: Location,
     private usuarioService: UsuarioService,
     private toastController: ToastController,
     private alertController: AlertController,
@@ -44,6 +51,8 @@ export class MarcarEncontroPage implements OnInit {
       data: ['', Validators.required],
       hora: ['', Validators.required],
       tipoId: [null, Validators.required],
+      maestroId: [null, Validators.required],
+      evento: [null],
       descricao: ['', [Validators.required, Validators.maxLength(255)]]
     });
   }
@@ -56,6 +65,11 @@ export class MarcarEncontroPage implements OnInit {
     }
 
     this.carregarTipos();
+    this.agendaOpcoes.maestros().subscribe((maestros) => this.maestros = maestros);
+    this.agendaOpcoes.eventos().subscribe((eventos) => this.eventos = eventos);
+
+    // O evento só é obrigatório (e só aparece) quando o tipo é "Ensaio"
+    this.formGroup.get('tipoId')?.valueChanges.subscribe(() => this.atualizarCampoEvento());
 
     const idParam = this.route.snapshot.queryParamMap.get('id');
     const id = Number(idParam);
@@ -70,6 +84,7 @@ export class MarcarEncontroPage implements OnInit {
     this.encontrosService.listarTipos().subscribe({
       next: (tipos) => {
         this.tipos = tipos;
+        this.atualizarCampoEvento();
         if (selecionarId != null) {
           this.formGroup.patchValue({ tipoId: selecionarId });
         } else if (this.formGroup.value.tipoId == null && tipos.length) {
@@ -78,6 +93,23 @@ export class MarcarEncontroPage implements OnInit {
       },
       error: () => this.mostrarToast('Não foi possível carregar os tipos de encontro.', 'danger')
     });
+  }
+
+  // true quando o tipo selecionado é "Ensaio"
+  get ehEnsaio(): boolean {
+    const tipo = this.tipos.find((item) => item.id === this.formGroup.value.tipoId);
+    return (tipo?.nome || '').trim().toLowerCase() === 'ensaio';
+  }
+
+  private atualizarCampoEvento() {
+    const campo = this.formGroup.get('evento');
+    if (this.ehEnsaio) {
+      campo?.setValidators(Validators.required);
+    } else {
+      campo?.clearValidators();
+      campo?.setValue(null, { emitEvent: false });
+    }
+    campo?.updateValueAndValidity({ emitEvent: false });
   }
 
   private carregarEncontro(id: number) {
@@ -89,8 +121,15 @@ export class MarcarEncontroPage implements OnInit {
           data: encontro.data,
           hora: (encontro.hora || '').slice(0, 5),
           tipoId: encontro.tipo?.id ?? null,
+          maestroId: encontro.maestro?.id ?? null,
+          evento: chaveDoEvento(encontro.evento),
           descricao: encontro.descricao
         });
+        this.atualizarCampoEvento();
+        // Mantém o maestro na lista mesmo que ele tenha sido desativado depois
+        if (encontro.maestro && !this.maestros.some((m) => m.id === encontro.maestro.id)) {
+          this.maestros = [...this.maestros, encontro.maestro];
+        }
       },
       error: async () => {
         await this.mostrarToast('Não foi possível carregar o encontro.', 'danger');
@@ -143,7 +182,9 @@ export class MarcarEncontroPage implements OnInit {
       hora: String(form.hora).slice(0, 5),
       tipoId: Number(form.tipoId),
       descricao: form.descricao.trim(),
-      criadorId: usuario?.id
+      criadorId: usuario?.id,
+      maestroId: Number(form.maestroId),
+      ...idsDoEvento(this.ehEnsaio ? form.evento : null)
     };
 
     const requisicao = this.modoEdicao
@@ -154,7 +195,7 @@ export class MarcarEncontroPage implements OnInit {
     requisicao.pipe(timeout(30000), finalize(() => this.isSaving = false)).subscribe({
       next: async () => {
         await this.mostrarToast(this.modoEdicao ? 'Encontro atualizado.' : 'Encontro marcado!', 'success');
-        this.router.navigate(['/inicio']);
+        this.voltar();
       },
       error: (erro) => this.mostrarToast(this.mensagemDeErro(erro, 'Não foi possível salvar o encontro.'), 'danger')
     });
@@ -176,7 +217,7 @@ export class MarcarEncontroPage implements OnInit {
             this.encontrosService.excluir(this.encontroId as number).subscribe({
               next: async () => {
                 await this.mostrarToast('Encontro desmarcado.', 'warning');
-                this.router.navigate(['/inicio']);
+                this.voltar();
               },
               error: (erro) => this.mostrarToast(this.mensagemDeErro(erro, 'Não foi possível desmarcar o encontro.'), 'danger')
             });
@@ -188,7 +229,16 @@ export class MarcarEncontroPage implements OnInit {
   }
 
   cancelar() {
-    this.router.navigate(['/inicio']);
+    this.voltar();
+  }
+
+  // Na edição volta para a página de onde veio (início ou arquivo); no cadastro vai para o início
+  private voltar() {
+    if (this.modoEdicao) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/inicio']);
+    }
   }
 
   isInvalid(campo: string): boolean {

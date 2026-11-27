@@ -86,3 +86,30 @@ $vermelho: #e5675d;
   .situacao { margin-left: 70px; }
   .item-info h4 { white-space: normal; }
 }
+
+/* Ações do perfil (ativar/desativar) */
+.perfil-acoes { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.botao { padding: 8px 14px; border: 1px solid $border; border-radius: 10px; background: transparent; color: $white; font-size: .82rem; font-weight: 600; cursor: pointer; }
+.botao:hover:not(:disabled) { border-color: $vermelho; color: $vermelho; }
+.botao.ativar:hover:not(:disabled), .adicionar .botao:hover:not(:disabled) { border-color: $verde; color: $verde; }
+.botao:disabled { opacity: .5; cursor: default; }
+.aviso { margin: 12px 0 0; padding: 10px 14px; border: 1px solid rgba($vermelho, .4); border-radius: 12px; background: rgba($vermelho, .08); color: #f0a7a0; font-size: .85rem; }
+
+/* Cards de frequência */
+.resumo-card small { color: #94a1b5; font-size: .68rem; font-weight: 600; letter-spacing: 1.5px; }
+.resumo-card.destaque { border-color: #514622; }
+
+/* Instrumentos */
+.instrumentos { margin-bottom: 36px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px 6px 13px; border: 1px solid #30343b; border-radius: 18px; color: $white; font-size: .88rem; }
+.chip.principal { border-color: #514622; background: #2d2a20; }
+.chip small { color: $muted; }
+.chip button { display: flex; padding: 0; border: none; background: transparent; color: $muted; font-size: 1rem; cursor: pointer; }
+.chip button:hover { color: $vermelho; }
+.adicionar { display: flex; gap: 8px; margin-top: 16px; }
+.adicionar select { flex: 1; min-width: 0; min-height: 40px; padding: 0 10px; border: 1px solid #303239; border-radius: 10px; background: #191a1e; color: $white; font-size: .9rem; }
+
+@media (max-width: 600px) {
+  .perfil-acoes { align-items: flex-start; width: 100%; }
+}
