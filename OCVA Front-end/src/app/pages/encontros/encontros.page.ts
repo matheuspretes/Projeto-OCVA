@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -44,11 +44,15 @@ export class EncontrosPage implements OnInit {
   carregando = true;
   usuario: any = null;
 
+  // A mesma página mostra a aba "Ensaios" ou a aba "Encontros" (outros tipos, ex.: reuniões)
+  modo: 'ensaios' | 'encontros' = 'encontros';
+
   constructor(
     private encontrosService: EncontrosService,
     private ensaiosService: EnsaiosService,
     private usuarioService: UsuarioService,
     private router: Router,
+    private route: ActivatedRoute,
     private alertController: AlertController,
     private toastController: ToastController
   ) {
@@ -60,6 +64,7 @@ export class EncontrosPage implements OnInit {
 
   ngOnInit() {
     this.usuario = this.usuarioService.buscarAutenticacao();
+    this.modo = this.route.snapshot.data['modo'] === 'ensaios' ? 'ensaios' : 'encontros';
     this.carregar();
   }
 
@@ -81,7 +86,7 @@ export class EncontrosPage implements OnInit {
     }).subscribe({
       next: ({ futuros, passados, ensaios }) => {
         // Não passaram: do mais próximo ao mais distante
-        this.naoPassaram = futuros.map((encontro) => this.deEncontro(encontro));
+        this.naoPassaram = futuros.map((encontro) => this.deEncontro(encontro)).filter((item) => this.pertenceAba(item));
 
         // Já passaram: ensaios registrados + encontros que não viram ensaio (ex.: reuniões),
         // do mais recente ao mais antigo
@@ -93,7 +98,7 @@ export class EncontrosPage implements OnInit {
         ];
 
         // Ensaios cadastrados direto com data futura ficam em "Não passaram"
-        for (const item of itens) {
+        for (const item of itens.filter((item) => this.pertenceAba(item))) {
           if (item.data > agora) {
             this.naoPassaram.push(item);
           } else {
@@ -109,6 +114,16 @@ export class EncontrosPage implements OnInit {
         await this.mostrarToast('Não foi possível carregar os encontros.', 'danger');
       }
     });
+  }
+
+  get titulo(): string {
+    return this.modo === 'ensaios' ? 'Arquivo de ensaios' : 'Arquivo de encontros';
+  }
+
+  // Aba Ensaios: só o tipo "Ensaio". Aba Encontros: todos os outros tipos.
+  private pertenceAba(item: ItemEncontro): boolean {
+    const ehEnsaio = item.tipo.trim().toLowerCase() === 'ensaio';
+    return this.modo === 'ensaios' ? ehEnsaio : !ehEnsaio;
   }
 
   // ---------- Permissões ----------

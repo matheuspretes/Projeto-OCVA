@@ -90,7 +90,7 @@ export class CriarEnsaioPage implements OnInit {
   ngOnInit() {
     const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
     if (usuarioAutenticado?.tipo !== 'diretoria') {
-      this.router.navigate(['/encontros']);
+      this.router.navigate(['/ensaios']);
       return;
     }
 
@@ -169,7 +169,7 @@ export class CriarEnsaioPage implements OnInit {
           color: 'danger'
         });
         await toast.present();
-        this.router.navigate(['/encontros']);
+        this.router.navigate(['/ensaios']);
       }
     });
   }
@@ -206,7 +206,7 @@ export class CriarEnsaioPage implements OnInit {
   async salvar() {
     const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
     if (usuarioAutenticado?.tipo !== 'diretoria') {
-      this.router.navigate(['/encontros']);
+      this.router.navigate(['/ensaios']);
       return;
     }
 
@@ -253,7 +253,7 @@ export class CriarEnsaioPage implements OnInit {
           color: 'success'
         });
         await toast.present();
-        this.router.navigate(['/encontros']);
+        this.router.navigate(['/ensaios']);
         this.isSaving = false;
       },
       error: async (erro) => {
@@ -288,7 +288,7 @@ export class CriarEnsaioPage implements OnInit {
                   color: 'warning' 
                 });
                 await toast.present();
-                this.router.navigate(['/encontros']);
+                this.router.navigate(['/ensaios']);
               },
               error: async () => {
                 const toast = await this.toastController.create({ 

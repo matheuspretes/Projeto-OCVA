@@ -54,8 +54,9 @@ export class AppLayoutComponent implements OnInit {
     { rota: '/marcar-evento', rotulo: 'Marcar Evento', icone: 'add-circle-outline', somente: ['maestro', 'diretoria'] },
   ];
 
-  // Opções do "Arquivo": encontros (inclui os ensaios) e eventos
+  // Opções do "Arquivo": ensaios, outros encontros (ex.: reuniões) e eventos
   readonly itensArquivo: ItemMenu[] = [
+    { rota: '/ensaios', rotulo: 'Ensaios', icone: 'musical-notes-outline' },
     { rota: '/encontros', rotulo: 'Encontros', icone: 'musical-note-outline' },
     { rota: '/eventos', rotulo: 'Eventos', icone: 'calendar-outline' },
   ];

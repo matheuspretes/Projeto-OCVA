@@ -1,4 +1,4 @@
-<app-layout titulo="Arquivo de encontros" icone="archive-outline" secao="/encontros">
+<app-layout [titulo]="titulo" icone="archive-outline" [secao]="modo === 'ensaios' ? '/ensaios' : '/encontros'">
   <ion-button acoes *ngIf="ehEquipe()" class="topbar-button" (click)="marcarEncontro()">
     <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
     Marcar encontro
@@ -12,7 +12,7 @@
 
       <ng-container *ngIf="!carregando">
         <div class="section-badge-title">NÃO PASSARAM · DO MAIS PRÓXIMO AO MAIS DISTANTE</div>
-        <p *ngIf="naoPassaram.length === 0" class="vazio">Nenhum encontro marcado.</p>
+        <p *ngIf="naoPassaram.length === 0" class="vazio">{{ modo === 'ensaios' ? 'Nenhum ensaio marcado.' : 'Nenhum encontro marcado.' }}</p>
         <div class="ensaios-grid" *ngIf="naoPassaram.length > 0">
           <ng-container *ngFor="let item of naoPassaram">
             <ng-container *ngTemplateOutlet="card; context: { $implicit: item }"></ng-container>
@@ -20,7 +20,7 @@
         </div>
 
         <div class="section-badge-title segunda">JÁ PASSARAM · DO MAIS RECENTE AO MAIS ANTIGO</div>
-        <p *ngIf="jaPassaram.length === 0" class="vazio">Nenhum encontro no arquivo.</p>
+        <p *ngIf="jaPassaram.length === 0" class="vazio">{{ modo === 'ensaios' ? 'Nenhum ensaio no arquivo.' : 'Nenhum encontro no arquivo.' }}</p>
         <div class="ensaios-grid" *ngIf="jaPassaram.length > 0">
           <ng-container *ngFor="let item of jaPassaram">
             <ng-container *ngTemplateOutlet="card; context: { $implicit: item }"></ng-container>

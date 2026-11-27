@@ -27,14 +27,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/codigos-acesso/codigos-acesso.page').then( m => m.CodigosAcessoPage)
   },
   {
+    // Arquivo > Encontros: reuniões e outros tipos (sem os ensaios)
     path: 'encontros',
-    loadComponent: () => import('./pages/encontros/encontros.page').then( m => m.EncontrosPage)
+    loadComponent: () => import('./pages/encontros/encontros.page').then( m => m.EncontrosPage),
+    data: { modo: 'encontros' }
   },
   {
-    // A lista de ensaios agora fica dentro de "Encontros"
+    // Arquivo > Ensaios: a mesma página, mostrando só os ensaios
     path: 'ensaios',
-    redirectTo: 'encontros',
-    pathMatch: 'full'
+    loadComponent: () => import('./pages/encontros/encontros.page').then( m => m.EncontrosPage),
+    data: { modo: 'ensaios' }
   },
   {
     path: 'ensaios/:id',
