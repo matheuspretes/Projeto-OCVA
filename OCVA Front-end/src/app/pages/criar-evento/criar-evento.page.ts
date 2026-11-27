@@ -9,6 +9,7 @@ import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { EventosService } from 'src/app/services/eventos-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { AgendaOpcoesService } from 'src/app/services/agenda-opcoes';
 import { Evento } from 'src/app/models/evento';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, calendarOutline, imageOutline, locationOutline, musicalNotesOutline, timeOutline } from 'ionicons/icons';
@@ -36,12 +37,18 @@ export class CriarEventoPage implements OnInit {
   eventoId: number | null = null;
   modoEdicao = false;
   bannerPreview = '';
+  maestros: Usuario[] = [];
+
+  // Instrumentos e partituras do evento, reenviados para não serem apagados
+  private instrumentos: { instrumento: string; quantidade: number }[] = [];
+  private partituraIds: number[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private usuarioService: UsuarioService,
     private ensaiosService: EnsaiosService,
     private eventosService: EventosService,
+    private agendaOpcoes: AgendaOpcoesService,
     private toastController: ToastController,
     private alertController: AlertController,
     private router: Router,
@@ -62,6 +69,7 @@ export class CriarEventoPage implements OnInit {
       horario: ['', Validators.required],
       local: ['', Validators.required],
       descricao: ['', Validators.compose([Validators.required])],
+      maestroId: [null, Validators.required],
       musicos: [[]]
     });
   }
@@ -73,11 +81,14 @@ export class CriarEventoPage implements OnInit {
       return;
     }
 
+    this.agendaOpcoes.maestros().subscribe((maestros) => this.maestros = maestros);
+
     this.ensaiosService.listar().subscribe({
       next: (ensaios) => {
         this.usuarioService.listar().subscribe({
           next: (usuarios) => {
-            this.todosOsMusicos = usuarios.filter((usuario) => usuario.tipo === 'musico');
+            // Músicos desativados não podem ser escalados
+            this.todosOsMusicos = usuarios.filter((usuario) => usuario.tipo === 'musico' && usuario.ativo !== false);
             this.musicosElegiveis = this.filtrarMusicosComMinimoDePresencas(this.todosOsMusicos, ensaios, 2);
             this.musicos = this.musicosElegiveis;
           },
@@ -174,9 +185,22 @@ export class CriarEventoPage implements OnInit {
           local: evento.local || '',
           banner: evento.banner || '',
           descricao: evento.descricao,
+          maestroId: evento.maestro?.id ?? null,
           musicos: evento.musicos || []
         });
         this.bannerPreview = evento.banner || '';
+        this.instrumentos = (evento.instrumentos || []).map((item) => ({ instrumento: item.instrumento, quantidade: item.quantidade }));
+        this.partituraIds = (evento.partituras || []).map((partitura: any) => partitura.id);
+
+        // Quem já estava no evento continua na lista, mesmo se tiver sido desativado depois
+        for (const musico of evento.musicos || []) {
+          if (!this.musicos.some((m) => m.id === musico.id)) {
+            this.musicos = [...this.musicos, musico];
+          }
+        }
+        if (evento.maestro && !this.maestros.some((m) => m.id === evento.maestro?.id)) {
+          this.maestros = [...this.maestros, evento.maestro];
+        }
         this.isSaving = false;
       },
       error: async () => {
@@ -206,7 +230,11 @@ export class CriarEventoPage implements OnInit {
       local: form.local,
       banner: this.bannerPreview || undefined,
       descricao: form.descricao,
-      musicos: form.musicos || []
+      musicos: form.musicos || [],
+      musicoIds: (form.musicos || []).map((musico: Usuario) => musico.id),
+      maestroId: Number(form.maestroId),
+      instrumentos: this.instrumentos,
+      partituraIds: this.partituraIds
     };
 
     const requisicao = this.modoEdicao && this.eventoId
@@ -229,8 +257,8 @@ export class CriarEventoPage implements OnInit {
         this.router.navigate(['/eventos']);
       },
       error: async (error) => {
-        const mensagem = error?.status === 400
-          ? 'Verifique os dados informados para o evento.'
+        const mensagem = error?.status === 400 || error?.status === 409
+          ? (error?.error?.message || 'Verifique os dados informados para o evento.')
           : error?.status === 413
             ? 'A descrição ou o banner do evento é muito grande.'
             : this.modoEdicao
@@ -244,6 +272,11 @@ export class CriarEventoPage implements OnInit {
         await errorToast.present();
       }
     });
+  }
+
+  // Compara músicos pelo id (os objetos vindos da API são diferentes dos da lista)
+  mesmoMusico(a: Usuario, b: Usuario): boolean {
+    return !!a && !!b && a.id === b.id;
   }
 
   isInvalid(controlName: string): boolean {

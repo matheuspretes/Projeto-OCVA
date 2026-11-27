@@ -14,4 +14,6 @@ export interface Evento {
     titulo?: string; 
     local?: string;
     banner?: string;
+    maestro?: Usuario;   // maestro responsável
+    maestroId?: number;
 }

@@ -43,6 +43,14 @@
             <ion-input class="field-input" placeholder="Ex.: Concerto de Natal" formControlName="titulo" maxlength="120"></ion-input>
           </div>
 
+          <div class="field">
+            <ion-label>Maestro responsável</ion-label>
+            <ion-select class="field-input" placeholder="Selecione o maestro" formControlName="maestroId" interface="popover">
+              <ion-select-option *ngFor="let maestro of maestros" [value]="maestro.id">{{ maestro.nome }}</ion-select-option>
+            </ion-select>
+            <small *ngIf="maestros.length === 0" class="eligibility-empty">Nenhum maestro ativo cadastrado.</small>
+          </div>
+
           <div class="two-columns">
             <div class="field">
               <ion-label>Data</ion-label>

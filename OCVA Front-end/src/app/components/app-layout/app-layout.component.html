@@ -16,7 +16,7 @@
         <ion-list lines="none" class="nav-list">
           <ng-container *ngTemplateOutlet="listaItens; context: { $implicit: visiveis(itensTopo) }"></ng-container>
 
-          <!-- Arquivo: escolha entre ensaios/encontros e eventos que já passaram -->
+          <!-- Arquivo: encontros (inclui os ensaios) e eventos -->
           <ion-item button class="arquivo" [class.destaque]="emArquivo" (click)="alternarArquivo()"
             [attr.aria-expanded]="arquivoAberto">
             <ion-icon slot="start" name="archive-outline"></ion-icon>

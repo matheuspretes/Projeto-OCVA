@@ -28,6 +28,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { Usuario } from '../../models/usuario';
+import { INSTRUMENTOS } from '../../constantes/instrumentos';
 import { UsuarioService } from 'src/app/services/usuario-service';
 import {CodigoAcessoService} from 'src/app/services/codigo-acesso-service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -62,6 +63,9 @@ import { HttpErrorResponse } from '@angular/common/http';
   ]
 })
 export class CadastroPage implements OnInit {
+  // Lista de instrumentos de orquestra e banda
+  readonly instrumentos = INSTRUMENTOS;
+
 
   usuario: Usuario;
   formGroup: FormGroup;
@@ -88,22 +92,22 @@ export class CadastroPage implements OnInit {
       login: ['', Validators.required],
       senha: ['', Validators.required],
       tipo: ['', Validators.required],
-      instrumento: ['']
+      instrumentos: [[]]
     });
   }
 
   ngOnInit() {
     this.formGroup.get('tipo')?.valueChanges.subscribe((tipo) => {
-      const instrumento = this.formGroup.get('instrumento');
+      const instrumentos = this.formGroup.get('instrumentos');
 
       if (tipo === 'musico') {
-        instrumento?.setValidators([Validators.required]);
+        instrumentos?.setValidators([Validators.required]);
       } else {
-        instrumento?.clearValidators();
-        instrumento?.setValue('');
+        instrumentos?.clearValidators();
+        instrumentos?.setValue([]);
       }
 
-      instrumento?.updateValueAndValidity();
+      instrumentos?.updateValueAndValidity();
     });
   }
 
@@ -203,7 +207,10 @@ export class CadastroPage implements OnInit {
           this.usuario.login = login;
           this.usuario.senha = this.formGroup.value.senha;
           this.usuario.tipo = this.formGroup.value.tipo;
-          this.usuario.instrumento = this.formGroup.value.instrumento;
+          // O primeiro instrumento escolhido fica como principal
+          const instrumentos: string[] = this.formGroup.value.instrumentos || [];
+          this.usuario.instrumentos = instrumentos;
+          this.usuario.instrumento = instrumentos[0] || '';
           this.usuario.codigoAcesso = this.formGroup.value.codigoAcesso?.trim() || '';
 
           this.usuarioService.cadastrar(this.usuario).subscribe({

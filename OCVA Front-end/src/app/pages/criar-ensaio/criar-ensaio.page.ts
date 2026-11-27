@@ -23,6 +23,7 @@ import { EnsaioRequest } from 'src/app/models/ensaio';
 import { Usuario } from 'src/app/models/usuario';
 import { EnsaiosService } from 'src/app/services/ensaios-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { AgendaOpcoesService, OpcaoEvento, chaveDoEvento, idsDoEvento } from 'src/app/services/agenda-opcoes';
 import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 
 @Component({
@@ -48,11 +49,21 @@ export class CriarEnsaioPage implements OnInit {
   isSaving = false;
   ensaioId: number | null = null;
   modoEdicao = false;
+  maestros: Usuario[] = [];
+  eventos: OpcaoEvento[] = [];
+
+  // Tipo do ensaio (ex.: "Reunião" em registros antigos). Só ensaios precisam de evento.
+  tipo: string | null = null;
+
+  // Instrumentos e partituras do ensaio, reenviados para não serem apagados
+  private instrumentos: { instrumento: string; quantidade: number }[] = [];
+  private partituraIds: number[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private usuarioService: UsuarioService,
     private ensaiosService: EnsaiosService,
+    private agendaOpcoes: AgendaOpcoesService,
     private toastController: ToastController,
     private alertController: AlertController,
     private router: Router,
@@ -70,6 +81,8 @@ export class CriarEnsaioPage implements OnInit {
       data: ['', Validators.required],
       horario: ['', Validators.required],
       descricao: ['', Validators.required],
+      maestroId: [null, Validators.required],
+      evento: [null, Validators.required],
       musicos: [[], Validators.required]
     });
   }
@@ -77,13 +90,16 @@ export class CriarEnsaioPage implements OnInit {
   ngOnInit() {
     const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
     if (usuarioAutenticado?.tipo !== 'diretoria') {
-      this.router.navigate(['/ensaios']);
+      this.router.navigate(['/encontros']);
       return;
     }
 
+    // Músicos desativados não podem ser escalados
     this.usuarioService.listar().subscribe((usuarios) => {
-      this.musicos = usuarios.filter((usuario) => usuario.tipo === 'musico');
+      this.musicos = usuarios.filter((usuario) => usuario.tipo === 'musico' && usuario.ativo !== false);
     });
+    this.agendaOpcoes.maestros().subscribe((maestros) => this.maestros = maestros);
+    this.agendaOpcoes.eventos().subscribe((eventos) => this.eventos = eventos);
 
     this.route.queryParamMap.subscribe((params) => {
       const idParam = params.get('id');
@@ -120,8 +136,29 @@ export class CriarEnsaioPage implements OnInit {
           data: dataStr,
           horario: horaStr,
           descricao: ensaio.descricao || '',
+          maestroId: ensaio.maestro?.id ?? null,
+          evento: chaveDoEvento(ensaio.evento),
           musicos: ensaio.musicos || []
         });
+
+        this.tipo = ensaio.tipo || null;
+        if (!this.ehEnsaio) {
+          // Registros de outros tipos (ex.: Reunião) não precisam de evento
+          this.formGroup.get('evento')?.clearValidators();
+          this.formGroup.get('evento')?.updateValueAndValidity();
+        }
+        this.instrumentos = (ensaio.instrumentos || []).map((item: any) => ({ instrumento: item.instrumento, quantidade: item.quantidade }));
+        this.partituraIds = (ensaio.partituras || []).map((partitura: any) => partitura.id);
+
+        // Quem já estava no ensaio continua na lista, mesmo se tiver sido desativado depois
+        for (const musico of ensaio.musicos || []) {
+          if (!this.musicos.some((m) => m.id === musico.id)) {
+            this.musicos = [...this.musicos, musico];
+          }
+        }
+        if (ensaio.maestro && !this.maestros.some((m) => m.id === ensaio.maestro.id)) {
+          this.maestros = [...this.maestros, ensaio.maestro];
+        }
         this.isSaving = false;
       },
       error: async () => {
@@ -132,9 +169,13 @@ export class CriarEnsaioPage implements OnInit {
           color: 'danger'
         });
         await toast.present();
-        this.router.navigate(['/ensaios']);
+        this.router.navigate(['/encontros']);
       }
     });
+  }
+
+  get ehEnsaio(): boolean {
+    return !this.tipo || this.tipo.trim().toLowerCase() === 'ensaio';
   }
 
   isMusicoSelecionado(musico: Usuario): boolean {
@@ -165,7 +206,7 @@ export class CriarEnsaioPage implements OnInit {
   async salvar() {
     const usuarioAutenticado = this.usuarioService.buscarAutenticacao();
     if (usuarioAutenticado?.tipo !== 'diretoria') {
-      this.router.navigate(['/ensaios']);
+      this.router.navigate(['/encontros']);
       return;
     }
 
@@ -193,7 +234,11 @@ export class CriarEnsaioPage implements OnInit {
       musicoIds: (form.musicos || [])
         .map((musico: Usuario | { id?: number }) => musico.id)
         .filter((id: number | undefined): id is number => id !== undefined),
-      criadorId: usuarioAutenticado?.id
+      criadorId: usuarioAutenticado?.id,
+      maestroId: Number(form.maestroId),
+      ...idsDoEvento(form.evento),
+      instrumentos: this.instrumentos,
+      partituraIds: this.partituraIds
     };
 
     const requisicao = this.modoEdicao && this.ensaioId
@@ -208,12 +253,12 @@ export class CriarEnsaioPage implements OnInit {
           color: 'success'
         });
         await toast.present();
-        this.router.navigate(['/ensaios']);
+        this.router.navigate(['/encontros']);
         this.isSaving = false;
       },
-      error: async () => {
+      error: async (erro) => {
         const toast = await this.toastController.create({
-          message: this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio',
+          message: erro?.error?.message || (this.modoEdicao ? 'Erro ao atualizar ensaio' : 'Erro ao salvar ensaio'),
           duration: 2000,
           color: 'danger'
         });
@@ -243,7 +288,7 @@ export class CriarEnsaioPage implements OnInit {
                   color: 'warning' 
                 });
                 await toast.present();
-                this.router.navigate(['/ensaios']);
+                this.router.navigate(['/encontros']);
               },
               error: async () => {
                 const toast = await this.toastController.create({ 

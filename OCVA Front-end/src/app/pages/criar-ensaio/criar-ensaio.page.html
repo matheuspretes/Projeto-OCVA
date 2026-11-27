@@ -1,7 +1,7 @@
-<app-layout [titulo]="modoEdicao ? 'Editar ensaio' : 'Novo ensaio'" icone="musical-notes-outline" secao="/ensaios">
-  <a acoes class="topbar-link" routerLink="/ensaios">
+<app-layout [titulo]="modoEdicao ? 'Editar ensaio' : 'Novo ensaio'" icone="musical-notes-outline" secao="/encontros">
+  <a acoes class="topbar-link" routerLink="/encontros">
     <ion-icon name="arrow-back-outline"></ion-icon>
-    <span>Voltar aos ensaios</span>
+    <span>Voltar aos encontros</span>
   </a>
 
   <div class="criar-ensaio-content">
@@ -26,6 +26,26 @@
             formControlName="titulo" 
           />
           <span *ngIf="isInvalid('titulo')" class="msg-erro">Preencha o título do ensaio.</span>
+        </div>
+
+        <!-- Evento do ensaio -->
+        <div class="campo-grupo" *ngIf="ehEnsaio">
+          <label>Evento deste ensaio</label>
+          <select class="input-dark" formControlName="evento">
+            <option [ngValue]="null" disabled>Selecione o evento</option>
+            <option *ngFor="let evento of eventos" [ngValue]="evento.chave">{{ evento.rotulo }}</option>
+          </select>
+          <span *ngIf="isInvalid('evento')" class="msg-erro">Selecione o evento do ensaio.</span>
+        </div>
+
+        <!-- Maestro responsável -->
+        <div class="campo-grupo">
+          <label>Maestro responsável</label>
+          <select class="input-dark" formControlName="maestroId">
+            <option [ngValue]="null" disabled>Selecione o maestro</option>
+            <option *ngFor="let maestro of maestros" [ngValue]="maestro.id">{{ maestro.nome }}</option>
+          </select>
+          <span *ngIf="isInvalid('maestroId')" class="msg-erro">Selecione o maestro responsável.</span>
         </div>
 
         <!-- Data e Horário -->

@@ -25,33 +25,79 @@
           <h1>{{ musico.nome }}</h1>
           <p>
             <ion-icon name="musical-note-outline"></ion-icon>
-            {{ musico.instrumento || 'Instrumento não informado' }}
+            {{ instrumentos.length ? instrumentos.join(', ') : 'Instrumento não informado' }}
             <span class="separador">•</span>
             {{ musico.tipo === 'maestro' ? 'Maestro' : 'Músico' }}
           </p>
         </div>
-        <span class="status" [class.suspenso]="musico.ativo === false">
-          {{ musico.ativo === false ? 'SUSPENSO' : 'ATIVO' }}
-        </span>
+        <div class="perfil-acoes">
+          <span class="status" [class.suspenso]="musico.ativo === false">
+            {{ musico.ativo === false ? 'DESATIVADO' : 'ATIVO' }}
+          </span>
+          <button *ngIf="podeEditar" type="button" class="botao" [class.ativar]="musico.ativo === false"
+            [disabled]="salvando" (click)="alternarAtivo()">
+            {{ musico.ativo === false ? 'Ativar músico' : 'Desativar músico' }}
+          </button>
+        </div>
       </section>
+      <p *ngIf="musico.ativo === false" class="aviso">
+        Músico desativado: ele não pode entrar no sistema nem ser escolhido em novos ensaios, eventos ou encontros.
+      </p>
 
       <!-- Resumo -->
       <section class="resumo">
+        <div class="resumo-card destaque">
+          <small>FREQUÊNCIA NO ÚLTIMO EVENTO</small>
+          <ng-container *ngIf="ultimoEvento; else semUltimoEvento">
+            <strong>{{ percentualUltimoEvento }}%</strong>
+            <span>{{ ultimoEvento.presencas }} de {{ ultimoEvento.ensaios }} ensaios de "{{ ultimoEvento.titulo }}"</span>
+          </ng-container>
+          <ng-template #semUltimoEvento>
+            <strong>—</strong>
+            <span>Nenhum evento realizado com ensaios.</span>
+          </ng-template>
+        </div>
+        <div class="resumo-card destaque">
+          <small>FREQUÊNCIA GERAL</small>
+          <strong>{{ totalRealizados ? percentualPresenca + '%' : '—' }}</strong>
+          <span>{{ totalPresencas }} presenças em {{ totalRealizados }} ensaios e eventos</span>
+        </div>
         <div class="resumo-card">
+          <small>ENSAIOS REALIZADOS</small>
           <strong>{{ ensaiosRealizados.length }}</strong>
-          <span>Ensaios realizados</span>
+          <span>{{ totalFaltas }} faltas no total</span>
         </div>
         <div class="resumo-card">
+          <small>EVENTOS REALIZADOS</small>
           <strong>{{ eventosRealizados.length }}</strong>
-          <span>Eventos realizados</span>
+          <span>{{ proximosEnsaios.length + proximosEventos.length }} próximos compromissos</span>
         </div>
-        <div class="resumo-card">
-          <strong>{{ proximosEnsaios.length + proximosEventos.length }}</strong>
-          <span>Próximos compromissos</span>
+      </section>
+
+      <!-- Instrumentos -->
+      <h2 class="secao-titulo">INSTRUMENTOS</h2>
+      <section class="coluna instrumentos">
+        <div class="chips">
+          <span class="chip" *ngFor="let nome of instrumentos; let i = index" [class.principal]="i === 0">
+            {{ nome }}<small *ngIf="i === 0"> (principal)</small>
+            <button *ngIf="podeEditar" type="button" (click)="removerInstrumento(nome)" [disabled]="salvando"
+              [attr.aria-label]="'Remover ' + nome">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </span>
+          <span *ngIf="instrumentos.length === 0" class="vazio">Nenhum instrumento cadastrado.</span>
         </div>
-        <div class="resumo-card">
-          <strong>{{ percentualPresenca }}%</strong>
-          <span>{{ totalPresencas }} presenças • {{ totalFaltas }} faltas</span>
+
+        <div class="adicionar" *ngIf="podeEditar">
+          <select [(ngModel)]="novoInstrumento">
+            <option value="">Escolha um instrumento</option>
+            <optgroup *ngFor="let grupo of gruposDeInstrumentos" [label]="grupo.familia">
+              <option *ngFor="let nome of disponiveis(grupo.instrumentos)" [value]="nome">{{ nome }}</option>
+            </optgroup>
+          </select>
+          <button type="button" class="botao" [disabled]="!novoInstrumento || salvando" (click)="adicionarInstrumento()">
+            Adicionar
+          </button>
         </div>
       </section>
 

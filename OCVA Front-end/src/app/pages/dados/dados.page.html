@@ -52,9 +52,12 @@
           </div>
 
           <div *ngIf="formGroup.get('tipo')?.value === 'musico'" class="field-stack">
-            <ion-label class="field-label" position="stacked">Instrumento</ion-label>
+            <ion-label class="field-label" position="stacked">Instrumentos</ion-label>
             <ion-item class="field-input-card">
-              <ion-input type="text" formControlName="instrumento"></ion-input>
+              <ion-select formControlName="instrumentos" multiple="true" placeholder="Escolha um ou mais instrumentos"
+                cancelText="Cancelar" okText="Confirmar">
+                <ion-select-option *ngFor="let nome of opcoesDeInstrumentos" [value]="nome">{{ nome }}</ion-select-option>
+              </ion-select>
             </ion-item>
           </div>
         </ion-card-content>

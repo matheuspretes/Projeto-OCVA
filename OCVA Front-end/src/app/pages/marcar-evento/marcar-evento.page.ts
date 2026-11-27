@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IonButton, IonIcon, IonInput, IonLabel, IonSpinner, IonTextarea, ToastController } from '@ionic/angular/standalone';
+import { IonButton, IonIcon, IonInput, IonLabel, IonSelect, IonSelectOption, IonSpinner, IonTextarea, ToastController } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { addCircleOutline, arrowBackOutline, calendarOutline, imageOutline } from 'ionicons/icons';
@@ -11,6 +11,8 @@ import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.com
 import { EventoMarcadoRequest } from 'src/app/models/evento-marcado';
 import { EventosMarcadosService } from 'src/app/services/eventos-marcados-service';
 import { UsuarioService } from 'src/app/services/usuario-service';
+import { Usuario } from 'src/app/models/usuario';
+import { AgendaOpcoesService } from 'src/app/services/agenda-opcoes';
 
 @Component({
   selector: 'app-marcar-evento',
@@ -18,7 +20,7 @@ import { UsuarioService } from 'src/app/services/usuario-service';
   // Reaproveita o visual dos formulários de evento
   styleUrls: ['../criar-evento/criar-evento.page.scss'],
   standalone: true,
-  imports: [AppLayoutComponent, CommonModule, ReactiveFormsModule, RouterLink, IonIcon, IonLabel, IonInput, IonTextarea, IonButton, IonSpinner]
+  imports: [AppLayoutComponent, CommonModule, ReactiveFormsModule, RouterLink, IonIcon, IonLabel, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton, IonSpinner]
 })
 export class MarcarEventoPage implements OnInit {
   @ViewChild('bannerInput') private bannerInput?: ElementRef<HTMLInputElement>;
@@ -28,12 +30,14 @@ export class MarcarEventoPage implements OnInit {
   modoEdicao = false;
   isSaving = false;
   bannerPreview = '';
+  maestros: Usuario[] = [];
   hoje = this.dataLocal(new Date());
 
   constructor(
     private formBuilder: FormBuilder,
     private eventosMarcadosService: EventosMarcadosService,
     private usuarioService: UsuarioService,
+    private agendaOpcoes: AgendaOpcoesService,
     private toastController: ToastController,
     private alertController: AlertController,
     private router: Router,
@@ -46,6 +50,7 @@ export class MarcarEventoPage implements OnInit {
       data: ['', Validators.required],
       hora: ['', Validators.required],
       local: ['', [Validators.required, Validators.maxLength(160)]],
+      maestroId: [null, Validators.required],
       descricao: ['', Validators.required]
     });
   }
@@ -56,6 +61,8 @@ export class MarcarEventoPage implements OnInit {
       this.router.navigate(['/inicio']);
       return;
     }
+
+    this.agendaOpcoes.maestros().subscribe((maestros) => this.maestros = maestros);
 
     const idParam = this.route.snapshot.queryParamMap.get('id');
     const id = Number(idParam);
@@ -75,8 +82,13 @@ export class MarcarEventoPage implements OnInit {
           data: evento.data,
           hora: (evento.hora || '').slice(0, 5),
           local: evento.local,
+          maestroId: evento.maestro?.id ?? null,
           descricao: evento.descricao
         });
+        // Mantém o maestro na lista mesmo que ele tenha sido desativado depois
+        if (evento.maestro && !this.maestros.some((m) => m.id === evento.maestro.id)) {
+          this.maestros = [...this.maestros, evento.maestro];
+        }
         this.bannerPreview = evento.banner || '';
       },
       error: async () => {
@@ -103,7 +115,8 @@ export class MarcarEventoPage implements OnInit {
       local: form.local.trim(),
       descricao: form.descricao.trim(),
       banner: this.bannerPreview || undefined,
-      criadorId: usuario?.id
+      criadorId: usuario?.id,
+      maestroId: Number(form.maestroId)
     };
 
     const requisicao = this.modoEdicao

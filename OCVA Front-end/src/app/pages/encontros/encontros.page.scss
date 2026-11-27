@@ -8,7 +8,7 @@
   --cinza-fraco: #60626a;
 }
 
-.ensaios-content {
+.encontros-content {
   --background: var(--fundo-principal);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -202,5 +202,37 @@
         --color: #eb445a;
       }
     }
+  }
+}
+.section-badge-title.segunda {
+  margin-top: 36px;
+}
+
+.vazio {
+  margin: 0 0 8px;
+  color: var(--cinza-texto);
+  font-size: 0.88rem;
+}
+
+.card-ensaio.sem-clique {
+  cursor: default;
+}
+
+.card-ensaio .ensaio-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--cinza-texto);
+  font-size: 0.85rem;
+
+  ion-icon {
+    color: var(--dourado);
+    font-size: 1rem;
+  }
+
+  strong {
+    color: #dedee3;
+    font-weight: 600;
   }
 }

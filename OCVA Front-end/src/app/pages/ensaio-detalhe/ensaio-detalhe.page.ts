@@ -7,12 +7,13 @@ import { IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   calendarOutline, checkmarkCircle, checkmarkCircleOutline, closeCircle, closeCircleOutline, createOutline,
-  musicalNote, peopleOutline, personOutline, timeOutline
+  musicalNote, peopleOutline, personOutline, starOutline, timeOutline
 } from 'ionicons/icons';
 import { Observable, of, switchMap } from 'rxjs';
 import { AppLayoutComponent } from 'src/app/components/app-layout/app-layout.component';
 import { Ensaio, EnsaioRequest } from 'src/app/models/ensaio';
 import { EnsaiosService } from '../../services/ensaios-service';
+import { chaveDoEvento, idsDoEvento } from '../../services/agenda-opcoes';
 
 type Situacao = 'presente' | 'falta' | null;
 
@@ -41,7 +42,7 @@ export class EnsaioDetalhePage implements OnInit {
   ) {
     addIcons({
       calendarOutline, checkmarkCircle, checkmarkCircleOutline, closeCircle, closeCircleOutline, createOutline,
-      musicalNote, peopleOutline, personOutline, timeOutline
+      musicalNote, peopleOutline, personOutline, starOutline, timeOutline
     });
 
     this.formGroup = this.formBuilder.group({
@@ -114,6 +115,9 @@ export class EnsaioDetalhePage implements OnInit {
       descricao: form.descricao.trim(),
       musicoIds: (this.ensaio.musicos || []).map((musico: any) => musico.id),
       criadorId: this.ensaio.criador?.id,
+      // Maestro e evento continuam os mesmos (são trocados na página de edição completa)
+      maestroId: this.ensaio.maestro?.id,
+      ...idsDoEvento(chaveDoEvento(this.ensaio.evento)),
       instrumentos: (this.ensaio.instrumentos || []).map((item) => ({ instrumento: item.instrumento, quantidade: item.quantidade })),
       partituraIds: (this.ensaio.partituras || []).map((partitura: any) => partitura.id)
     };

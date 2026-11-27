@@ -1,7 +1,7 @@
-<app-layout titulo="Detalhes do ensaio" icone="musical-note-outline" secao="/ensaios">
-  <a acoes class="topbar-link" routerLink="/ensaios">
+<app-layout titulo="Detalhes do ensaio" icone="musical-note-outline" secao="/encontros">
+  <a acoes class="topbar-link" routerLink="/encontros">
     <ion-icon name="arrow-back-outline"></ion-icon>
-    <span>Voltar aos ensaios</span>
+    <span>Voltar aos encontros</span>
   </a>
 
   <main class="detalhe-body">
@@ -31,6 +31,14 @@
         <div class="meta">
           <ion-icon name="calendar-outline"></ion-icon>
           <span>{{ dataFormatada() }}</span>
+        </div>
+        <div class="meta">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>Maestro responsável: <strong>{{ ensaio.maestro?.nome || 'Não definido' }}</strong></span>
+        </div>
+        <div class="meta" *ngIf="ensaio.evento">
+          <ion-icon name="star-outline"></ion-icon>
+          <span>Evento: <strong>{{ ensaio.evento.titulo }}</strong></span>
         </div>
         <div class="meta" *ngIf="ensaio.criador">
           <ion-icon name="person-outline"></ion-icon>

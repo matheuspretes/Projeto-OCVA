@@ -1,0 +1,88 @@
+<app-layout titulo="Arquivo de encontros" icone="archive-outline" secao="/encontros">
+  <ion-button acoes *ngIf="ehEquipe()" class="topbar-button" (click)="marcarEncontro()">
+    <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
+    Marcar encontro
+  </ion-button>
+
+  <div class="encontros-content">
+    <div class="container-wrapper">
+      <div *ngIf="carregando" class="empty-state">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <ng-container *ngIf="!carregando">
+        <div class="section-badge-title">NÃO PASSARAM · DO MAIS PRÓXIMO AO MAIS DISTANTE</div>
+        <p *ngIf="naoPassaram.length === 0" class="vazio">Nenhum encontro marcado.</p>
+        <div class="ensaios-grid" *ngIf="naoPassaram.length > 0">
+          <ng-container *ngFor="let item of naoPassaram">
+            <ng-container *ngTemplateOutlet="card; context: { $implicit: item }"></ng-container>
+          </ng-container>
+        </div>
+
+        <div class="section-badge-title segunda">JÁ PASSARAM · DO MAIS RECENTE AO MAIS ANTIGO</div>
+        <p *ngIf="jaPassaram.length === 0" class="vazio">Nenhum encontro no arquivo.</p>
+        <div class="ensaios-grid" *ngIf="jaPassaram.length > 0">
+          <ng-container *ngFor="let item of jaPassaram">
+            <ng-container *ngTemplateOutlet="card; context: { $implicit: item }"></ng-container>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Card usado nas duas seções -->
+  <ng-template #card let-item>
+    <div class="card-ensaio" [class.sem-clique]="item.origem === 'encontro' && !podeEditar(item)" (click)="abrir(item)">
+      <div class="tag-tipo">
+        <ion-icon name="musical-note"></ion-icon>
+        <span>{{ item.tipo | uppercase }}</span>
+      </div>
+
+      <h2 class="ensaio-titulo">{{ item.titulo }}</h2>
+
+      <div class="ensaio-data">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ formatarData(item.data) }}</span>
+      </div>
+
+      <div class="ensaio-info">
+        <ion-icon name="person-outline"></ion-icon>
+        <span><strong>Maestro:</strong> {{ item.maestro || 'Não definido' }}</span>
+      </div>
+      <div class="ensaio-info" *ngIf="item.evento">
+        <ion-icon name="star-outline"></ion-icon>
+        <span><strong>Evento:</strong> {{ item.evento }}</span>
+      </div>
+
+      <div class="ensaio-descricao">
+        <span class="desc-label">Descrição:</span>
+        <span class="desc-texto">{{ item.descricao || 'Sem descrição' }}</span>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="musicos-section">
+        <div class="section-label">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>{{ item.rotuloMusicos }}</span>
+        </div>
+        <p *ngIf="item.musicos.length === 0" class="sem-musicos">Ninguém ainda.</p>
+        <div class="musicos-chips" *ngIf="item.musicos.length > 0">
+          <div class="musico-badge" *ngFor="let musico of item.musicos">
+            <span class="avatar-iniciais">{{ iniciais(musico.nome) }}</span>
+            <span class="nome-musico">{{ musico.nome }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="podeEditar(item)" class="card-acoes" (click)="$event.stopPropagation()">
+        <ion-button fill="clear" size="small" class="btn-acao edit" (click)="editar(item)" title="Editar">
+          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" class="btn-acao delete" (click)="excluir(item)" title="Excluir">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+</app-layout>

@@ -192,12 +192,115 @@ $white: #f1f1f2;
   }
 }
 
-// O card abre os detalhes do evento
+// Clicar no card mostra os ensaios do evento
 .evento-card {
   cursor: pointer;
   transition: border-color .2s;
 
   &:hover {
     border-color: #3e424d;
+  }
+}
+
+.evento-card.aberto {
+  border-color: $gold;
+}
+
+.dica {
+  margin: 0 0 24px;
+  color: $muted;
+  font-size: .85rem;
+}
+
+.section-title.segunda {
+  margin-top: 44px;
+}
+
+.vazio {
+  margin: -16px 0 0;
+  color: $muted;
+  font-size: .88rem;
+}
+
+.ensaios-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: $gold;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.ensaios-toggle .seta {
+  transition: transform .2s;
+}
+
+.ensaios-toggle .seta.virada {
+  transform: rotate(180deg);
+}
+
+.ensaios-painel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  cursor: default;
+}
+
+.ensaios-painel .vazio {
+  margin: 0;
+}
+
+.ensaio-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #1d1e23;
+  border: 1px solid $border;
+  border-radius: 10px;
+  font-size: .85rem;
+}
+
+.ensaio-item.com-link {
+  cursor: pointer;
+}
+
+.ensaio-item.com-link:hover {
+  border-color: $gold;
+}
+
+.ensaio-data {
+  flex: 0 0 auto;
+  color: $muted;
+}
+
+.ensaio-titulo {
+  flex: 1;
+  min-width: 0;
+  color: $white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ensaio-status {
+  padding: 3px 9px;
+  border-radius: 10px;
+  background: rgba($gold, .15);
+  color: $gold;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.ensaio-status.realizado {
+  background: rgba(76, 195, 138, .15);
+  color: #4cc38a;
+}
+
+@media (max-width: 600px) {
+  .ensaio-item {
+    flex-wrap: wrap;
   }
 }

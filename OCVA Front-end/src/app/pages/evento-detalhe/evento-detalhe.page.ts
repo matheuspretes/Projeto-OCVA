@@ -117,6 +117,7 @@ export class EventoDetalhePage implements OnInit {
       local: form.local.trim(),
       descricao: form.descricao.trim(),
       banner: this.evento.banner,
+      maestroId: this.evento.maestro?.id,
       musicoIds: (this.evento.musicos || []).map((musico: any) => musico.id),
       instrumentos: (this.evento.instrumentos || []).map((item) => ({ instrumento: item.instrumento, quantidade: item.quantidade })),
       partituraIds: (this.evento.partituras || []).map((partitura: any) => partitura.id)

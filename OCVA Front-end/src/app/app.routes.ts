@@ -27,8 +27,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/codigos-acesso/codigos-acesso.page').then( m => m.CodigosAcessoPage)
   },
   {
+    path: 'encontros',
+    loadComponent: () => import('./pages/encontros/encontros.page').then( m => m.EncontrosPage)
+  },
+  {
+    // A lista de ensaios agora fica dentro de "Encontros"
     path: 'ensaios',
-    loadComponent: () => import('./pages/ensaios/ensaios.page').then( m => m.EnsaiosPage)
+    redirectTo: 'encontros',
+    pathMatch: 'full'
   },
   {
     path: 'ensaios/:id',

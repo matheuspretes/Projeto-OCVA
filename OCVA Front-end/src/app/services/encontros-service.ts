@@ -16,6 +16,11 @@ export class EncontrosService {
     return this.http.get<Encontro[]>(this.API_URL);
   }
 
+  // Encontros que já aconteceram e não viraram ensaio (ex.: reuniões)
+  listarPassados(): Observable<Encontro[]> {
+    return this.http.get<Encontro[]>(`${this.API_URL}/passados`);
+  }
+
   // Devolve null quando não há nenhum encontro marcado
   proximo(): Observable<Encontro | null> {
     return this.http.get<Encontro | null>(`${this.API_URL}/proximo`);

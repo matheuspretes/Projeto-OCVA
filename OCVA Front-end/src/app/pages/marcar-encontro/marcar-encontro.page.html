@@ -9,7 +9,7 @@
     <section class="form-card">
       <header class="form-heading">
         <h1><ion-icon name="calendar-outline"></ion-icon> Dados do encontro</h1>
-        <p>Depois que o dia do encontro passar, ele é registrado automaticamente como ensaio.</p>
+        <p>Quando o horário de um encontro do tipo "Ensaio" passar, ele é registrado automaticamente como ensaio.</p>
       </header>
 
       <form [formGroup]="formGroup" (ngSubmit)="salvar()">
@@ -28,6 +28,22 @@
               <ion-icon name="add"></ion-icon>
             </button>
           </div>
+        </div>
+
+        <div class="field" *ngIf="ehEnsaio">
+          <ion-label>Evento deste ensaio</ion-label>
+          <ion-select class="field-input" placeholder="Selecione o evento" formControlName="evento" interface="popover">
+            <ion-select-option *ngFor="let evento of eventos" [value]="evento.chave">{{ evento.rotulo }}</ion-select-option>
+          </ion-select>
+          <small *ngIf="eventos.length === 0" class="eligibility-empty">Nenhum evento cadastrado. Marque um evento antes de marcar o ensaio.</small>
+        </div>
+
+        <div class="field">
+          <ion-label>Maestro responsável</ion-label>
+          <ion-select class="field-input" placeholder="Selecione o maestro" formControlName="maestroId" interface="popover">
+            <ion-select-option *ngFor="let maestro of maestros" [value]="maestro.id">{{ maestro.nome }}</ion-select-option>
+          </ion-select>
+          <small *ngIf="maestros.length === 0" class="eligibility-empty">Nenhum maestro ativo cadastrado.</small>
         </div>
 
         <div class="two-columns">
